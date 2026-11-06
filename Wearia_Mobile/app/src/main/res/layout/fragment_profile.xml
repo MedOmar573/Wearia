@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="40dp">
+
+        <!-- Titre Serif Élégant -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile &amp; Preferences"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:fontFamily="serif"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Infos personnelles -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/colorSurface"
+            android:layout_marginBottom="18dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/tv_profile_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ameni"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:fontFamily="serif"
+                    android:textColor="@color/colorTextPrimary" />
+
+                <TextView
+                    android:id="@+id/tv_profile_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ameni@wearia.tn"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp" />
+
+                <TextView
+                    android:id="@+id/tv_profile_ville"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ville : Tunis"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Accès rapide Style Profile (Maquette 4.jpg) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_open_style_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="1dp"
+            app:cardBackgroundColor="@color/colorSurface"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📏"
+                    android:textSize="20sp"
+                    android:layout_marginEnd="12dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Style Profile &amp; Body Fit"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Height, weight, measurements &amp; preferred fit"
+                        android:textSize="12sp"
+                        android:textColor="@color/colorTextSecondary" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textSize="22sp"
+                    android:textColor="@color/colorTextMuted" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Accès rapide Color Preferences (Maquette 5.jpg) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_open_color_preferences"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="1dp"
+            app:cardBackgroundColor="@color/colorSurface"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🎨"
+                    android:textSize="20sp"
+                    android:layout_marginEnd="12dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Color Preferences"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Loved colors and colors to avoid"
+                        android:textSize="12sp"
+                        android:textColor="@color/colorTextSecondary" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textSize="22sp"
+                    android:textColor="@color/colorTextMuted" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Routines Hebdomadaires (BR09) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weekly Routines"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your outfit occasions are automatically inferred from your routine each day."
+            android:textSize="12sp"
+            android:textColor="@color/colorTextSecondary"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:id="@+id/layout_routines_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_routine"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="+ Add a routine"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="0dp"
+            android:includeFontPadding="false"
+            style="@style/Widget.Wearia.Button.Pill.Outline"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Déconnexion -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_logout"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:text="Sign out"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:includeFontPadding="false"
+            app:cornerRadius="27dp"
+            app:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/colorOnPrimary" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

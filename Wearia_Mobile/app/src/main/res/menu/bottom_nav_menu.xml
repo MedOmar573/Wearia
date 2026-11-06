@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_nav_home"
+        android:title="Home" />
+    <item
+        android:id="@+id/dressingFragment"
+        android:icon="@drawable/ic_nav_wardrobe"
+        android:title="Wardrobe" />
+    <item
+        android:id="@+id/outfitsHistoryFragment"
+        android:icon="@drawable/ic_nav_outfits"
+        android:title="Outfits" />
+    <item
+        android:id="@+id/shoppingFragment"
+        android:icon="@drawable/ic_nav_shopper"
+        android:title="Shopper" />
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_nav_profile"
+        android:title="Profile" />
+</menu>

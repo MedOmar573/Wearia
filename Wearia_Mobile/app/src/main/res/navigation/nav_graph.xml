@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <!-- Onboarding Flow (Maquettes 1.jpg, 2.jpg, 3.jpg) -->
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.wearia.app.ui.auth.OnboardingFragment"
+        android:label="Welcome"
+        tools:layout="@layout/fragment_onboarding">
+        <action
+            android:id="@+id/action_onboarding_to_register"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_onboarding_to_login"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_onboarding_to_styleProfile"
+            app:destination="@id/styleProfileFragment" />
+    </fragment>
+
+    <!-- Style Profile (Maquette 4.jpg) -->
+    <fragment
+        android:id="@+id/styleProfileFragment"
+        android:name="com.wearia.app.ui.profile.StyleProfileFragment"
+        android:label="Style Profile"
+        tools:layout="@layout/fragment_style_profile">
+        <action
+            android:id="@+id/action_styleProfile_to_colorPreferences"
+            app:destination="@id/colorPreferencesFragment" />
+    </fragment>
+
+    <!-- Color Preferences (Maquette 5.jpg) -->
+    <fragment
+        android:id="@+id/colorPreferencesFragment"
+        android:name="com.wearia.app.ui.profile.ColorPreferencesFragment"
+        android:label="Color Preferences"
+        tools:layout="@layout/fragment_color_preferences">
+        <action
+            android:id="@+id/action_colorPreferences_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Auth -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.wearia.app.ui.auth.LoginFragment"
+        android:label="Connexion"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_login_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_login_to_styleProfile"
+            app:destination="@id/styleProfileFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_login_to_onboarding"
+            app:destination="@id/onboardingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.wearia.app.ui.auth.RegisterFragment"
+        android:label="Inscription"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_register_to_styleProfile"
+            app:destination="@id/styleProfileFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_register_to_login"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_register_to_onboarding"
+            app:destination="@id/onboardingFragment" />
+    </fragment>
+
+    <!-- Accueil (Maquette 12.jpg) -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.wearia.app.ui.home.HomeFragment"
+        android:label="Wearia"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_dressing"
+            app:destination="@id/dressingFragment" />
+        <action
+            android:id="@+id/action_home_to_outfit"
+            app:destination="@id/outfitRecommendationFragment" />
+        <action
+            android:id="@+id/action_home_to_camera"
+            app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/action_home_to_shopping"
+            app:destination="@id/shoppingFragment" />
+        <action
+            android:id="@+id/action_home_to_outfitsHistory"
+            app:destination="@id/outfitsHistoryFragment" />
+    </fragment>
+
+    <!-- Dressing / Garde-robe (Maquette 6.jpg) -->
+    <fragment
+        android:id="@+id/dressingFragment"
+        android:name="com.wearia.app.ui.dressing.DressingFragment"
+        android:label="My Wardrobe"
+        tools:layout="@layout/fragment_dressing">
+        <action
+            android:id="@+id/action_dressing_to_camera"
+            app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/action_dressing_to_clothingDetail"
+            app:destination="@id/addClothingFragment" />
+        <action
+            android:id="@+id/action_dressing_to_addClothing"
+            app:destination="@id/addClothingFragment" />
+    </fragment>
+
+    <!-- Caméra (CameraX) -->
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.wearia.app.ui.camera.CameraFragment"
+        android:label="Take Photo"
+        tools:layout="@layout/fragment_camera">
+        <action
+            android:id="@+id/action_camera_to_addClothing"
+            app:destination="@id/addClothingFragment" />
+    </fragment>
+
+    <!-- Ajout & Confirmation Vêtement IA (Maquette 7.jpg) -->
+    <fragment
+        android:id="@+id/addClothingFragment"
+        android:name="com.wearia.app.ui.dressing.AddClothingFragment"
+        android:label="Add a clothing item"
+        tools:layout="@layout/fragment_add_clothing">
+        <action
+            android:id="@+id/action_addClothing_to_camera"
+            app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/action_addClothing_to_dressing"
+            app:destination="@id/dressingFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <!-- Tenue Recommandée (Maquette 8.jpg & 9.jpg) -->
+    <fragment
+        android:id="@+id/outfitRecommendationFragment"
+        android:name="com.wearia.app.ui.outfit.OutfitRecommendationFragment"
+        android:label="Your outfit"
+        tools:layout="@layout/fragment_outfit_recommendation">
+        <action
+            android:id="@+id/action_outfit_to_camera"
+            app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/action_outfit_to_dressing"
+            app:destination="@id/dressingFragment" />
+    </fragment>
+
+    <!-- Mes Tenues / Historique & Favoris (Maquette 11.jpg) -->
+    <fragment
+        android:id="@+id/outfitsHistoryFragment"
+        android:name="com.wearia.app.ui.outfit.OutfitsHistoryFragment"
+        android:label="My Outfits"
+        tools:layout="@layout/fragment_my_outfits" />
+
+    <!-- Personal Shopper IA (Maquette 10.jpg) -->
+    <fragment
+        android:id="@+id/shoppingFragment"
+        android:name="com.wearia.app.ui.shopping.ShoppingFragment"
+        android:label="AI Personal Shopper"
+        tools:layout="@layout/fragment_shopping" />
+
+    <!-- Profil & Routines -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.wearia.app.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_to_styleProfile"
+            app:destination="@id/styleProfileFragment" />
+        <action
+            android:id="@+id/action_profile_to_colorPreferences"
+            app:destination="@id/colorPreferencesFragment" />
+    </fragment>
+
+</navigation>

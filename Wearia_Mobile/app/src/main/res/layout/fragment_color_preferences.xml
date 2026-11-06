@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="40dp">
+
+        <!-- Titre Serif Élégant (Maquette 5.jpg) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your color preferences"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:fontFamily="serif"
+            android:textColor="@color/colorTextPrimary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose the colors you enjoy wearing."
+            android:textSize="14sp"
+            android:textColor="@color/colorTextSecondary"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Grid 4 colonnes des couleurs préférées (5.jpg) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_preferred_colors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="28dp" />
+
+        <!-- Titre: Colors I prefer to avoid (5.jpg) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Colors I prefer to avoid"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="serif"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="18dp" />
+
+        <!-- Grid des couleurs à éviter (5.jpg) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_avoid_colors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="36dp" />
+
+        <!-- Bouton Continue avec indicateur de chargement (5.jpg) -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_continue_colors"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Continue"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="28dp"
+                app:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/colorOnPrimary" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar_colors"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/colorOnPrimary"
+                android:visibility="gone" />
+        </FrameLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

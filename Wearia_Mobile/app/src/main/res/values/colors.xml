@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Palette Wearia Luxury & Minimalist (Identique aux maquettes) -->
+    <color name="colorBackground">#FAF6F0</color>
+    <color name="colorBackgroundDarker">#F0ECE4</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorSurfaceCard">#FFFFFF</color>
+    <color name="colorSurfaceVariant">#F6F2EC</color>
+    <color name="colorBorder">#EAE3D8</color>
+    <color name="colorBorderStrong">#D8D0C5</color>
+
+    <!-- Éléments Primaires (Noir mat / Obsidian) -->
+    <color name="colorPrimary">#1F1E1D</color>
+    <color name="colorPrimaryVariant">#141312</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+
+    <!-- Éléments Secondaires (Taupe chaud / Sable doré) -->
+    <color name="colorSecondary">#A89882</color>
+    <color name="colorSecondaryVariant">#8F7F6A</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+    <color name="colorSelectedChip">#A89882</color>
+
+    <!-- Typographie -->
+    <color name="colorTextPrimary">#1F1E1D</color>
+    <color name="colorTextSecondary">#7D7973</color>
+    <color name="colorTextMuted">#A8A39B</color>
+
+    <!-- Pastilles & Badges d'occasions (Couleurs pastel exactes) -->
+    <color name="chipPeach">#F8EFE0</color>
+    <color name="chipPeachText">#705335</color>
+    <color name="chipPink">#FCEAE8</color>
+    <color name="chipPinkText">#7C3D3A</color>
+    <color name="chipBlue">#E8F2FA</color>
+    <color name="chipBlueText">#2B5876</color>
+    <color name="chipGreen">#EAF2EB</color>
+    <color name="chipGreenText">#2E5437</color>
+    <color name="chipTaupe">#EBE5DC</color>
+    <color name="chipTaupeText">#5E5851</color>
+
+    <!-- Statuts standard -->
+    <color name="colorSuccess">#388E3C</color>
+    <color name="colorWarning">#F57C00</color>
+    <color name="colorError">#D32F2F</color>
+
+    <!-- Couleurs pour sélecteur de couleurs (Screen 5) -->
+    <color name="palette_black">#1F1E1D</color>
+    <color name="palette_white">#FFFFFF</color>
+    <color name="palette_gray">#9E9E9E</color>
+    <color name="palette_navy">#1B2E4B</color>
+    <color name="palette_blue">#21759B</color>
+    <color name="palette_beige">#D8C7B5</color>
+    <color name="palette_sand">#E6DAC8</color>
+    <color name="palette_brown">#6D4C3D</color>
+    <color name="palette_green">#2E6047</color>
+    <color name="palette_red">#C63D36</color>
+    <color name="palette_darkbrown">#423229</color>
+    <color name="palette_yellow">#ECAE28</color>
+    <color name="palette_coral">#D94A3D</color>
+    <color name="palette_pink">#F3B6C2</color>
+    <color name="palette_orange">#E56A26</color>
+    <color name="palette_lightyellow">#F8D548</color>
+</resources>

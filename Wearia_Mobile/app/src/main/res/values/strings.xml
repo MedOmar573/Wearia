@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Wearia</string>
+    <string name="title_home">Home</string>
+    <string name="title_dressing">My Wardrobe</string>
+    <string name="title_outfit">Your outfit</string>
+    <string name="title_outfits">My Outfits</string>
+    <string name="title_shopping">AI Personal Shopper</string>
+    <string name="title_profile">Profile</string>
+
+    <string name="action_view_outfit">View outfit</string>
+    <string name="action_add_wardrobe">Add to wardrobe</string>
+    <string name="action_like_outfit">Like this outfit</string>
+    <string name="action_try_another">Try another</string>
+    <string name="action_change_item">Change one item</string>
+    <string name="action_save_feedback">Save feedback</string>
+</resources>

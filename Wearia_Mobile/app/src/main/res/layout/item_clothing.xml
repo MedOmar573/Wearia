@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/colorSurface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <!-- Image Container avec fond sable doux (Maquette 6.jpg) -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:background="@drawable/bg_clothing_item_preview">
+
+            <ImageView
+                android:id="@+id/iv_clothing_photo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:padding="8dp" />
+
+            <!-- Pastille couleur discrète en haut à gauche -->
+            <View
+                android:id="@+id/view_color_badge"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="top|start"
+                android:layout_margin="10dp"
+                android:background="@drawable/circle_shape" />
+
+            <!-- Bouton Corbeille / Supprimer visible en haut à droite -->
+            <ImageButton
+                android:id="@+id/btn_delete"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="8dp"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                android:background="@drawable/bg_circle_trash"
+                android:src="@drawable/ic_trash"
+                android:contentDescription="Supprimer le vêtement"
+                android:elevation="4dp" />
+        </FrameLayout>
+
+        <!-- Titre de l'article -->
+        <TextView
+            android:id="@+id/tv_clothing_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Basic T-shirt"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginTop="8dp" />
+
+        <!-- Sous-titre / Type / Matière -->
+        <TextView
+            android:id="@+id/tv_clothing_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Basic · Casual"
+            android:textSize="12sp"
+            android:textColor="@color/colorTextSecondary"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Ligne avec Tag Catégorie Pill et Tag Statut -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_clothing_category_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tops"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/chipPeachText"
+                android:background="@drawable/bg_badge_peach"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp" />
+
+            <!-- Status interactif (Disponible / Sale) -->
+            <TextView
+                android:id="@+id/tv_clothing_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="Disponible"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/chipGreenText"
+                android:background="@drawable/bg_badge_available"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

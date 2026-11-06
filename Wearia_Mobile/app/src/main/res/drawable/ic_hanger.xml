@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <!-- Cintre / Hanger minimaliste élégant (Screen 7) -->
+    <path
+        android:strokeColor="#A89882"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000"
+        android:pathData="M32,16 C35,16 37,13.5 37,11 C37,8.5 34.5,6.5 32,6.5 C29.5,6.5 27.5,8.5 27.5,11 C27.5,15 32,18 32,22 L10,36 C8,37.3 8.5,40.5 11,40.5 L53,40.5 C55.5,40.5 56,37.3 54,36 L32,22 Z" />
+</vector>
+

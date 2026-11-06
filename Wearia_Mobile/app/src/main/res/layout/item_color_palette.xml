@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cell_color"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <View
+        android:id="@+id/view_color_circle"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_gravity="center"
+        android:background="@drawable/circle_shape" />
+
+    <TextView
+        android:id="@+id/tv_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="✓"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+</FrameLayout>
+

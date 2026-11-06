@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Conditions Météorologiques Simulées"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Température (°C) :"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/et_manual_temp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:text="12.0"
+        android:hint="Ex: 12.0"
+        android:layout_marginBottom="16dp" />
+
+    <CheckBox
+        android:id="@+id/cb_manual_precip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Précipitations (Pluie / Neige) - Teste BR02"
+        android:checked="true" />
+</LinearLayout>
+

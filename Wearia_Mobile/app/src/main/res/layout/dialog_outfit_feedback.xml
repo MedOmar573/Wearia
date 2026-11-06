@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_bottom_sheet">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="32dp">
+
+        <!-- Handle bar -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:background="#D0C9C0"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Titre Serif Élégant (Maquette 9.jpg) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="How was this outfit?"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:fontFamily="serif"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="18dp" />
+
+        <!-- Ligne des 3 réactions (9.jpg) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="18dp">
+
+            <!-- Réaction 1: Love it -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_reaction_love"
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/colorSurface"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🖤"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Love it"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary"
+                        android:layout_marginTop="6dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Réaction 2: It's okay -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_reaction_okay"
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="3dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/colorSurface"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👍"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="It's okay"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary"
+                        android:layout_marginTop="6dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Réaction 3: Not for me -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_reaction_not_for_me"
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/colorSurfaceVariant"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="2dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👎"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Not for me"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary"
+                        android:layout_marginTop="6dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Carte: What would you change? (9.jpg) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/colorSurface"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="What would you change?"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorTextPrimary"
+                    android:layout_marginBottom="14dp" />
+
+                <!-- Chips sélectionnables (9.jpg) -->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_feedback_reasons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_reason_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Color"
+                        style="@style/Widget.Wearia.Chip"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_reason_fit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fit"
+                        style="@style/Widget.Wearia.Chip"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_reason_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Style"
+                        style="@style/Widget.Wearia.Chip"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_reason_shoes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Shoes"
+                        style="@style/Widget.Wearia.Chip"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_reason_jacket"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jacket"
+                        style="@style/Widget.Wearia.Chip"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_reason_warm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Too warm"
+                        style="@style/Widget.Wearia.Chip"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_reason_light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Too light"
+                        style="@style/Widget.Wearia.Chip"
+                        android:checkable="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_reason_occasion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Not suitable for the occasion"
+                        style="@style/Widget.Wearia.Chip"
+                        android:checkable="true" />
+                </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Bouton Save feedback (Pill noir mat - 9.jpg) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Save feedback"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:includeFontPadding="false"
+            app:cornerRadius="28dp"
+            app:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/colorOnPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Note d'aide sous le bouton (9.jpg) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Your feedback helps Wearia improve future recommendations."
+            android:textSize="12sp"
+            android:textColor="@color/colorTextSecondary"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
+

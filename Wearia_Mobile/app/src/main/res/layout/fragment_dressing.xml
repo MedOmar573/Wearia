@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="20dp">
+
+            <!-- Titre Serif Élégant (Maquette 6.jpg) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Wardrobe"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:fontFamily="serif"
+                android:textColor="@color/colorTextPrimary"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Barre de Recherche & Bouton Filtre (6.jpg) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <!-- Champ de recherche style pill blanc -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_search_bar"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginEnd="10dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_search_modern"
+                        android:layout_marginEnd="10dp" />
+
+                    <EditText
+                        android:id="@+id/et_search_wardrobe"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:hint="Search my wardrobe..."
+                        android:textSize="14sp"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textColorHint="@color/colorTextMuted"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text" />
+                </LinearLayout>
+
+                <!-- Bouton Filtre Circulaire -->
+                <ImageButton
+                    android:id="@+id/btn_filter_wardrobe"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_circle_button"
+                    android:src="@drawable/ic_filter_modern"
+                    android:contentDescription="Filtres" />
+            </LinearLayout>
+
+            <!-- Chips de Catégories Horizontales (6.jpg) -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:layout_marginBottom="12dp">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_categories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All"
+                        android:checked="true"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:chipCornerRadius="20dp"
+                        app:chipBackgroundColor="@color/colorPrimary"
+                        android:textColor="@color/colorOnPrimary" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_tops"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tops"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:chipCornerRadius="20dp"
+                        app:chipBackgroundColor="@color/colorSurface"
+                        app:chipStrokeColor="@color/colorBorderStrong"
+                        app:chipStrokeWidth="1dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_bottoms"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bottoms"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:chipCornerRadius="20dp"
+                        app:chipBackgroundColor="@color/colorSurface"
+                        app:chipStrokeColor="@color/colorBorderStrong"
+                        app:chipStrokeWidth="1dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_jackets"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jackets"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:chipCornerRadius="20dp"
+                        app:chipBackgroundColor="@color/colorSurface"
+                        app:chipStrokeColor="@color/colorBorderStrong"
+                        app:chipStrokeWidth="1dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_shoes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Shoes"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:chipCornerRadius="20dp"
+                        app:chipBackgroundColor="@color/colorSurface"
+                        app:chipStrokeColor="@color/colorBorderStrong"
+                        app:chipStrokeWidth="1dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_accessories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Accessories"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:chipCornerRadius="20dp"
+                        app:chipBackgroundColor="@color/colorSurface"
+                        app:chipStrokeColor="@color/colorBorderStrong"
+                        app:chipStrokeWidth="1dp" />
+
+                    <!-- Anciennes chips pour compatibilité de code -->
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_available"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_dirty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_offline_warning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Offline mode - Showing cached wardrobe"
+                android:background="#FFF3CD"
+                android:textColor="#856404"
+                android:padding="8dp"
+                android:textAlignment="center"
+                android:visibility="gone"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tv_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Your wardrobe is empty.\nTap + to add your first clothing item."
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="15sp"
+                android:visibility="gone"
+                android:padding="32dp" />
+
+            <!-- Grid 2 colonnes (6.jpg) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_clothes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="80dp" />
+        </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Floating Action Button Noir Mat avec '+' (6.jpg) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_clothing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:contentDescription="Add clothing item"
+        app:backgroundTint="@color/colorPrimary"
+        app:tint="@color/colorOnPrimary"
+        app:fabCustomSize="56dp"
+        app:maxImageSize="28dp"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

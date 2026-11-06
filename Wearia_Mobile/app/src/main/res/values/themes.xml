@@ -1,0 +1,122 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.Wearia" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Brand colors -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+
+        <!-- Status bar with dark icons on warm beige background -->
+        <item name="android:statusBarColor">@color/colorBackground</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+        <item name="android:textColorSecondary">@color/colorTextSecondary</item>
+
+        <!-- Default Material Component styles -->
+        <item name="materialButtonStyle">@style/Widget.Wearia.Button.Pill</item>
+        <item name="materialCardViewStyle">@style/Widget.Wearia.Card</item>
+        <item name="chipStyle">@style/Widget.Wearia.Chip</item>
+        <item name="bottomNavigationStyle">@style/Widget.Wearia.BottomNav</item>
+    </style>
+
+    <!-- Style Bouton Pill Noir Mat (Centrage parfait du texte sans coupure) -->
+    <style name="Widget.Wearia.Button.Pill" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">@color/colorOnPrimary</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Bouton Pill Outline / Secondaire (Centrage parfait du texte) -->
+    <style name="Widget.Wearia.Button.Pill.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="strokeColor">@color/colorBorderStrong</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- Style Card Élégante (Coins arrondis 18dp, fond blanc, ombre douce) -->
+    <style name="Widget.Wearia.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/colorSurface</item>
+        <item name="cardCornerRadius">18dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- Style Chip Élégante (Centrage vertical et horizontal) -->
+    <style name="Widget.Wearia.Chip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipCornerRadius">20dp</item>
+        <item name="chipBackgroundColor">@color/colorSurface</item>
+        <item name="chipStrokeColor">@color/colorBorder</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:minHeight">38dp</item>
+    </style>
+
+    <!-- Bottom Navigation Bar minimaliste -->
+    <style name="Widget.Wearia.BottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="backgroundTint">@color/colorSurface</item>
+        <item name="itemIconTint">@color/bottom_nav_color_selector</item>
+        <item name="itemTextColor">@color/bottom_nav_color_selector</item>
+        <item name="elevation">8dp</item>
+        <item name="itemRippleColor">#1A1F1E1D</item>
+    </style>
+
+    <!-- Style Titre & Sous-titre Élégant -->
+    <style name="Wearia.Text.Title" parent="">
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+    </style>
+
+    <style name="Wearia.Text.Title.Serif">
+        <item name="android:fontFamily">serif</item>
+    </style>
+
+    <style name="Wearia.Text.Subtitle" parent="">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+    </style>
+
+    <style name="Wearia.Text.Subtitle.Serif">
+        <item name="android:fontFamily">serif</item>
+    </style>
+</resources>

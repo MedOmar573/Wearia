@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="40dp">
+
+        <!-- Titre Serif Élégant (Maquette 4.jpg) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Build your style profile"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:fontFamily="serif"
+            android:textColor="@color/colorTextPrimary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tell us a little about yourself to personalize your recommendations."
+            android:textSize="14sp"
+            android:textColor="@color/colorTextSecondary"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="22dp" />
+
+        <!-- Section: Basic information (4.jpg) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Basic information"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Choix du Genre (Homme / Femme) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gender"
+            android:textSize="13sp"
+            android:textColor="@color/colorTextSecondary"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <!-- Option Homme -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_gender_man"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/colorPrimary"
+                app:cardBackgroundColor="@color/colorSurface"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingVertical="14dp"
+                    android:paddingHorizontal="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👨"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_gender_man"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Homme"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Option Femme -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_gender_woman"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/colorBorder"
+                app:cardBackgroundColor="@color/colorSurface"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingVertical="14dp"
+                    android:paddingHorizontal="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👩"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_gender_woman"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Femme"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextSecondary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="22dp">
+
+            <!-- Carte Height (4.jpg) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/colorSurface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Height"
+                        android:textSize="13sp"
+                        android:textColor="@color/colorTextSecondary" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="bottom"
+                        android:layout_marginTop="4dp">
+
+                        <EditText
+                            android:id="@+id/et_height"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="170"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorTextPrimary"
+                            android:background="@null"
+                            android:inputType="number" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" cm"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary"
+                            android:layout_marginStart="4dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Carte Weight (4.jpg) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/colorSurface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Weight"
+                        android:textSize="13sp"
+                        android:textColor="@color/colorTextSecondary" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="bottom"
+                        android:layout_marginTop="4dp">
+
+                        <EditText
+                            android:id="@+id/et_weight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="65"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorTextPrimary"
+                            android:background="@null"
+                            android:inputType="number" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" kg"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary"
+                            android:layout_marginStart="4dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Section: Optional measurements (4.jpg) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Optional measurements"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:layout_marginBottom="22dp">
+
+            <!-- Shoulders -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/colorSurface">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Shoulders"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+ Add"
+                        android:textSize="13sp"
+                        android:textColor="@color/colorTextSecondary"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Chest -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/colorSurface">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chest"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+ Add"
+                        android:textSize="13sp"
+                        android:textColor="@color/colorTextSecondary"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Waist -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/colorSurface">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Waist"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+ Add"
+                        android:textSize="13sp"
+                        android:textColor="@color/colorTextSecondary"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Hips -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/colorSurface">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hips"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+ Add"
+                        android:textSize="13sp"
+                        android:textColor="@color/colorTextSecondary"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </GridLayout>
+
+        <!-- Section: Preferred fit (4.jpg) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Preferred fit"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="22dp">
+
+            <TextView
+                android:id="@+id/chip_fit_fitted"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="Fitted"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/colorTextPrimary"
+                android:background="@drawable/bg_badge_outline"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/chip_fit_regular"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="Regular"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/colorOnPrimary"
+                android:background="@drawable/bg_badge_taupe"
+                android:layout_marginHorizontal="3dp" />
+
+            <TextView
+                android:id="@+id/chip_fit_oversized"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="Oversized"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/colorTextPrimary"
+                android:background="@drawable/bg_badge_outline"
+                android:layout_marginStart="6dp" />
+        </LinearLayout>
+
+        <!-- Section: Favorite styles (4.jpg) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Favorite styles"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_styles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_style_casual"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Casual"
+                android:checked="true"
+                style="@style/Widget.Wearia.Chip"
+                app:chipBackgroundColor="@color/colorSecondary"
+                android:textColor="@color/colorOnPrimary" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_style_classic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Classic"
+                android:checked="true"
+                style="@style/Widget.Wearia.Chip"
+                app:chipBackgroundColor="@color/colorSecondary"
+                android:textColor="@color/colorOnPrimary" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_style_streetwear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Streetwear"
+                style="@style/Widget.Wearia.Chip" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_style_elegant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Elegant"
+                style="@style/Widget.Wearia.Chip" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_style_sporty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sporty"
+                style="@style/Widget.Wearia.Chip" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_style_minimal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Minimal"
+                style="@style/Widget.Wearia.Chip" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Bouton Continue (Pill noir mat - 4.jpg) avec indicateur de chargement -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_continue_profile"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Continue"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:includeFontPadding="false"
+                app:cornerRadius="28dp"
+                app:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/colorOnPrimary" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar_profile"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/colorOnPrimary"
+                android:visibility="gone" />
+        </FrameLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
+
