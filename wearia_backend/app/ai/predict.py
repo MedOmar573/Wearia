@@ -7,6 +7,7 @@ import joblib
 from app.core.config import settings
 from app.ai.feature_extraction import extract_advanced_features
 from app.ai.color_detection import detect_dominant_color
+from app.ai.feedback_learning import ActiveLearningManager
 
 logger = logging.getLogger(__name__)
 
@@ -166,9 +167,23 @@ def predict_clothing_category(image_path: str) -> Dict[str, Any]:
 
     final_category = "Pull"
     confidence = 0.85
+    learned_type_id = None
+    learned_color_id = None
 
-    # 2. Inférence du modèle entraîné
-    if model is not None and scaler is not None:
+    # 1.bis Vérification de la mémoire active (apprentissage des corrections manuelles de l'utilisateur)
+    learned_match = ActiveLearningManager.find_matching_memory(image_path)
+    if learned_match is not None:
+        matched_sample, sim = learned_match
+        final_category = matched_sample["category"]
+        confidence = min(0.98, max(0.92, sim))
+        learned_type_id = matched_sample.get("type_id")
+        learned_color_id = matched_sample.get("color_id")
+        if matched_sample.get("color"):
+            color_info["name"] = matched_sample["color"]
+        logger.info(f"Prédiction optimisée via correction utilisateur mémorisée : {final_category}")
+
+    # 2. Inférence du modèle entraîné (si pas de match appris)
+    elif model is not None and scaler is not None:
         try:
             features = extract_advanced_features(image_path)
             scaled_features = scaler.transform(features)
@@ -240,6 +255,8 @@ def predict_clothing_category(image_path: str) -> Dict[str, Any]:
         "color": color_info["name"],
         "color_hex": color_info["hex"],
         "confidence": round(confidence, 2),
+        "learned_type_id": learned_type_id,
+        "learned_color_id": learned_color_id,
         **attrs
     }
 

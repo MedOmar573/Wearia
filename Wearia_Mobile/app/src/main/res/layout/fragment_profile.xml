@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
@@ -11,17 +12,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
-        android:paddingTop="24dp"
-        android:paddingBottom="40dp">
+        android:paddingTop="28dp"
+        android:paddingBottom="44dp">
 
-        <!-- Titre Serif Élégant -->
+        <!-- En-tête Profil -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile &amp; Preferences"
-            android:textSize="28sp"
+            android:text="Mon Profil"
+            android:textSize="26sp"
             android:textStyle="bold"
-            android:fontFamily="serif"
             android:textColor="@color/colorTextPrimary"
             android:layout_marginBottom="20dp" />
 
@@ -29,10 +29,12 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="24dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/colorSurface"
-            android:layout_marginBottom="18dp">
+            app:cardBackgroundColor="@color/colorSurfaceCard"
+            app:strokeColor="@color/colorBorder"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,61 +42,159 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Photo de Profil / Avatar avec Badge Caméra -->
+                    <FrameLayout
+                        android:id="@+id/layout_avatar_container"
+                        android:layout_width="74dp"
+                        android:layout_height="74dp"
+                        android:layout_marginEnd="16dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            app:cardCornerRadius="36dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/colorPrimary"
+                            app:strokeWidth="2dp"
+                            app:cardBackgroundColor="@color/colorBackground">
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <TextView
+                                    android:id="@+id/tv_avatar_initial"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="A"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="26sp"
+                                    android:textStyle="bold"
+                                    android:background="@color/colorBackground" />
+
+                                <ImageView
+                                    android:id="@+id/iv_profile_avatar"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="centerCrop"
+                                    android:contentDescription="Photo de profil" />
+                            </FrameLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Badge bouton pour changer la photo -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/btn_change_avatar"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="bottom|end"
+                            app:cardCornerRadius="13dp"
+                            app:cardElevation="2dp"
+                            app:cardBackgroundColor="@color/colorPrimary">
+
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_camera"
+                                app:tint="@color/colorOnPrimary"
+                                android:contentDescription="Changer photo" />
+                        </com.google.android.material.card.MaterialCardView>
+                    </FrameLayout>
+
+                    <!-- Informations Nom, Email, Ville -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_profile_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ameni"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorTextPrimary" />
+
+                        <TextView
+                            android:id="@+id/tv_profile_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ameni@wearia.tn"
+                            android:textColor="@color/colorTextSecondary"
+                            android:textSize="13sp"
+                            android:layout_marginTop="2dp" />
+
+                        <TextView
+                            android:id="@+id/tv_profile_ville"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ville : Tunis"
+                            android:textColor="@color/colorTextSecondary"
+                            android:textSize="13sp"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
                 <TextView
-                    android:id="@+id/tv_profile_name"
+                    android:id="@+id/tv_change_avatar_prompt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ameni"
-                    android:textSize="20sp"
+                    android:text="📷 Importer une photo de profil depuis la galerie"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:fontFamily="serif"
-                    android:textColor="@color/colorTextPrimary" />
-
-                <TextView
-                    android:id="@+id/tv_profile_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ameni@wearia.tn"
-                    android:textColor="@color/colorTextSecondary"
-                    android:textSize="13sp"
-                    android:layout_marginTop="2dp" />
-
-                <TextView
-                    android:id="@+id/tv_profile_ville"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ville : Tunis"
-                    android:textColor="@color/colorTextSecondary"
-                    android:textSize="13sp"
-                    android:layout_marginTop="2dp" />
+                    android:layout_marginTop="12dp"
+                    android:paddingVertical="4dp"
+                    android:clickable="true"
+                    android:focusable="true" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Accès rapide Style Profile (Maquette 4.jpg) -->
+        <!-- Accès rapide Style Profile -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_open_style_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="1dp"
-            app:cardBackgroundColor="@color/colorSurface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/colorSurfaceCard"
+            app:strokeColor="@color/colorBorder"
+            app:strokeWidth="1dp"
             android:clickable="true"
             android:focusable="true"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="14dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="16dp">
+                android:padding="18dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="📏"
-                    android:textSize="20sp"
-                    android:layout_marginEnd="12dp" />
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_badge_haut"
+                    android:layout_marginEnd="14dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_ruler"
+                        app:tint="@color/colorPrimary" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -105,7 +205,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Style Profile &amp; Body Fit"
+                        android:text="Profil de Style &amp; Morphologie"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorTextPrimary" />
@@ -113,9 +213,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Height, weight, measurements &amp; preferred fit"
+                        android:text="Taille, poids, mensurations et coupes favorites"
                         android:textSize="12sp"
-                        android:textColor="@color/colorTextSecondary" />
+                        android:textColor="@color/colorTextSecondary"
+                        android:layout_marginTop="2dp" />
                 </LinearLayout>
 
                 <TextView
@@ -127,14 +228,16 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Accès rapide Color Preferences (Maquette 5.jpg) -->
+        <!-- Accès rapide Color Preferences -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_open_color_preferences"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="1dp"
-            app:cardBackgroundColor="@color/colorSurface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/colorSurfaceCard"
+            app:strokeColor="@color/colorBorder"
+            app:strokeWidth="1dp"
             android:clickable="true"
             android:focusable="true"
             android:layout_marginBottom="24dp">
@@ -144,14 +247,21 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="16dp">
+                android:padding="18dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🎨"
-                    android:textSize="20sp"
-                    android:layout_marginEnd="12dp" />
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_badge_accessoire"
+                    android:layout_marginEnd="14dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_palette"
+                        app:tint="@color/colorSecondary" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -162,7 +272,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Color Preferences"
+                        android:text="Palette &amp; Couleurs Préférées"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorTextPrimary" />
@@ -170,9 +280,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Loved colors and colors to avoid"
+                        android:text="Couleurs adorées et nuances à éviter"
                         android:textSize="12sp"
-                        android:textColor="@color/colorTextSecondary" />
+                        android:textColor="@color/colorTextSecondary"
+                        android:layout_marginTop="2dp" />
                 </LinearLayout>
 
                 <TextView
@@ -184,11 +295,11 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Routines Hebdomadaires (BR09) -->
+        <!-- Routines Hebdomadaires -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weekly Routines"
+            android:text="Routines Hebdomadaires"
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="@color/colorTextPrimary"
@@ -197,10 +308,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your outfit occasions are automatically inferred from your routine each day."
+            android:text="Vos occasions de tenue sont automatiquement déduites de votre planning."
             android:textSize="12sp"
             android:textColor="@color/colorTextSecondary"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="14dp" />
 
         <LinearLayout
             android:id="@+id/layout_routines_list"
@@ -209,38 +320,28 @@
             android:orientation="vertical"
             android:layout_marginBottom="12dp" />
 
+        <!-- Bouton Ajouter Routine -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_add_routine"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:text="+ Add a routine"
-            android:gravity="center"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="0dp"
-            android:includeFontPadding="false"
+            android:text="+ Ajouter une routine"
             style="@style/Widget.Wearia.Button.Pill.Outline"
             android:layout_marginBottom="32dp" />
 
-        <!-- Déconnexion -->
+        <!-- Bouton Déconnexion -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_logout"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:text="Sign out"
-            android:textAllCaps="false"
+            android:layout_height="52dp"
+            android:text="Se déconnecter"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:gravity="center"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:includeFontPadding="false"
-            app:cornerRadius="27dp"
-            app:backgroundTint="@color/colorPrimary"
-            android:textColor="@color/colorOnPrimary" />
+            app:cornerRadius="24dp"
+            app:backgroundTint="@android:color/transparent"
+            android:textColor="@color/colorError"
+            app:strokeColor="@color/colorError"
+            app:strokeWidth="1.5dp" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Thème Fresh Fashion Tech - Mode Sombre -->
+    <color name="colorPrimary">#9B87FF</color>
+    <color name="colorPrimaryVariant">#7E64FF</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+
+    <color name="colorSecondary">#2DD4BF</color>
+    <color name="colorSecondaryVariant">#14B8A6</color>
+    <color name="colorOnSecondary">#0E0D14</color>
+
+    <color name="colorBackground">#0E0D14</color>
+    <color name="colorBackgroundDarker">#08070C</color>
+    <color name="colorSurface">#17161F</color>
+    <color name="colorSurfaceCard">#17161F</color>
+    <color name="colorSurfaceElevated">#1F1D2B</color>
+    <color name="colorSurfaceVariant">#242232</color>
+
+    <color name="colorBorder">#2B2940</color>
+    <color name="colorBorderStrong">#3D3A58</color>
+
+    <color name="colorTextPrimary">#F4F3FA</color>
+    <color name="colorTextSecondary">#A9A6BD</color>
+    <color name="colorTextMuted">#76738A</color>
+
+    <!-- Statuts -->
+    <color name="colorSuccess">#22C55E</color>
+    <color name="colorWarning">#F59E0B</color>
+    <color name="colorError">#EF4444</color>
+
+    <!-- Dégradé de marque 135° -->
+    <color name="gradientStart">#2DD4BF</color>
+    <color name="gradientEnd">#9B87FF</color>
+
+    <!-- Pastels badges de catégories en mode sombre -->
+    <color name="badge_haut_bg">#29244D</color>
+    <color name="badge_haut_text">#C4B5FD</color>
+
+    <color name="badge_bas_bg">#163354</color>
+    <color name="badge_bas_text">#7DD3FC</color>
+
+    <color name="badge_chaussures_bg">#432313</color>
+    <color name="badge_chaussures_text">#FDBA74</color>
+
+    <color name="badge_veste_bg">#422C0A</color>
+    <color name="badge_veste_text">#FDE68A</color>
+
+    <color name="badge_robe_bg">#471B33</color>
+    <color name="badge_robe_text">#F9A8D4</color>
+
+    <color name="badge_accessoire_bg">#113E3B</color>
+    <color name="badge_accessoire_text">#5EEAD4</color>
+
+    <!-- Badges occasions (compatibilité arrière) -->
+    <color name="chipPeach">#432313</color>
+    <color name="chipPeachText">#FDBA74</color>
+    <color name="chipPink">#471B33</color>
+    <color name="chipPinkText">#F9A8D4</color>
+    <color name="chipBlue">#163354</color>
+    <color name="chipBlueText">#7DD3FC</color>
+    <color name="chipGreen">#113E3B</color>
+    <color name="chipGreenText">#5EEAD4</color>
+    <color name="chipTaupe">#29244D</color>
+    <color name="chipTaupeText">#C4B5FD</color>
+    <color name="colorSelectedChip">#9B87FF</color>
+
+    <!-- Sélecteur de couleurs (Screen 5) -->
+    <color name="palette_black">#14121F</color>
+    <color name="palette_white">#FFFFFF</color>
+    <color name="palette_gray">#94A3B8</color>
+    <color name="palette_navy">#1E293B</color>
+    <color name="palette_blue">#3B82F6</color>
+    <color name="palette_beige">#E2D9CC</color>
+    <color name="palette_sand">#E7DFD5</color>
+    <color name="palette_brown">#78350F</color>
+    <color name="palette_green">#10B981</color>
+    <color name="palette_red">#EF4444</color>
+    <color name="palette_darkbrown">#451A03</color>
+    <color name="palette_yellow">#F59E0B</color>
+    <color name="palette_coral">#F43F5E</color>
+    <color name="palette_pink">#EC4899</color>
+    <color name="palette_orange">#F97316</color>
+    <color name="palette_lightyellow">#FDE047</color>
+</resources>

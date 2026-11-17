@@ -1,12 +1,16 @@
+from pathlib import Path
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.api.deps import get_current_user
+from app.core.config import settings
 from app.models.user import Utilisateur
 from app.models.clothing import Vetement
+from app.models.referentials import TypeVetement, Couleur
 from app.models.enums import Saison, StatutVetement
 from app.schemas.clothing import VetementCreate, VetementUpdate, VetementResponse
+from app.ai.feedback_learning import ActiveLearningManager
 
 router = APIRouter(prefix="/clothes", tags=["Dressing (Vêtements)"])
 
@@ -74,6 +78,25 @@ def create_clothing(
     db.add(vetement)
     db.commit()
     db.refresh(vetement)
+
+    # Apprentissage actif / Boucle de rétroaction IA
+    try:
+        photo_filename = Path(clothing_in.photoUrl).name
+        local_img_path = settings.UPLOAD_DIR / photo_filename
+        if local_img_path.exists():
+            type_obj = db.query(TypeVetement).filter(TypeVetement.id == clothing_in.type_vetement_id).first()
+            color_obj = db.query(Couleur).filter(Couleur.id == clothing_in.couleur_id).first()
+            if type_obj and color_obj:
+                ActiveLearningManager.record_feedback(
+                    image_path=str(local_img_path),
+                    category_name=type_obj.nom,
+                    type_id=type_obj.id,
+                    color_name=color_obj.nom,
+                    color_id=color_obj.id
+                )
+    except Exception:
+        pass
+
     return vetement
 
 @router.get("/{id}", response_model=VetementResponse)

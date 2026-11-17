@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -12,11 +13,12 @@ import com.wearia.app.R
 import com.wearia.app.WeariaApplication
 import com.wearia.app.data.local.entity.TenueFavoriteEntity
 import com.wearia.app.databinding.FragmentMyOutfitsBinding
+import com.wearia.app.utils.addPressEffect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
- * OutfitsHistoryFragment : Écran "My Outfits" avec Favoris et Historique (Maquette 11.jpg).
+ * OutfitsHistoryFragment : Écran "Mes Tenues" modernisé avec Favoris et Historique.
  */
 class OutfitsHistoryFragment : Fragment() {
 
@@ -36,8 +38,10 @@ class OutfitsHistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.tabFavorites.addPressEffect(0.98f)
+        binding.tabHistory.addPressEffect(0.98f)
+
         adapter = OutfitsHistoryAdapter { outfit ->
-            // Ouvrir l'écran de détail / recommandation de cette tenue
             findNavController().navigate(R.id.outfitRecommendationFragment)
         }
 
@@ -54,19 +58,19 @@ class OutfitsHistoryFragment : Fragment() {
     private fun setupTabs() {
         binding.tabFavorites.setOnClickListener {
             isFavoritesTab = true
-            binding.tvTabFavorites.setTextColor(resources.getColor(R.color.colorTextPrimary, null))
-            binding.indicatorFavorites.setBackgroundColor(resources.getColor(R.color.colorPrimary, null))
-            binding.tvTabHistory.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
-            binding.indicatorHistory.setBackgroundColor(resources.getColor(android.R.color.transparent, null))
+            binding.tvTabFavorites.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+            binding.indicatorFavorites.setBackgroundResource(R.drawable.bg_brand_gradient)
+            binding.tvTabHistory.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorTextSecondary))
+            binding.indicatorHistory.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
             filterAndDisplay()
         }
 
         binding.tabHistory.setOnClickListener {
             isFavoritesTab = false
-            binding.tvTabHistory.setTextColor(resources.getColor(R.color.colorTextPrimary, null))
-            binding.indicatorHistory.setBackgroundColor(resources.getColor(R.color.colorPrimary, null))
-            binding.tvTabFavorites.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
-            binding.indicatorFavorites.setBackgroundColor(resources.getColor(android.R.color.transparent, null))
+            binding.tvTabHistory.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+            binding.indicatorHistory.setBackgroundResource(R.drawable.bg_brand_gradient)
+            binding.tvTabFavorites.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorTextSecondary))
+            binding.indicatorFavorites.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
             filterAndDisplay()
         }
     }
@@ -119,4 +123,3 @@ class OutfitsHistoryFragment : Fragment() {
         _binding = null
     }
 }
-

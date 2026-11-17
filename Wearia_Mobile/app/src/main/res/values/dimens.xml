@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Grille de dimensions 4/8dp & Spécifications Fresh Fashion Tech -->
+    <dimen name="spacing_xxs">4dp</dimen>
+    <dimen name="spacing_xs">8dp</dimen>
+    <dimen name="spacing_sm">12dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">20dp</dimen>
+    <dimen name="spacing_xl">24dp</dimen>
+    <dimen name="spacing_xxl">32dp</dimen>
+
+    <dimen name="screen_margin">20dp</dimen>
+    <dimen name="card_corner_radius">20dp</dimen>
+    <dimen name="hero_card_corner_radius">28dp</dimen>
+    <dimen name="pill_corner_radius">24dp</dimen>
+    <dimen name="chip_corner_radius">20dp</dimen>
+
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="touch_target_min">48dp</dimen>
+</resources>

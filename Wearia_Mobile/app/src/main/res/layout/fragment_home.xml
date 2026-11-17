@@ -12,43 +12,58 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
-        android:paddingTop="24dp"
-        android:paddingBottom="32dp">
+        android:paddingTop="28dp"
+        android:paddingBottom="36dp">
 
-        <!-- En-tête Salutation (Serif élégant comme 12.jpg) -->
-        <TextView
-            android:id="@+id/tv_greeting"
-            android:layout_width="wrap_content"
+        <!-- En-tête Salutation & Date -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Good morning, Ameni 👋"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:fontFamily="serif"
-            android:textColor="@color/colorTextPrimary"
-            android:layout_marginBottom="18dp" />
+            android:orientation="vertical"
+            android:layout_marginBottom="18dp">
 
-        <!-- Weather Card (12.jpg) -->
+            <TextView
+                android:id="@+id/tv_greeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bonjour, Ameni"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Prêt(e) pour composer votre tenue du jour ?"
+                android:textSize="14sp"
+                android:textColor="@color/colorTextSecondary"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Weather Card Moderne (Pill & Icônes vectorielles) -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/colorSurface"
-            android:layout_marginBottom="20dp">
+            app:cardBackgroundColor="@color/colorSurfaceCard"
+            app:strokeColor="@color/colorBorder"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="22dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingHorizontal="18dp"
+                android:paddingHorizontal="20dp"
                 android:paddingVertical="14dp">
 
-                <!-- Location & Température -->
+                <!-- Localisation & Température -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.2"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -57,12 +72,12 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="📍"
-                            android:textSize="12sp"
-                            android:layout_marginEnd="4dp" />
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:src="@drawable/ic_search_modern"
+                            app:tint="@color/colorPrimary"
+                            android:layout_marginEnd="6dp" />
 
                         <TextView
                             android:id="@+id/tv_city_weather_quick"
@@ -78,57 +93,77 @@
                         android:id="@+id/tv_temperature_home"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🌙 19°C"
-                        android:textSize="20sp"
+                        android:text="19°C"
+                        android:textSize="22sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorTextPrimary"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>
 
-                <!-- Condition Météo -->
+                <!-- Condition Météo avec icône vectorielle -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginEnd="12dp">
+                    android:background="@drawable/bg_badge_veste"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp"
+                    android:layout_marginEnd="8dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_sun"
+                        android:layout_marginEnd="4dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="☀️ Sunny"
-                        android:textSize="13sp"
+                        android:text="Ensoleillé"
+                        android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="@color/colorTextSecondary" />
+                        android:textColor="@color/badge_veste_text" />
                 </LinearLayout>
 
-                <!-- Vent / Climat -->
+                <!-- Vent doux avec icône vectorielle -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_badge_accessoire"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_wind"
+                        android:layout_marginEnd="4dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🍃 Light wind"
-                        android:textSize="13sp"
+                        android:text="Brise légère"
+                        android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="@color/colorTextSecondary" />
+                        android:textColor="@color/badge_accessoire_text" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Outfit of the day Hero Card (12.jpg) -->
+        <!-- Outfit of the day Hero Card (Coins 28dp) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_today_outfit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="3dp"
-            app:cardBackgroundColor="@color/colorSurface"
-            android:layout_marginBottom="24dp">
+            app:cardCornerRadius="28dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/colorSurfaceCard"
+            app:strokeColor="@color/colorBorder"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="28dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -136,28 +171,39 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- Header de la carte avec étoiles -->
+                <!-- Header de la carte avec sparkle et titre -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:layout_marginBottom="16dp">
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_sparkle"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_sparkle_filled"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Tenue du jour"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Outfit of the day"
-                        android:textSize="20sp"
+                        android:text="Conseil IA"
+                        android:textSize="11sp"
                         android:textStyle="bold"
-                        android:fontFamily="serif"
-                        android:textColor="@color/colorTextPrimary" />
+                        android:textColor="@color/colorPrimary"
+                        android:background="@drawable/bg_badge_haut"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp" />
                 </LinearLayout>
 
                 <!-- Loading State -->
@@ -168,7 +214,7 @@
                     android:layout_gravity="center"
                     android:indeterminateTint="@color/colorPrimary"
                     android:visibility="gone"
-                    android:layout_marginVertical="24dp" />
+                    android:layout_marginVertical="28dp" />
 
                 <!-- Layout pour quand il y a une tenue -->
                 <LinearLayout
@@ -178,11 +224,11 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <!-- Collage d'aperçu de la tenue (Chemise, Pantalon, Veste, Chaussures) -->
+                    <!-- Collage d'aperçu de la tenue -->
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/layout_outfit_collage"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
+                        android:layout_height="210dp"
                         android:background="@drawable/bg_clothing_item_preview"
                         android:padding="12dp"
                         android:layout_marginBottom="16dp">
@@ -198,8 +244,8 @@
 
                         <ImageView
                             android:id="@+id/iv_outfit_bottom"
-                            android:layout_width="80dp"
-                            android:layout_height="160dp"
+                            android:layout_width="85dp"
+                            android:layout_height="170dp"
                             android:scaleType="fitCenter"
                             app:layout_constraintStart_toEndOf="@+id/iv_outfit_top"
                             app:layout_constraintEnd_toStartOf="@+id/iv_outfit_jacket"
@@ -217,8 +263,8 @@
 
                         <ImageView
                             android:id="@+id/iv_outfit_shoes"
-                            android:layout_width="70dp"
-                            android:layout_height="50dp"
+                            android:layout_width="75dp"
+                            android:layout_height="55dp"
                             android:scaleType="fitCenter"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -226,7 +272,7 @@
                             android:layout_marginBottom="8dp" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <!-- Tags / Badges pastels (Casual, University, Weather suitable) -->
+                    <!-- Badges pastels officiels (Score %, Occasion, Météo) -->
                     <LinearLayout
                         android:id="@+id/layout_outfit_tags"
                         android:layout_width="match_parent"
@@ -239,53 +285,50 @@
                             android:id="@+id/tag_style"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Casual"
+                            android:text="95% match"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:textColor="@color/chipPeachText"
-                            android:background="@drawable/bg_badge_peach"
+                            android:textColor="@color/badge_haut_text"
+                            android:background="@drawable/bg_badge_haut"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
                             android:layout_marginEnd="6dp" />
 
                         <TextView
                             android:id="@+id/tag_occasion"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="University"
+                            android:text="Quotidien"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:textColor="@color/chipPinkText"
-                            android:background="@drawable/bg_badge_pink"
+                            android:textColor="@color/badge_robe_text"
+                            android:background="@drawable/bg_badge_robe"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
                             android:layout_marginEnd="6dp" />
 
                         <TextView
                             android:id="@+id/tag_weather"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Weather suitable"
+                            android:text="20°C adapté"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:textColor="@color/chipBlueText"
-                            android:background="@drawable/bg_badge_blue" />
+                            android:textColor="@color/badge_bas_text"
+                            android:background="@drawable/bg_badge_bas"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp" />
                     </LinearLayout>
 
-                    <!-- Bouton View outfit (Pill noir mat) -->
+                    <!-- Bouton Dégradé Brand Gradient Pill -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_view_outfit"
+                        style="@style/Widget.Wearia.Button.Gradient"
                         android:layout_width="match_parent"
-                        android:layout_height="54dp"
-                        android:text="View outfit"
-                        android:textAllCaps="false"
+                        android:layout_height="52dp"
+                        android:text="Voir la tenue complète"
                         android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        android:paddingTop="0dp"
-                        android:paddingBottom="0dp"
-                        android:includeFontPadding="false"
-                        app:cornerRadius="27dp"
-                        app:backgroundTint="@color/colorPrimary"
-                        android:textColor="@color/colorOnPrimary" />
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <!-- État vide : Si la garde-robe est vide -->
@@ -297,22 +340,21 @@
                     android:gravity="center"
                     android:background="@drawable/bg_clothing_item_preview"
                     android:paddingHorizontal="20dp"
-                    android:paddingVertical="26dp"
+                    android:paddingVertical="28dp"
                     android:visibility="visible">
 
-                    <!-- Icône Cintre dans un cercle blanc -->
                     <FrameLayout
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_circle_button"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/bg_badge_haut"
                         android:layout_marginBottom="12dp">
 
                         <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_hanger"
-                            app:tint="@color/colorTextPrimary" />
+                            app:tint="@color/colorPrimary" />
                     </FrameLayout>
 
                     <TextView
@@ -322,7 +364,6 @@
                         android:text="Garde-robe vide"
                         android:textSize="17sp"
                         android:textStyle="bold"
-                        android:fontFamily="serif"
                         android:textColor="@color/colorTextPrimary"
                         android:layout_marginBottom="6dp" />
 
@@ -337,36 +378,30 @@
                         android:lineSpacingExtra="2dp"
                         android:layout_marginBottom="16dp" />
 
-                    <!-- Bouton Ajouter un vêtement -->
+                    <!-- Bouton Ajouter un vêtement Dégradé -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_empty_add_clothing"
+                        style="@style/Widget.Wearia.Button.Gradient"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
                         android:text="+ Ajouter un vêtement"
-                        android:textAllCaps="false"
                         android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        android:paddingHorizontal="20dp"
-                        app:cornerRadius="22dp"
-                        app:backgroundTint="@color/colorPrimary"
-                        android:textColor="@color/colorOnPrimary" />
+                        android:paddingHorizontal="22dp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Section: What do you want to do? -->
+        <!-- Titre Section Actions Rapides -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="What do you want to do?"
-            android:textSize="19sp"
+            android:text="Que souhaitez-vous faire ?"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/colorTextPrimary"
             android:layout_marginBottom="14dp" />
 
-        <!-- 2x2 Grid de cartes actions (12.jpg) -->
+        <!-- Grille 2x2 des Actions Rapides modernisées -->
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -375,16 +410,18 @@
             android:alignmentMode="alignMargins"
             android:columnOrderPreserved="false">
 
-            <!-- Action 1: Generate outfit -->
+            <!-- Action 1: Recommander une tenue -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_action_add"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="105dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
-                app:cardCornerRadius="18dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/colorSurface"
+                app:cardBackgroundColor="@color/colorSurfaceCard"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -395,34 +432,36 @@
                     android:gravity="center"
                     android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✨"
-                        android:textSize="22sp" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_sparkle_filled"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Generate outfit"
+                        android:text="Créer une tenue"
                         android:textAlignment="center"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorTextPrimary"
-                        android:layout_marginTop="6dp" />
+                        android:layout_marginTop="8dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Action 2: My wardrobe -->
+            <!-- Action 2: Dressing -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_action_dressing"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="105dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
-                app:cardCornerRadius="18dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/colorSurface"
+                app:cardBackgroundColor="@color/colorSurfaceCard"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -433,34 +472,36 @@
                     android:gravity="center"
                     android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="👗"
-                        android:textSize="22sp" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_nav_wardrobe"
+                        app:tint="@color/colorSecondary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="My wardrobe"
+                        android:text="Mon Dressing"
                         android:textAlignment="center"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorTextPrimary"
-                        android:layout_marginTop="6dp" />
+                        android:layout_marginTop="8dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Action 3: Favorites -->
+            <!-- Action 3: Favoris -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_action_favorites"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="105dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
-                app:cardCornerRadius="18dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/colorSurface"
+                app:cardBackgroundColor="@color/colorSurfaceCard"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -471,21 +512,21 @@
                     android:gravity="center"
                     android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🖤"
-                        android:textSize="20sp" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_heart_filled"
+                        app:tint="#F43F5E" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Favorites"
+                        android:text="Mes Favoris"
                         android:textAlignment="center"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorTextPrimary"
-                        android:layout_marginTop="6dp" />
+                        android:layout_marginTop="8dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -493,12 +534,14 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_action_shopping"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="105dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
-                app:cardCornerRadius="18dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/colorSurface"
+                app:cardBackgroundColor="@color/colorSurfaceCard"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -509,21 +552,21 @@
                     android:gravity="center"
                     android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🛍️"
-                        android:textSize="20sp" />
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_nav_shopper"
+                        app:tint="#F59E0B" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Personal Shopper"
                         android:textAlignment="center"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textStyle="bold"
                         android:textColor="@color/colorTextPrimary"
-                        android:layout_marginTop="6dp" />
+                        android:layout_marginTop="8dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </GridLayout>

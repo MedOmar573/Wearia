@@ -14,6 +14,7 @@ import com.wearia.app.WeariaApplication
 import com.wearia.app.data.remote.dto.CouleurResponse
 import com.wearia.app.databinding.FragmentColorPreferencesBinding
 import com.wearia.app.utils.Resource
+import com.wearia.app.utils.addPressEffect
 import com.wearia.app.viewmodel.ProfileViewModel
 
 /**
@@ -42,6 +43,8 @@ class ColorPreferencesFragment : Fragment() {
 
         profileViewModel.loadReferentials()
         profileViewModel.loadProfile()
+
+        binding.btnContinueColors.addPressEffect()
 
         binding.btnContinueColors.setOnClickListener {
             savePreferencesAndProceed()
@@ -117,7 +120,7 @@ class ColorPreferencesFragment : Fragment() {
                 }
                 is Resource.Success -> {
                     binding.progressBarColors.visibility = View.GONE
-                    binding.btnContinueColors.text = "Continue"
+                    binding.btnContinueColors.text = "Enregistrer & Continuer"
                     binding.btnContinueColors.isEnabled = true
 
                     val session = WeariaApplication.instance.sessionManager
@@ -130,7 +133,7 @@ class ColorPreferencesFragment : Fragment() {
                 }
                 is Resource.Error -> {
                     binding.progressBarColors.visibility = View.GONE
-                    binding.btnContinueColors.text = "Continue"
+                    binding.btnContinueColors.text = "Enregistrer & Continuer"
                     binding.btnContinueColors.isEnabled = true
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
                 }

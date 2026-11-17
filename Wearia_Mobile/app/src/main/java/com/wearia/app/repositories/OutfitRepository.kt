@@ -25,13 +25,21 @@ class OutfitRepository {
     suspend fun getRecommendation(
         occasion: String? = null,
         manualTemp: Float? = null,
-        manualPrecip: Boolean? = null
+        manualPrecip: Boolean? = null,
+        variation: Int = 0,
+        excludeItemIds: List<Int>? = null,
+        swapCategory: String? = null,
+        currentItemIds: List<Int>? = null
     ): Resource<RecommendationResponse> {
         return try {
             val request = RecommendationRequest(
                 occasion = occasion,
                 temperature = manualTemp,
-                precipitations = manualPrecip
+                precipitations = manualPrecip,
+                variation = variation,
+                excludeItemIds = excludeItemIds,
+                swapCategory = swapCategory,
+                currentItemIds = currentItemIds
             )
             val response = api.getRecommendation(authHeader(), request)
             if (response.isSuccessful && response.body() != null) {

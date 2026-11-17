@@ -30,14 +30,22 @@ class OutfitViewModel(private val repository: OutfitRepository) : ViewModel() {
     fun generateRecommendation(
         occasion: String? = null,
         manualTemp: Float? = null,
-        manualPrecip: Boolean? = null
+        manualPrecip: Boolean? = null,
+        variation: Int = 0,
+        excludeItemIds: List<Int>? = null,
+        swapCategory: String? = null,
+        currentItemIds: List<Int>? = null
     ) {
         viewModelScope.launch {
             _recommendationState.value = Resource.Loading
             _recommendationState.value = repository.getRecommendation(
                 occasion = occasion,
                 manualTemp = manualTemp,
-                manualPrecip = manualPrecip
+                manualPrecip = manualPrecip,
+                variation = variation,
+                excludeItemIds = excludeItemIds,
+                swapCategory = swapCategory,
+                currentItemIds = currentItemIds
             )
         }
     }

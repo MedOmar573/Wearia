@@ -25,6 +25,10 @@ def get_outfit_recommendation(
     date_cible = req.dateCible if req else None
     temp = req.temperature if req else None
     precip = req.precipitations if req else None
+    variation = req.variation if (req and req.variation is not None) else 0
+    exclude_item_ids = req.exclude_item_ids if req else None
+    swap_category = req.swap_category if req else None
+    current_item_ids = req.current_item_ids if req else None
 
     try:
         tenue, items = RecommendationService.generate_recommendation(
@@ -33,7 +37,11 @@ def get_outfit_recommendation(
             forced_occasion=occasion,
             target_date=date_cible,
             manual_temp=temp,
-            manual_precip=precip
+            manual_precip=precip,
+            variation=variation,
+            exclude_item_ids=exclude_item_ids,
+            swap_category=swap_category,
+            current_item_ids=current_item_ids
         )
     except ValueError as e:
         raise HTTPException(

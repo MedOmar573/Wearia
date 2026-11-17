@@ -23,6 +23,7 @@ class SessionManager(context: Context) {
         private const val KEY_USER_WEIGHT = "user_weight"
         private const val KEY_ONBOARDING_DONE = "onboarding_done"
         private const val KEY_PROFILE_COMPLETED = "profile_completed"
+        private const val KEY_AVATAR_URI = "user_avatar_uri"
     }
 
     fun saveSession(
@@ -71,6 +72,12 @@ class SessionManager(context: Context) {
     fun getUserHeight(): Int = prefs.getInt(KEY_USER_HEIGHT, 175)
 
     fun getUserWeight(): Float = prefs.getFloat(KEY_USER_WEIGHT, 70f)
+
+    fun saveAvatarUri(uri: String) {
+        prefs.edit().putString(KEY_AVATAR_URI, uri).apply()
+    }
+
+    fun getAvatarUri(): String? = prefs.getString(KEY_AVATAR_URI, null)
 
     fun isLoggedIn(): Boolean = !getToken().isNullOrEmpty()
 

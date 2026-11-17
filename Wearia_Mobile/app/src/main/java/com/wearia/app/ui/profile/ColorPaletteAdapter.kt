@@ -9,6 +9,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.wearia.app.data.remote.dto.CouleurResponse
 import com.wearia.app.databinding.ItemColorPaletteBinding
+import com.wearia.app.utils.addPressEffect
 
 class ColorPaletteAdapter(
     private val isAvoidMode: Boolean = false,
@@ -44,6 +45,10 @@ class ColorPaletteAdapter(
     override fun getItemCount(): Int = colors.size
 
     inner class ColorViewHolder(private val binding: ItemColorPaletteBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.cellColor.addPressEffect()
+        }
+
         fun bind(couleur: CouleurResponse) {
             val parsedColor = try {
                 Color.parseColor(couleur.codeHex)

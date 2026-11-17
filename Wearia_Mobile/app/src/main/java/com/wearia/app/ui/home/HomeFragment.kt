@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -14,10 +13,11 @@ import com.wearia.app.R
 import com.wearia.app.WeariaApplication
 import com.wearia.app.databinding.FragmentHomeBinding
 import com.wearia.app.utils.Resource
+import com.wearia.app.utils.addPressEffect
 import com.wearia.app.viewmodel.OutfitViewModel
 
 /**
- * HomeFragment : Tableau de bord d'accueil luxueux (Maquette 12.jpg).
+ * HomeFragment : Écran d'accueil modernisé Fresh Fashion Tech avec carte météo, tenue du jour et actions 2x2.
  */
 class HomeFragment : Fragment() {
 
@@ -33,11 +33,19 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val session = WeariaApplication.instance.sessionManager
-        val userName = session.getUserName()
-        binding.tvGreeting.text = if (userName.isNotEmpty()) "Good morning, $userName 👋" else "Good morning, Mohamed 👋"
+        // Effets tactiles sur tous les éléments cliquables
+        binding.cardActionAdd.addPressEffect()
+        binding.cardActionDressing.addPressEffect()
+        binding.cardActionFavorites.addPressEffect()
+        binding.cardActionShopping.addPressEffect()
+        binding.btnViewOutfit.addPressEffect()
+        binding.btnEmptyAddClothing.addPressEffect()
+        binding.cardTodayOutfit.addPressEffect(0.98f)
 
-        val ville = session.getUserVille()
+        // Salutation dynamique personnalisée
+        val userName = WeariaApplication.instance.sessionManager.getUserName() ?: ""
+        val ville = WeariaApplication.instance.sessionManager.getUserVille() ?: ""
+        binding.tvGreeting.text = if (userName.isNotEmpty()) "Bonjour, $userName" else "Bonjour"
         binding.tvCityWeatherQuick.text = if (ville.isNotEmpty()) ville else "Tunis"
 
         // Observer la tenue du jour
@@ -51,48 +59,49 @@ class HomeFragment : Fragment() {
                 }
                 is Resource.Success -> {
                     val rec = state.data
-                    val baseUrl = BuildConfig.BASE_URL.trimEnd('/')
-                    var topLoaded = false
-                    var bottomLoaded = false
-                    var shoesLoaded = false
-                    var jacketLoaded = false
+                    if (rec.items.isNotEmpty()) {
+                        val baseUrl = BuildConfig.BASE_URL.trimEnd('/')
+                        var topLoaded = false
+                        var bottomLoaded = false
+                        var shoesLoaded = false
+                        var jacketLoaded = false
 
-                    rec.items.forEach { item ->
-                        val cat = item.category?.lowercase() ?: ""
-                        val fullImgUrl = item.imageUrl?.let { if (it.startsWith("http")) it else "$baseUrl$it" }
-                        when {
-                            (cat.contains("haut") || cat.contains("chemise") || cat.contains("top") || cat.contains("t-shirt") || cat.contains("polo") || cat.contains("pull") || cat.contains("sweat") || cat.contains("robe")) && !topLoaded -> {
-                                fullImgUrl?.let {
-                                    binding.ivOutfitTop.load(it) { crossfade(true) }
-                                    topLoaded = true
+                        rec.items.forEach { item ->
+                            val cat = item.category?.lowercase() ?: ""
+                            val fullUrl = item.imageUrl?.let { if (it.startsWith("http")) it else "$baseUrl$it" }
+
+                            when {
+                                (cat.contains("haut") || cat.contains("chemise") || cat.contains("top") || cat.contains("t-shirt") || cat.contains("polo") || cat.contains("pull") || cat.contains("sweat")) && !topLoaded -> {
+                                    fullUrl?.let {
+                                        binding.ivOutfitTop.load(it) { crossfade(true) }
+                                        topLoaded = true
+                                    }
                                 }
-                            }
-                            (cat.contains("bas") || cat.contains("pantalon") || cat.contains("jean") || cat.contains("short") || cat.contains("jupe")) && !bottomLoaded -> {
-                                fullImgUrl?.let {
-                                    binding.ivOutfitBottom.load(it) { crossfade(true) }
-                                    bottomLoaded = true
+                                (cat.contains("bas") || cat.contains("pantalon") || cat.contains("jean") || cat.contains("short")) && !bottomLoaded -> {
+                                    fullUrl?.let {
+                                        binding.ivOutfitBottom.load(it) { crossfade(true) }
+                                        bottomLoaded = true
+                                    }
                                 }
-                            }
-                            (cat.contains("chaussure") || cat.contains("sneaker") || cat.contains("shoe") || cat.contains("basket") || cat.contains("derbie") || cat.contains("botte")) && !shoesLoaded -> {
-                                fullImgUrl?.let {
-                                    binding.ivOutfitShoes.load(it) { crossfade(true) }
-                                    shoesLoaded = true
+                                (cat.contains("chaussure") || cat.contains("sneaker") || cat.contains("shoe") || cat.contains("basket")) && !shoesLoaded -> {
+                                    fullUrl?.let {
+                                        binding.ivOutfitShoes.load(it) { crossfade(true) }
+                                        shoesLoaded = true
+                                    }
                                 }
-                            }
-                            (cat.contains("veste") || cat.contains("manteau") || cat.contains("jacket") || cat.contains("blazer") || cat.contains("bomber")) && !jacketLoaded -> {
-                                fullImgUrl?.let {
-                                    binding.ivOutfitJacket.load(it) { crossfade(true) }
-                                    jacketLoaded = true
+                                (cat.contains("veste") || cat.contains("manteau") || cat.contains("jacket") || cat.contains("blazer") || cat.contains("bomber")) && !jacketLoaded -> {
+                                    fullUrl?.let {
+                                        binding.ivOutfitJacket.load(it) { crossfade(true) }
+                                        jacketLoaded = true
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    val hasAnyPiece = topLoaded || bottomLoaded || shoesLoaded || jacketLoaded
-                    if (rec.items.isNotEmpty() && hasAnyPiece) {
-                        binding.tagStyle.text = "${rec.score}%"
+                        // Tags descriptifs
+                        binding.tagStyle.text = "${rec.score}% match"
                         binding.tagOccasion.text = rec.occasion.lowercase().replaceFirstChar { it.uppercase() }
-                        binding.tagWeather.text = "${rec.temperature?.toInt() ?: 20}°C"
+                        binding.tagWeather.text = "${rec.temperature?.toInt() ?: 20}°C adapté"
 
                         binding.ivOutfitTop.visibility = if (topLoaded) View.VISIBLE else View.INVISIBLE
                         binding.ivOutfitBottom.visibility = if (bottomLoaded) View.VISIBLE else View.INVISIBLE
@@ -112,8 +121,7 @@ class HomeFragment : Fragment() {
                     binding.pbOutfitLoading.visibility = View.GONE
                     binding.layoutOutfitContent.visibility = View.GONE
                     binding.layoutOutfitEmpty.visibility = View.VISIBLE
-
-                    if (state.message.contains("sale", ignoreCase = true) || state.message.contains("disponible", ignoreCase = true)) {
+                    if (state.message.isNotEmpty()) {
                         binding.tvEmptyOutfitDesc.text = state.message
                     } else {
                         binding.tvEmptyOutfitDesc.text = "Votre garde-robe ne contient aucun vêtement.\nAjoutez des pièces pour que l'IA compose votre tenue !"
@@ -122,47 +130,41 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Charger la recommandation du jour
+        // Charger la tenue du jour
         outfitViewModel.generateRecommendation()
 
-        // Bouton View outfit & carte hero
+        // Bouton "Voir la tenue complète"
         binding.btnViewOutfit.setOnClickListener {
-            safeNavigate(R.id.action_home_to_outfit)
+            findNavController().navigate(R.id.action_home_to_outfit)
         }
+
         binding.btnEmptyAddClothing.setOnClickListener {
-            safeNavigate(R.id.action_home_to_camera)
+            findNavController().navigate(R.id.action_home_to_camera)
         }
+
         binding.cardTodayOutfit.setOnClickListener {
             if (binding.layoutOutfitContent.visibility == View.VISIBLE) {
-                safeNavigate(R.id.action_home_to_outfit)
+                findNavController().navigate(R.id.action_home_to_outfit)
             } else if (binding.layoutOutfitEmpty.visibility == View.VISIBLE) {
-                safeNavigate(R.id.action_home_to_camera)
+                findNavController().navigate(R.id.action_home_to_camera)
             }
         }
 
-        // 2x2 Grid Actions
+        // Actions rapides
         binding.cardActionAdd.setOnClickListener {
-            safeNavigate(R.id.action_home_to_outfit)
+            findNavController().navigate(R.id.action_home_to_outfit)
         }
 
         binding.cardActionDressing.setOnClickListener {
-            safeNavigate(R.id.action_home_to_dressing)
+            findNavController().navigate(R.id.action_home_to_dressing)
         }
 
         binding.cardActionFavorites.setOnClickListener {
-            safeNavigate(R.id.outfitsHistoryFragment)
+            findNavController().navigate(R.id.action_home_to_outfitsHistory)
         }
 
         binding.cardActionShopping.setOnClickListener {
-            safeNavigate(R.id.action_home_to_shopping)
-        }
-    }
-
-    private fun safeNavigate(resId: Int) {
-        try {
-            findNavController().navigate(resId)
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Navigation : ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_home_to_shopping)
         }
     }
 

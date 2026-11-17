@@ -5,9 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
-    app:cardCornerRadius="18dp"
+    app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/colorSurface">
+    app:cardBackgroundColor="@color/colorSurfaceCard"
+    app:strokeColor="@color/colorBorder"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,10 +17,10 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-        <!-- Image Container avec fond sable doux (Maquette 6.jpg) -->
+        <!-- Image Container avec fond preview doux -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="145dp"
             android:background="@drawable/bg_clothing_item_preview">
 
             <ImageView
@@ -26,9 +28,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
-                android:padding="8dp" />
+                android:padding="10dp" />
 
-            <!-- Pastille couleur discrète en haut à gauche -->
+            <!-- Pastille couleur en haut à gauche -->
             <View
                 android:id="@+id/view_color_badge"
                 android:layout_width="14dp"
@@ -37,27 +39,28 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/circle_shape" />
 
-            <!-- Bouton Corbeille / Supprimer visible en haut à droite -->
+            <!-- Bouton Corbeille / Supprimer avec fond flouté -->
             <ImageButton
                 android:id="@+id/btn_delete"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="top|end"
                 android:layout_margin="8dp"
-                android:padding="6dp"
+                android:padding="7dp"
                 android:scaleType="fitCenter"
                 android:background="@drawable/bg_circle_trash"
                 android:src="@drawable/ic_trash"
+                app:tint="@color/colorError"
                 android:contentDescription="Supprimer le vêtement"
-                android:elevation="4dp" />
+                android:elevation="3dp" />
         </FrameLayout>
 
-        <!-- Titre de l'article -->
+        <!-- Titre du vêtement -->
         <TextView
             android:id="@+id/tv_clothing_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Basic T-shirt"
+            android:text="T-shirt Basique"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/colorTextPrimary"
@@ -65,18 +68,18 @@
             android:ellipsize="end"
             android:layout_marginTop="8dp" />
 
-        <!-- Sous-titre / Type / Matière -->
+        <!-- Sous-titre / Type / Coupe -->
         <TextView
             android:id="@+id/tv_clothing_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Basic · Casual"
+            android:text="Blanc · Casual"
             android:textSize="12sp"
             android:textColor="@color/colorTextSecondary"
             android:layout_marginTop="2dp"
-            android:layout_marginBottom="6dp" />
+            android:layout_marginBottom="8dp" />
 
-        <!-- Ligne avec Tag Catégorie Pill et Tag Statut -->
+        <!-- Ligne avec Tag Catégorie Pastel et Statut -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,11 +90,11 @@
                 android:id="@+id/tv_clothing_category_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tops"
+                android:text="Hauts"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:textColor="@color/chipPeachText"
-                android:background="@drawable/bg_badge_peach"
+                android:textColor="@color/badge_haut_text"
+                android:background="@drawable/bg_badge_haut"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="3dp" />
 
@@ -104,10 +107,10 @@
                 android:text="Disponible"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                android:textColor="@color/chipGreenText"
+                android:textColor="@color/colorSuccess"
                 android:background="@drawable/bg_badge_available"
-                android:paddingHorizontal="6dp"
-                android:paddingVertical="2dp" />
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="3dp" />
         </LinearLayout>
 
     </LinearLayout>

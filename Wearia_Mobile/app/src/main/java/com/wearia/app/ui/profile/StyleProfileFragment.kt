@@ -14,10 +14,11 @@ import com.wearia.app.WeariaApplication
 import com.wearia.app.data.remote.dto.UserUpdateRequest
 import com.wearia.app.databinding.FragmentStyleProfileBinding
 import com.wearia.app.utils.Resource
+import com.wearia.app.utils.addPressEffect
 import com.wearia.app.viewmodel.ProfileViewModel
 
 /**
- * StyleProfileFragment : Écran de configuration du profil morphologique et styles (Étape 2 du parcours).
+ * StyleProfileFragment : Configuration du profil morphologique et styles (Étape 2 du parcours).
  * Permet de définir le genre, la taille, le poids, la coupe préférée et les styles vestimentaires.
  */
 class StyleProfileFragment : Fragment() {
@@ -28,6 +29,10 @@ class StyleProfileFragment : Fragment() {
 
     private var selectedGender: String = "HOMME"
     private var selectedFit: String = "Regular"
+    private var shouldersCm: Float? = null
+    private var chestCm: Float? = null
+    private var waistCm: Float? = null
+    private var hipsCm: Float? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentStyleProfileBinding.inflate(inflater, container, false)
@@ -37,18 +42,77 @@ class StyleProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.cardGenderMan.addPressEffect()
+        binding.cardGenderWoman.addPressEffect()
+        binding.btnContinueProfile.addPressEffect()
+        binding.cardShoulders.addPressEffect()
+        binding.cardChest.addPressEffect()
+        binding.cardWaist.addPressEffect()
+        binding.cardHips.addPressEffect()
+
         setupGenderSelection()
         setupFitChips()
+        setupMeasurements()
         setupStyles()
         observeViewModel()
 
-        // Charger le profil existant pour restaurer les valeurs (persistance)
+        // Charger le profil existant pour restaurer les valeurs
         profileViewModel.loadProfile()
         profileViewModel.loadReferentials()
 
         binding.btnContinueProfile.setOnClickListener {
             saveProfileAndContinue()
         }
+    }
+
+    private fun setupMeasurements() {
+        binding.cardShoulders.setOnClickListener {
+            showMeasurementDialog("Épaules", shouldersCm) { value ->
+                shouldersCm = value
+                binding.tvShouldersVal.text = if (value != null) "${value.toInt()} cm" else "+ Ajouter"
+            }
+        }
+        binding.cardChest.setOnClickListener {
+            showMeasurementDialog("Poitrine", chestCm) { value ->
+                chestCm = value
+                binding.tvChestVal.text = if (value != null) "${value.toInt()} cm" else "+ Ajouter"
+            }
+        }
+        binding.cardWaist.setOnClickListener {
+            showMeasurementDialog("Tour de taille", waistCm) { value ->
+                waistCm = value
+                binding.tvWaistVal.text = if (value != null) "${value.toInt()} cm" else "+ Ajouter"
+            }
+        }
+        binding.cardHips.setOnClickListener {
+            showMeasurementDialog("Hanches", hipsCm) { value ->
+                hipsCm = value
+                binding.tvHipsVal.text = if (value != null) "${value.toInt()} cm" else "+ Ajouter"
+            }
+        }
+    }
+
+    private fun showMeasurementDialog(title: String, currentValue: Float?, onSaved: (Float?) -> Unit) {
+        val input = android.widget.EditText(requireContext()).apply {
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            hint = "Ex : 90"
+            currentValue?.let { setText(it.toInt().toString()) }
+            setPadding(50, 40, 50, 40)
+        }
+
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Mesure : $title (cm)")
+            .setView(input)
+            .setPositiveButton("Valider") { _, _ ->
+                val txt = input.text.toString().trim()
+                val flt = txt.toFloatOrNull()
+                onSaved(flt)
+            }
+            .setNeutralButton("Effacer") { _, _ ->
+                onSaved(null)
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
     }
 
     private fun setupGenderSelection() {
@@ -96,6 +160,10 @@ class StyleProfileFragment : Fragment() {
     private fun setupFitChips() {
         updateFitChips()
 
+        binding.chipFitFitted.addPressEffect()
+        binding.chipFitRegular.addPressEffect()
+        binding.chipFitOversized.addPressEffect()
+
         binding.chipFitFitted.setOnClickListener {
             selectedFit = "Fitted"
             updateFitChips()
@@ -111,7 +179,7 @@ class StyleProfileFragment : Fragment() {
     }
 
     private fun updateFitChips() {
-        val selectedBg = R.drawable.bg_badge_taupe
+        val selectedBg = R.drawable.bg_pill_gradient
         val normalBg = R.drawable.bg_badge_outline
 
         val isFitted = selectedFit.equals("Fitted", ignoreCase = true)
@@ -129,7 +197,6 @@ class StyleProfileFragment : Fragment() {
     }
 
     private fun setupStyles() {
-        // Sélection par défaut Casual & Classic
         binding.chipStyleCasual.isChecked = true
         binding.chipStyleClassic.isChecked = true
     }
@@ -159,6 +226,22 @@ class StyleProfileFragment : Fragment() {
                 }
                 user.poidsKg?.let {
                     binding.etWeight.setText(it.toInt().toString())
+                }
+                user.tourEpaules?.let {
+                    shouldersCm = it
+                    binding.tvShouldersVal.text = "${it.toInt()} cm"
+                }
+                user.tourPoitrine?.let {
+                    chestCm = it
+                    binding.tvChestVal.text = "${it.toInt()} cm"
+                }
+                user.tourTaille?.let {
+                    waistCm = it
+                    binding.tvWaistVal.text = "${it.toInt()} cm"
+                }
+                user.tourHanches?.let {
+                    hipsCm = it
+                    binding.tvHipsVal.text = "${it.toInt()} cm"
                 }
                 user.coupePreferee?.let {
                     selectedFit = when (it.uppercase()) {
@@ -191,14 +274,14 @@ class StyleProfileFragment : Fragment() {
                 }
                 is Resource.Success -> {
                     binding.progressBarProfile.visibility = View.GONE
-                    binding.btnContinueProfile.text = "Continue"
+                    binding.btnContinueProfile.text = "Enregistrer & Continuer"
                     binding.btnContinueProfile.isEnabled = true
                     Toast.makeText(requireContext(), "Profil mis à jour !", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_styleProfile_to_colorPreferences)
                 }
                 is Resource.Error -> {
                     binding.progressBarProfile.visibility = View.GONE
-                    binding.btnContinueProfile.text = "Continue"
+                    binding.btnContinueProfile.text = "Enregistrer & Continuer"
                     binding.btnContinueProfile.isEnabled = true
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
                 }
@@ -244,7 +327,11 @@ class StyleProfileFragment : Fragment() {
             genre = selectedGender,
             hauteurCm = height,
             poidsKg = weight,
-            coupePreferee = coupeEnum
+            coupePreferee = coupeEnum,
+            tourEpaules = shouldersCm,
+            tourPoitrine = chestCm,
+            tourTaille = waistCm,
+            tourHanches = hipsCm
         )
         profileViewModel.updateProfile(updateRequest)
     }

@@ -29,6 +29,10 @@ class RecommendationRequest(BaseModel):
     dateCible: Optional[date] = None # Par défaut date.today()
     temperature: Optional[float] = None # Si fourni manuellement
     precipitations: Optional[bool] = None # Si fourni manuellement
+    variation: Optional[int] = 0 # Pour "Autre tenue"
+    exclude_item_ids: Optional[List[int]] = None # Pour éviter de répéter les mêmes pièces
+    swap_category: Optional[str] = None # ex: "haut", "bas", "chaussures", "veste", "robe"
+    current_item_ids: Optional[List[int]] = None # Pour "Changer une pièce"
 
 class RecommendationResponse(BaseModel):
     outfit_id: int

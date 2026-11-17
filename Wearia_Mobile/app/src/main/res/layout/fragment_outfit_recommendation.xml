@@ -13,25 +13,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
-        android:paddingTop="24dp"
-        android:paddingBottom="40dp">
+        android:paddingTop="28dp"
+        android:paddingBottom="44dp">
 
-        <!-- Titre Serif Élégant (Maquette 8.jpg) -->
+        <!-- En-tête Recommandation -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your outfit"
-            android:textSize="28sp"
+            android:text="Votre Recommandation"
+            android:textSize="26sp"
             android:textStyle="bold"
-            android:fontFamily="serif"
-            android:textColor="@color/colorTextPrimary"
-            android:layout_marginBottom="18dp" />
+            android:textColor="@color/colorTextPrimary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Composée selon votre dressing, votre style et la météo"
+            android:textSize="13sp"
+            android:textColor="@color/colorTextSecondary"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="20dp" />
 
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:indeterminateTint="@color/colorPrimary"
             android:visibility="gone"
             android:layout_marginBottom="16dp" />
 
@@ -51,25 +59,24 @@
             <FrameLayout
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:background="@drawable/bg_circle_button"
+                android:background="@drawable/bg_badge_haut"
                 android:layout_marginBottom="16dp">
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_hanger"
-                    app:tint="@color/colorTextPrimary" />
+                    app:tint="@color/colorPrimary" />
             </FrameLayout>
 
             <TextView
                 android:id="@+id/tv_empty_recommendation_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Garde-robe vide"
+                android:text="Garde-robe insuffisante"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:fontFamily="serif"
                 android:textColor="@color/colorTextPrimary"
                 android:layout_marginBottom="8dp" />
 
@@ -77,7 +84,7 @@
                 android:id="@+id/tv_empty_recommendation_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Votre garde-robe ne contient pas assez de vêtements disponibles pour composer une tenue."
+                android:text="Votre dressing ne contient pas assez de vêtements disponibles pour composer une tenue."
                 android:textSize="14sp"
                 android:textColor="@color/colorTextSecondary"
                 android:textAlignment="center"
@@ -86,18 +93,12 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_recommendation_add_clothing"
+                style="@style/Widget.Wearia.Button.Gradient"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:text="+ Ajouter un vêtement"
-                android:textAllCaps="false"
+                android:text="+ Ajouter une pièce"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingHorizontal="24dp"
-                app:cornerRadius="24dp"
-                app:backgroundTint="@color/colorPrimary"
-                android:textColor="@color/colorOnPrimary" />
+                android:paddingHorizontal="24dp" />
         </LinearLayout>
 
         <!-- Contenu détaillé de la tenue -->
@@ -107,361 +108,342 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <!-- Carte 1: Aperçu Collage de la tenue (8.jpg) -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/colorSurface"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
+            <!-- Carte 1: Aperçu Collage de la tenue (Coins 28dp Héros) -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                app:cardCornerRadius="28dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="@color/colorSurfaceCard"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
+                android:layout_marginBottom="18dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="240dp"
-                    android:background="@drawable/bg_clothing_item_preview"
-                    android:padding="12dp">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
-                    <!-- Top vêtement haut -->
-                    <ImageView
-                        android:id="@+id/iv_piece_top"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:scaleType="fitCenter"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/iv_piece_jacket" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:background="@drawable/bg_clothing_item_preview"
+                        android:padding="14dp">
 
-                    <!-- Veste / Manteau -->
-                    <ImageView
-                        android:id="@+id/iv_piece_jacket"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:scaleType="fitCenter"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/iv_piece_top" />
+                        <!-- Haut -->
+                        <ImageView
+                            android:id="@+id/iv_piece_top"
+                            android:layout_width="125dp"
+                            android:layout_height="125dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/iv_piece_jacket" />
 
-                    <!-- Pantalon bas -->
-                    <ImageView
-                        android:id="@+id/iv_piece_bottom"
-                        android:layout_width="90dp"
-                        android:layout_height="180dp"
-                        android:scaleType="fitCenter"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        <!-- Veste / Manteau -->
+                        <ImageView
+                            android:id="@+id/iv_piece_jacket"
+                            android:layout_width="125dp"
+                            android:layout_height="125dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_piece_top" />
 
-                    <!-- Chaussures -->
-                    <ImageView
-                        android:id="@+id/iv_piece_shoes"
-                        android:layout_width="90dp"
-                        android:layout_height="65dp"
-                        android:scaleType="fitCenter"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginEnd="12dp"
-                        android:layout_marginBottom="8dp" />
+                        <!-- Pantalon bas -->
+                        <ImageView
+                            android:id="@+id/iv_piece_bottom"
+                            android:layout_width="95dp"
+                            android:layout_height="185dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
 
-                    <!-- Compatibilité avec l'ancien iv_outfit_preview -->
-                    <ImageView
-                        android:id="@+id/iv_outfit_preview"
+                        <!-- Chaussures -->
+                        <ImageView
+                            android:id="@+id/iv_piece_shoes"
+                            android:layout_width="95dp"
+                            android:layout_height="70dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginEnd="12dp"
+                            android:layout_marginBottom="8dp" />
+
+                        <!-- Compatibilité technique avec iv_outfit_preview -->
+                        <ImageView
+                            android:id="@+id/iv_outfit_preview"
+                            android:layout_width="1dp"
+                            android:layout_height="1dp"
+                            android:visibility="gone"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/tv_outfit_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Casual • Quotidien"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary"
+                        android:layout_marginTop="14dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Carte 2: Contexte Météo / Occasion / Couleurs (Coins 20dp) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/colorSurfaceCard"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
+                android:layout_marginBottom="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <!-- Météo -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sun"
+                            android:layout_marginEnd="10dp" />
+
+                        <TextView
+                            android:id="@+id/tv_weather"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="19°C — Ensoleillé"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorTextPrimary" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <ImageButton
+                            android:id="@+id/btn_manual_weather"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@android:drawable/ic_menu_edit"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Modifier météo"
+                            app:tint="@color/colorPrimary" />
+                    </LinearLayout>
+
+                    <!-- Occasion -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_filled"
+                            app:tint="@color/colorPrimary"
+                            android:layout_marginEnd="10dp" />
+
+                        <TextView
+                            android:id="@+id/tv_occasion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Occasion — Université"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary" />
+                    </LinearLayout>
+
+                    <!-- Couleurs -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_palette"
+                            app:tint="@color/colorSecondary"
+                            android:layout_marginEnd="10dp" />
+
+                        <TextView
+                            android:id="@+id/tv_colors_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Palette — Blanc / Bleu Marine / Noir"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary" />
+                    </LinearLayout>
+
+                    <!-- Score technique (invisible mais conservé pour compatibilité) -->
+                    <ProgressBar
+                        android:id="@+id/progress_score"
+                        style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="1dp"
                         android:layout_height="1dp"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/tv_outfit_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Casual • University"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorTextPrimary"
-                    android:layout_marginTop="14dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/tv_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-        <!-- Carte 2: Contexte Météo / Occasion / Couleurs (8.jpg) -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/colorSurface"
-            android:layout_marginBottom="16dp">
-
-            <LinearLayout
+            <!-- Carte 3: Pourquoi cette tenue ? (Justification des règles expertes) -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/colorSurfaceCard"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
+                android:layout_marginBottom="24dp">
 
-                <!-- Météo -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="☀️"
-                        android:textSize="16sp"
-                        android:layout_marginEnd="8dp" />
-
-                    <TextView
-                        android:id="@+id/tv_weather"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="19°C — Sunny"
-                        android:textSize="14sp"
+                        android:text="Pourquoi cette tenue ?"
+                        android:textSize="17sp"
                         android:textStyle="bold"
-                        android:textColor="@color/colorTextPrimary" />
+                        android:textColor="@color/colorTextPrimary"
+                        android:layout_marginBottom="14dp" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
+                    <!-- Règles validées -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                    <ImageButton
-                        android:id="@+id/btn_manual_weather"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@android:drawable/ic_menu_edit"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="Edit weather"
-                        app:tint="@color/colorTextMuted" />
+                        <TextView
+                            android:id="@+id/tv_rule_style"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Conforme à votre style favori"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:id="@+id/tv_rule_weather"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Adaptée à la météo du jour"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:id="@+id/tv_rule_wardrobe"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Pièces disponibles dans votre dressing"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:id="@+id/tv_rule_colors"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Harmonie des teintes respectée"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:id="@+id/tv_rule_fit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Coupe adaptée à votre morphologie"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary" />
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_outfit_pieces"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_feedback_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                <!-- Occasion -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+            <!-- Bouton J'aime cette tenue Dégradé -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_like_outfit"
+                style="@style/Widget.Wearia.Button.Gradient"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="J'aime cette tenue"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎯"
-                        android:textSize="16sp"
-                        android:layout_marginEnd="8dp" />
-
-                    <TextView
-                        android:id="@+id/tv_occasion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Occasion — University"
-                        android:textSize="14sp"
-                        android:textColor="@color/colorTextPrimary" />
-                </LinearLayout>
-
-                <!-- Couleurs -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎨"
-                        android:textSize="16sp"
-                        android:layout_marginEnd="8dp" />
-
-                    <TextView
-                        android:id="@+id/tv_colors_info"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Colors — White / Navy / Black"
-                        android:textSize="14sp"
-                        android:textColor="@color/colorTextPrimary" />
-                </LinearLayout>
-
-                <!-- Score technique (invisible mais présent pour la logique) -->
-                <ProgressBar
-                    android:id="@+id/progress_score"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="1dp"
-                    android:layout_height="1dp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tv_score"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Carte 3: Why this outfit? (8.jpg) -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/colorSurface"
-            android:layout_marginBottom="24dp">
-
+            <!-- Ligne avec Try another & Change one item -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Why this outfit?"
-                    android:textSize="17sp"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_try_another"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="Autre tenue"
+                    android:textSize="14sp"
                     android:textStyle="bold"
-                    android:textColor="@color/colorTextPrimary"
-                    android:layout_marginBottom="12dp" />
+                    style="@style/Widget.Wearia.Button.Pill.Outline"
+                    android:layout_marginEnd="8dp" />
 
-                <!-- Checkmarks items (8.jpg) -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_rule_style"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✓ Matches your preferred style"
-                        android:textSize="14sp"
-                        android:textColor="@color/colorTextPrimary"
-                        android:layout_marginBottom="8dp" />
-
-                    <TextView
-                        android:id="@+id/tv_rule_weather"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✓ Fits today's weather"
-                        android:textSize="14sp"
-                        android:textColor="@color/colorTextPrimary"
-                        android:layout_marginBottom="8dp" />
-
-                    <TextView
-                        android:id="@+id/tv_rule_wardrobe"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✓ Uses clothes from your wardrobe"
-                        android:textSize="14sp"
-                        android:textColor="@color/colorTextPrimary"
-                        android:layout_marginBottom="8dp" />
-
-                    <TextView
-                        android:id="@+id/tv_rule_colors"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✓ Matches your preferred colors"
-                        android:textSize="14sp"
-                        android:textColor="@color/colorTextPrimary"
-                        android:layout_marginBottom="8dp" />
-
-                    <TextView
-                        android:id="@+id/tv_rule_fit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✓ Considers your fit preferences"
-                        android:textSize="14sp"
-                        android:textColor="@color/colorTextPrimary" />
-                </LinearLayout>
-
-                <!-- Vêtements composant la tenue (liste textuelle ou recyclerview pour compatibilité) -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_outfit_pieces"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tv_feedback_badge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_change_item"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="Changer une pièce"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    style="@style/Widget.Wearia.Button.Pill.Outline"
+                    android:layout_marginStart="8dp" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Bouton Like this outfit (Pill noir mat - 8.jpg) -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_like_outfit"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="🤍  Like this outfit"
-            android:textAllCaps="false"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:includeFontPadding="false"
-            app:cornerRadius="28dp"
-            app:backgroundTint="@color/colorPrimary"
-            android:textColor="@color/colorOnPrimary"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Ligne avec Try another & Change one item (8.jpg) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_try_another"
-                android:layout_width="0dp"
-                android:layout_height="52dp"
-                android:layout_weight="1"
-                android:text="🔄 Try another"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:includeFontPadding="false"
-                style="@style/Widget.Wearia.Button.Pill.Outline"
-                android:layout_marginEnd="8dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_change_item"
-                android:layout_width="0dp"
-                android:layout_height="52dp"
-                android:layout_weight="1"
-                android:text="✕ Change one item"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:includeFontPadding="false"
-                style="@style/Widget.Wearia.Button.Pill.Outline"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
 
         </LinearLayout>
 

@@ -74,10 +74,15 @@ class RecommendationService:
         forced_occasion: Optional[Occasion] = None,
         target_date: Optional[date] = None,
         manual_temp: Optional[float] = None,
-        manual_precip: Optional[bool] = None
+        manual_precip: Optional[bool] = None,
+        variation: int = 0,
+        exclude_item_ids: Optional[List[int]] = None,
+        swap_category: Optional[str] = None,
+        current_item_ids: Optional[List[int]] = None
     ) -> Tuple[Tenue, List[Vetement]]:
         """
         Moteur complet de recommandation selon BR01, BR02, BR03, BR04, BR08, BR09.
+        Supporte les variations ("Autre tenue") et le remplacement ciblé ("Changer une pièce").
         """
         if target_date is None:
             target_date = date.today()
@@ -177,42 +182,130 @@ class RecommendationService:
         chaussures.sort(key=piece_preference_score, reverse=True)
         vestes_manteaux.sort(key=piece_preference_score, reverse=True)
 
-        # 4. BR01 (Complétude) : (Haut + Bas OU Robe) + Chaussures
-        selected_items: List[Vetement] = []
-        use_robe = False
-
-        if robes and user_gender_str != "HOMME" and (not hauts or not bas or len(robes) > len(bas)):
-            selected_items.append(robes[0])
-            use_robe = True
-        elif hauts and bas:
-            selected_items.extend([hauts[0], bas[0]])
-        elif hauts:
-            selected_items.append(hauts[0])
-        elif bas:
-            selected_items.append(bas[0])
-
-        if chaussures:
-            selected_items.append(chaussures[0])
-
-        # 5. BR02 : Météo (si < 14°C ou pluie, couche supérieure obligatoire)
         needs_outerwear = (temp < 14.0) or precip
-        has_outerwear = False
+        selected_items: List[Vetement] = []
 
-        if needs_outerwear:
-            outer_candidates = [
-                v for v in available_clothes 
-                if (v.type_vetement and v.type_vetement.estCoucheSuperieure) 
-                or v.estThermique 
-                or v.estImpermeable
-                or (v.type_vetement and "veste" in v.type_vetement.categorie.nom.lower())
-            ]
-            if outer_candidates:
-                outer_candidates.sort(key=piece_preference_score, reverse=True)
-                for cand in outer_candidates:
-                    if cand.id not in [item.id for item in selected_items]:
-                        selected_items.append(cand)
-                        has_outerwear = True
-                        break
+        # ==================== CAS A : CHANGER UNE PIÈCE SPÉCIFIQUE ====================
+        if swap_category and current_item_ids:
+            cur_items = db.query(Vetement).filter(Vetement.id.in_(current_item_ids)).all()
+            swap_cat_lower = swap_category.lower()
+
+            # Identifier la catégorie cible à changer
+            target_pool = []
+            if "haut" in swap_cat_lower:
+                target_pool = hauts
+            elif "bas" in swap_cat_lower:
+                target_pool = bas
+            elif "robe" in swap_cat_lower:
+                target_pool = robes
+            elif "chauss" in swap_cat_lower or "basket" in swap_cat_lower:
+                target_pool = chaussures
+            elif "veste" in swap_cat_lower or "manteau" in swap_cat_lower:
+                target_pool = vestes_manteaux
+
+            # Candidats non encore présents dans la sélection actuelle
+            cur_ids_set = set(current_item_ids)
+            candidates = [p for p in target_pool if p.id not in cur_ids_set]
+
+            if candidates:
+                # Choisir une alternative selon la variation demandée
+                new_piece = candidates[variation % len(candidates)]
+                
+                # Conserver tous les items de l'autre catégorie
+                kept_items = []
+                for it in cur_items:
+                    it_cat = it.type_vetement.categorie.nom.lower() if (it.type_vetement and it.type_vetement.categorie) else ""
+                    # Si c'est la catégorie à changer, on ne la garde pas
+                    if "haut" in swap_cat_lower and "haut" in it_cat:
+                        continue
+                    if "bas" in swap_cat_lower and "bas" in it_cat:
+                        continue
+                    if "robe" in swap_cat_lower and "robe" in it_cat:
+                        continue
+                    if ("chauss" in swap_cat_lower or "basket" in swap_cat_lower) and ("chauss" in it_cat or "basket" in it_cat):
+                        continue
+                    if ("veste" in swap_cat_lower or "manteau" in swap_cat_lower) and ("veste" in it_cat or "manteau" in it_cat or (it.type_vetement and it.type_vetement.estCoucheSuperieure)):
+                        continue
+                    kept_items.append(it)
+
+                kept_items.append(new_piece)
+                selected_items = kept_items
+            else:
+                # Pas d'autre alternative dans cette catégorie spécifique, conserver la sélection actuelle
+                selected_items = list(cur_items)
+
+        # ==================== CAS B : COMBINAISONS OPTIMALES & "AUTRE TENUE" ====================
+        if not selected_items:
+            candidate_combos: List[List[Vetement]] = []
+
+            # 1. Combinaisons Haut + Bas
+            for h in hauts[:5]: # Top 5 hauts
+                for b in bas[:5]: # Top 5 bas
+                    combo = [h, b]
+                    if chaussures:
+                        combo.append(chaussures[0])
+                    candidate_combos.append(combo)
+
+            # 2. Combinaisons Robe
+            if robes and user_gender_str != "HOMME":
+                for r in robes[:4]:
+                    combo = [r]
+                    if chaussures:
+                        combo.append(chaussures[0])
+                    candidate_combos.append(combo)
+
+            # 3. Fallbacks si garde-robe restreinte
+            if not candidate_combos:
+                single_combo = []
+                if hauts: single_combo.append(hauts[0])
+                if bas: single_combo.append(bas[0])
+                if robes and user_gender_str != "HOMME" and not single_combo: single_combo.append(robes[0])
+                if chaussures: single_combo.append(chaussures[0])
+                if single_combo: candidate_combos.append(single_combo)
+
+            # Ajouter une veste/manteau si météo froide
+            if needs_outerwear and vestes_manteaux:
+                for combo in candidate_combos:
+                    combo.append(vestes_manteaux[0])
+
+            # Scorer chaque combinaison
+            def score_combo(combo: List[Vetement]) -> int:
+                s = sum(piece_preference_score(p) for p in combo)
+                # Harmonie couleurs
+                cols = {p.couleur.nom.lower() for p in combo if p.couleur}
+                if len(cols) <= 3:
+                    s += 40
+                else:
+                    s -= (len(cols) - 3) * 20
+                return s
+
+            candidate_combos.sort(key=score_combo, reverse=True)
+
+            # Exclure les combinaisons déjà présentées si demandé
+            if exclude_item_ids:
+                excluded_set = set(exclude_item_ids)
+                distinct_combos = [c for c in candidate_combos if set(p.id for p in c) != excluded_set]
+                if distinct_combos:
+                    candidate_combos = distinct_combos
+
+            # Sélection selon la variation demandée ("Autre tenue")
+            if candidate_combos:
+                selected_idx = variation % len(candidate_combos)
+                selected_items = candidate_combos[selected_idx]
+            else:
+                selected_items = available_clothes[:3]
+
+        # 5. Vérification couche supérieure si météo froide
+        has_outerwear = any(
+            (v.type_vetement and v.type_vetement.estCoucheSuperieure) or v.estThermique or v.estImpermeable or (v.type_vetement and "veste" in v.type_vetement.categorie.nom.lower())
+            for v in selected_items
+        )
+        if needs_outerwear and not has_outerwear and vestes_manteaux:
+            for vm in vestes_manteaux:
+                if vm.id not in [p.id for p in selected_items]:
+                    selected_items.append(vm)
+                    has_outerwear = True
+                    break
 
         # 6. BR03 : Harmonie colorimétrique (max 3 teintes divergentes)
         colors = [item.couleur.nom.lower() for item in selected_items if item.couleur]

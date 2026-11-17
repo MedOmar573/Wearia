@@ -20,6 +20,7 @@ import com.wearia.app.R
 import com.wearia.app.databinding.FragmentCameraBinding
 import com.wearia.app.utils.ImageUtils
 import com.wearia.app.utils.Resource
+import com.wearia.app.utils.addPressEffect
 import com.wearia.app.viewmodel.ClothingViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -78,6 +79,14 @@ class CameraFragment : Fragment() {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
 
+        binding.btnCapture.addPressEffect()
+        binding.btnGallery.addPressEffect()
+        binding.btnCloseCamera.addPressEffect()
+
+        binding.btnCloseCamera.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
         binding.btnCapture.setOnClickListener { takePhoto() }
         binding.btnGallery.setOnClickListener {
             try {
@@ -94,9 +103,20 @@ class CameraFragment : Fragment() {
                     binding.btnCapture.isEnabled = false
                     binding.tvClassifyStatus.text = "Analyse IA en cours..."
                     binding.progressBar.visibility = View.VISIBLE
+                    binding.viewScanLine.visibility = View.VISIBLE
+                    binding.viewScanLine.animate()
+                        .translationY(900f)
+                        .setDuration(1200)
+                        .withEndAction {
+                            binding.viewScanLine.translationY = 0f
+                        }
+                        .start()
                 }
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.viewScanLine.animate().cancel()
+                    binding.viewScanLine.translationY = 0f
+                    binding.viewScanLine.visibility = View.INVISIBLE
                     binding.btnCapture.isEnabled = true
                     val result = state.data
                     binding.tvClassifyStatus.text = "Catégorie : ${result.category.uppercase()} " +

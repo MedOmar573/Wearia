@@ -12,10 +12,11 @@ import com.wearia.app.R
 import com.wearia.app.WeariaApplication
 import com.wearia.app.databinding.FragmentLoginBinding
 import com.wearia.app.utils.Resource
+import com.wearia.app.utils.addPressEffect
 import com.wearia.app.viewmodel.AuthViewModel
 
 /**
- * LoginFragment : Écran de connexion (Étape 1 du parcours pour les utilisateurs existants).
+ * LoginFragment : Écran de connexion modernisé avec carte flottante et retour tactile.
  */
 class LoginFragment : Fragment() {
 
@@ -30,6 +31,10 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Effets tactiles
+        binding.btnLogin.addPressEffect()
+        binding.tvGoToRegister.addPressEffect(0.98f)
 
         // Si déjà connecté, rediriger selon l'état du profil
         if (viewModel.isLoggedIn()) {
@@ -69,7 +74,7 @@ class LoginFragment : Fragment() {
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnLogin.isEnabled = true
-                    Toast.makeText(requireContext(), "Bienvenue !", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Bienvenue sur Wearia !", Toast.LENGTH_SHORT).show()
                     val session = WeariaApplication.instance.sessionManager
                     if (session.isProfileCompleted()) {
                         findNavController().navigate(R.id.action_login_to_home)

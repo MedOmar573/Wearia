@@ -12,9 +12,11 @@ import com.wearia.app.BuildConfig
 import com.wearia.app.R
 import com.wearia.app.data.remote.dto.VetementResponse
 import com.wearia.app.databinding.ItemClothingBinding
+import com.wearia.app.utils.addPressEffect
+import com.wearia.app.utils.applyCategoryBadge
 
 /**
- * ClothingAdapter : RecyclerView Adapter pour la liste des vêtements du dressing (Maquette 6.jpg).
+ * ClothingAdapter : RecyclerView Adapter modernisé avec badges pastel et animations de pression tactile.
  */
 class ClothingAdapter(
     private val onItemClick: (VetementResponse) -> Unit,
@@ -39,18 +41,22 @@ class ClothingAdapter(
             val colorName = clothing.couleur?.nom ?: ""
             val coupeName = clothing.coupe ?: "Casual"
             binding.tvClothingType.text = if (colorName.isNotEmpty()) "$colorName · $coupeName" else coupeName
-            binding.tvClothingCategoryBadge.text = clothing.typeVetement?.nom ?: "Vêtement"
+            
+            // Catégorie avec badge pastel Fresh Fashion Tech
+            val typeName = clothing.typeVetement?.nom ?: "Vêtement"
+            binding.tvClothingCategoryBadge.text = typeName
+            binding.tvClothingCategoryBadge.applyCategoryBadge(typeName)
 
             // Statut vêtement (Disponible / Sale)
             val isDirty = clothing.statut.equals("SALE", ignoreCase = true)
             if (isDirty) {
                 binding.tvClothingStatus.text = "Sale"
-                binding.tvClothingStatus.setTextColor(ContextCompat.getColor(binding.root.context, R.color.chipPinkText))
-                binding.tvClothingStatus.setBackgroundResource(R.drawable.bg_badge_dirty)
+                binding.tvClothingStatus.setTextColor(ContextCompat.getColor(binding.root.context, R.color.badge_robe_text))
+                binding.tvClothingStatus.setBackgroundResource(R.drawable.bg_badge_robe)
             } else {
                 binding.tvClothingStatus.text = "Disponible"
-                binding.tvClothingStatus.setTextColor(ContextCompat.getColor(binding.root.context, R.color.chipGreenText))
-                binding.tvClothingStatus.setBackgroundResource(R.drawable.bg_badge_available)
+                binding.tvClothingStatus.setTextColor(ContextCompat.getColor(binding.root.context, R.color.badge_accessoire_text))
+                binding.tvClothingStatus.setBackgroundResource(R.drawable.bg_badge_accessoire)
             }
 
             binding.tvClothingStatus.setOnClickListener {
@@ -69,7 +75,7 @@ class ClothingAdapter(
                 binding.viewColorBadge.setBackgroundColor(Color.GRAY)
             }
 
-            // Image via Coil
+            // Image via Coil avec chargement fluide
             val photo = clothing.photoUrl ?: ""
             val fullUrl = when {
                 photo.startsWith("http") -> photo
@@ -81,6 +87,10 @@ class ClothingAdapter(
                 error(R.drawable.ic_hanger)
                 crossfade(true)
             }
+
+            // Effets de toucher tactiles
+            binding.root.addPressEffect(0.97f)
+            binding.btnDelete.addPressEffect(0.88f)
 
             binding.root.setOnClickListener { onItemClick(clothing) }
             binding.btnDelete.setOnClickListener { onDeleteClick(clothing) }

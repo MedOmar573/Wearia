@@ -7,39 +7,37 @@
     android:orientation="vertical"
     android:background="@color/colorBackground"
     android:paddingHorizontal="20dp"
-    android:paddingTop="24dp">
+    android:paddingTop="28dp">
 
-    <!-- Titre Serif Élégant (Maquette 10.jpg) -->
+    <!-- En-tête -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="AI Personal Shopper"
-        android:textSize="28sp"
+        android:text="Personal Shopper IA"
+        android:textSize="26sp"
         android:textStyle="bold"
-        android:fontFamily="serif"
         android:textColor="@color/colorTextPrimary" />
 
-    <!-- Sous-titre (10.jpg) -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Complete your wardrobe with pieces that match your style."
+        android:text="Complétez votre dressing avec des pièces qui s'accordent à votre style."
         android:textSize="14sp"
         android:textColor="@color/colorTextSecondary"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="20dp" />
 
-    <!-- Section: What's missing from your wardrobe? (10.jpg) -->
+    <!-- Section: Que manque-t-il dans votre dressing ? -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="What's missing from your wardrobe?"
-        android:textSize="18sp"
+        android:text="Pièces manquantes recommandées"
+        android:textSize="17sp"
         android:textStyle="bold"
         android:textColor="@color/colorTextPrimary"
         android:layout_marginBottom="16dp" />
 
-    <!-- Champ de recherche caché / optionnel pour compatibilité de code -->
+    <!-- Champ de recherche caché pour compatibilité ViewModel -->
     <EditText
         android:id="@+id/et_shopping_need"
         android:layout_width="match_parent"
@@ -54,9 +52,10 @@
 
     <ProgressBar
         android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_gravity="center"
+        android:indeterminateTint="@color/colorPrimary"
         android:visibility="gone"
         android:layout_marginBottom="12dp" />
 
@@ -65,6 +64,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="24dp" />
+        android:paddingBottom="32dp" />
 
 </LinearLayout>

@@ -9,10 +9,10 @@ import androidx.navigation.fragment.findNavController
 import com.wearia.app.R
 import com.wearia.app.WeariaApplication
 import com.wearia.app.databinding.FragmentOnboardingBinding
+import com.wearia.app.utils.addPressEffect
 
 /**
- * OnboardingFragment : Écrans d'accueil et tutoriel (Maquettes 1.jpg, 2.jpg, 3.jpg).
- * Affiche le logo Wearia et les 3 écrans de présentation des tenues / IA styliste.
+ * OnboardingFragment : Écrans d'accueil et tutoriel modernisés aux couleurs Fresh Fashion Tech.
  */
 class OnboardingFragment : Fragment() {
 
@@ -29,14 +29,13 @@ class OnboardingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         updateStepUI()
 
+        binding.btnOnboardingNext.addPressEffect()
         binding.btnOnboardingNext.setOnClickListener {
             if (currentStep < 3) {
                 currentStep++
                 updateStepUI()
             } else {
-                // Marquer l'onboarding comme complété pour ne plus le réafficher
                 WeariaApplication.instance.sessionManager.setOnboardingCompleted(true)
-                // Étape 1 du parcours : Création de compte / Inscription
                 findNavController().navigate(R.id.action_onboarding_to_register)
             }
         }
@@ -46,25 +45,25 @@ class OnboardingFragment : Fragment() {
         when (currentStep) {
             1 -> {
                 binding.ivOnboardingGraphic.setImageResource(R.drawable.onboarding_graphic_1)
-                binding.tvOnboardingTitle.text = "Transform your wardrobe"
-                binding.tvOnboardingSubtitle.text = "Organize your clothes digitally and discover new outfit combinations."
-                binding.btnOnboardingNext.text = "Next"
+                binding.tvOnboardingTitle.text = "Révélez votre style"
+                binding.tvOnboardingSubtitle.text = "Numérisez vos vêtements et découvrez chaque jour de nouvelles combinaisons harmonieuses."
+                binding.btnOnboardingNext.text = "Continuer"
                 binding.tvFooterSubtext.visibility = View.INVISIBLE
                 setDotActive(1)
             }
             2 -> {
                 binding.ivOnboardingGraphic.setImageResource(R.drawable.onboarding_graphic_2)
-                binding.tvOnboardingTitle.text = "Get recommendations\nmade for you"
-                binding.tvOnboardingSubtitle.text = "Style, colors, fit preferences, occasion and weather are combined to create personalized outfits."
-                binding.btnOnboardingNext.text = "Next"
+                binding.tvOnboardingTitle.text = "Des tenues créées pour vous"
+                binding.tvOnboardingSubtitle.text = "Couleurs, météo, coupe et occasion : l'IA fusionne vos préférences pour un look impeccable."
+                binding.btnOnboardingNext.text = "Continuer"
                 binding.tvFooterSubtext.visibility = View.INVISIBLE
                 setDotActive(2)
             }
             3 -> {
                 binding.ivOnboardingGraphic.setImageResource(R.drawable.onboarding_graphic_3)
-                binding.tvOnboardingTitle.text = "Your AI stylist"
-                binding.tvOnboardingSubtitle.text = "Get outfit suggestions adapted to your wardrobe, your preferences, the weather and your occasion."
-                binding.btnOnboardingNext.text = "Get Started"
+                binding.tvOnboardingTitle.text = "Votre styliste intelligent"
+                binding.tvOnboardingSubtitle.text = "Recevez des suggestions instantanées et optimisez votre garde-robe au quotidien."
+                binding.btnOnboardingNext.text = "Commencer"
                 binding.tvFooterSubtext.visibility = View.VISIBLE
                 setDotActive(3)
             }

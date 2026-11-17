@@ -24,6 +24,7 @@ import com.wearia.app.data.remote.dto.VetementCreateRequest
 import com.wearia.app.databinding.FragmentAddClothingBinding
 import com.wearia.app.utils.ImageUtils
 import com.wearia.app.utils.Resource
+import com.wearia.app.utils.addPressEffect
 import com.wearia.app.viewmodel.ClothingViewModel
 import com.wearia.app.viewmodel.ProfileViewModel
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +62,7 @@ class AddClothingFragment : Fragment() {
 
     private var availableTypes: List<TypeVetementResponse> = emptyList()
     private var availableColors: List<CouleurResponse> = emptyList()
+    private var hasUserCorrectedAi: Boolean = false
 
     // Sélecteur de galerie
     private val galleryLauncher =
@@ -75,6 +77,10 @@ class AddClothingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.btnSaveClothing.addPressEffect()
+        binding.cardTakePhoto.addPressEffect(0.98f)
+        binding.tvChooseGallery.addPressEffect(0.98f)
 
         // Récupérer les arguments passés depuis CameraFragment s'il y en a
         arguments?.let { args ->
@@ -257,7 +263,12 @@ class AddClothingFragment : Fragment() {
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSaveClothing.isEnabled = true
-                    Toast.makeText(requireContext(), "Vêtement ajouté avec succès !", Toast.LENGTH_SHORT).show()
+                    val successMsg = if (hasUserCorrectedAi) {
+                        "✨ Vêtement ajouté ! L'IA a mémorisé votre correction."
+                    } else {
+                        "Vêtement ajouté au dressing avec succès !"
+                    }
+                    Toast.makeText(requireContext(), successMsg, Toast.LENGTH_LONG).show()
                     clothingViewModel.loadClothes()
                     clothingViewModel.resetClassifyState()
                     clothingViewModel.resetAddClothingState()
@@ -344,6 +355,8 @@ class AddClothingFragment : Fragment() {
 
         val typeId = availableTypes[selectedTypeIndex].id
         val colorId = availableColors[selectedColorIndex].id
+        hasUserCorrectedAi = (suggestedTypeId != -1 && typeId != suggestedTypeId) ||
+                             (suggestedColorId != -1 && colorId != suggestedColorId)
         val styleName = binding.spinnerStyle.selectedItem?.toString() ?: "Casual"
         val fitName = binding.spinnerFit.selectedItem?.toString() ?: "Regular"
 

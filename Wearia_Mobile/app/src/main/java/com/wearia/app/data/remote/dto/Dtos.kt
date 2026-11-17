@@ -178,7 +178,11 @@ data class RecommendationRequest(
     val occasion: String? = null,
     @SerializedName("dateCible") val dateCible: String? = null,
     val temperature: Float? = null,
-    val precipitations: Boolean? = null
+    val precipitations: Boolean? = null,
+    val variation: Int? = 0,
+    @SerializedName("exclude_item_ids") val excludeItemIds: List<Int>? = null,
+    @SerializedName("swap_category") val swapCategory: String? = null,
+    @SerializedName("current_item_ids") val currentItemIds: List<Int>? = null
 )
 
 data class OutfitItemSimple(

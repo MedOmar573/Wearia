@@ -1,62 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Palette Wearia Luxury & Minimalist (Identique aux maquettes) -->
-    <color name="colorBackground">#FAF6F0</color>
-    <color name="colorBackgroundDarker">#F0ECE4</color>
-    <color name="colorSurface">#FFFFFF</color>
-    <color name="colorSurfaceCard">#FFFFFF</color>
-    <color name="colorSurfaceVariant">#F6F2EC</color>
-    <color name="colorBorder">#EAE3D8</color>
-    <color name="colorBorderStrong">#D8D0C5</color>
-
-    <!-- Éléments Primaires (Noir mat / Obsidian) -->
-    <color name="colorPrimary">#1F1E1D</color>
-    <color name="colorPrimaryVariant">#141312</color>
+    <!-- Thème Fresh Fashion Tech - Mode Clair -->
+    <color name="colorPrimary">#6C47FF</color>
+    <color name="colorPrimaryVariant">#5338D5</color>
     <color name="colorOnPrimary">#FFFFFF</color>
 
-    <!-- Éléments Secondaires (Taupe chaud / Sable doré) -->
-    <color name="colorSecondary">#A89882</color>
-    <color name="colorSecondaryVariant">#8F7F6A</color>
+    <color name="colorSecondary">#12B5A6</color>
+    <color name="colorSecondaryVariant">#0E9487</color>
     <color name="colorOnSecondary">#FFFFFF</color>
-    <color name="colorSelectedChip">#A89882</color>
 
-    <!-- Typographie -->
-    <color name="colorTextPrimary">#1F1E1D</color>
-    <color name="colorTextSecondary">#7D7973</color>
-    <color name="colorTextMuted">#A8A39B</color>
+    <color name="colorBackground">#F7F6FB</color>
+    <color name="colorBackgroundDarker">#EFEBF5</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorSurfaceCard">#FFFFFF</color>
+    <color name="colorSurfaceElevated">#FFFFFF</color>
+    <color name="colorSurfaceVariant">#F0EEF8</color>
 
-    <!-- Pastilles & Badges d'occasions (Couleurs pastel exactes) -->
-    <color name="chipPeach">#F8EFE0</color>
-    <color name="chipPeachText">#705335</color>
-    <color name="chipPink">#FCEAE8</color>
-    <color name="chipPinkText">#7C3D3A</color>
-    <color name="chipBlue">#E8F2FA</color>
-    <color name="chipBlueText">#2B5876</color>
-    <color name="chipGreen">#EAF2EB</color>
-    <color name="chipGreenText">#2E5437</color>
-    <color name="chipTaupe">#EBE5DC</color>
-    <color name="chipTaupeText">#5E5851</color>
+    <color name="colorBorder">#E7E4F2</color>
+    <color name="colorBorderStrong">#D0CCE0</color>
 
-    <!-- Statuts standard -->
-    <color name="colorSuccess">#388E3C</color>
-    <color name="colorWarning">#F57C00</color>
-    <color name="colorError">#D32F2F</color>
+    <color name="colorTextPrimary">#14121F</color>
+    <color name="colorTextSecondary">#6B6880</color>
+    <color name="colorTextMuted">#9E9AB0</color>
 
-    <!-- Couleurs pour sélecteur de couleurs (Screen 5) -->
-    <color name="palette_black">#1F1E1D</color>
+    <!-- Statuts -->
+    <color name="colorSuccess">#22C55E</color>
+    <color name="colorWarning">#F59E0B</color>
+    <color name="colorError">#EF4444</color>
+
+    <!-- Dégradé de marque 135° -->
+    <color name="gradientStart">#12B5A6</color>
+    <color name="gradientEnd">#6C47FF</color>
+
+    <!-- Pastels badges de catégories -->
+    <color name="badge_haut_bg">#EAE5FF</color>
+    <color name="badge_haut_text">#5338D5</color>
+
+    <color name="badge_bas_bg">#E0F2FE</color>
+    <color name="badge_bas_text">#0369A1</color>
+
+    <color name="badge_chaussures_bg">#FFEDD5</color>
+    <color name="badge_chaussures_text">#C2410C</color>
+
+    <color name="badge_veste_bg">#FEF3C7</color>
+    <color name="badge_veste_text">#B45309</color>
+
+    <color name="badge_robe_bg">#FCE7F3</color>
+    <color name="badge_robe_text">#BE185D</color>
+
+    <color name="badge_accessoire_bg">#CCFBF1</color>
+    <color name="badge_accessoire_text">#0F766E</color>
+
+    <!-- Badges occasions (compatibilité arrière) -->
+    <color name="chipPeach">#FFEDD5</color>
+    <color name="chipPeachText">#C2410C</color>
+    <color name="chipPink">#FCE7F3</color>
+    <color name="chipPinkText">#BE185D</color>
+    <color name="chipBlue">#E0F2FE</color>
+    <color name="chipBlueText">#0369A1</color>
+    <color name="chipGreen">#CCFBF1</color>
+    <color name="chipGreenText">#0F766E</color>
+    <color name="chipTaupe">#EAE5FF</color>
+    <color name="chipTaupeText">#5338D5</color>
+    <color name="colorSelectedChip">#6C47FF</color>
+
+    <!-- Sélecteur de couleurs (Screen 5) -->
+    <color name="palette_black">#14121F</color>
     <color name="palette_white">#FFFFFF</color>
-    <color name="palette_gray">#9E9E9E</color>
-    <color name="palette_navy">#1B2E4B</color>
-    <color name="palette_blue">#21759B</color>
-    <color name="palette_beige">#D8C7B5</color>
-    <color name="palette_sand">#E6DAC8</color>
-    <color name="palette_brown">#6D4C3D</color>
-    <color name="palette_green">#2E6047</color>
-    <color name="palette_red">#C63D36</color>
-    <color name="palette_darkbrown">#423229</color>
-    <color name="palette_yellow">#ECAE28</color>
-    <color name="palette_coral">#D94A3D</color>
-    <color name="palette_pink">#F3B6C2</color>
-    <color name="palette_orange">#E56A26</color>
-    <color name="palette_lightyellow">#F8D548</color>
+    <color name="palette_gray">#94A3B8</color>
+    <color name="palette_navy">#1E293B</color>
+    <color name="palette_blue">#3B82F6</color>
+    <color name="palette_beige">#E2D9CC</color>
+    <color name="palette_sand">#E7DFD5</color>
+    <color name="palette_brown">#78350F</color>
+    <color name="palette_green">#10B981</color>
+    <color name="palette_red">#EF4444</color>
+    <color name="palette_darkbrown">#451A03</color>
+    <color name="palette_yellow">#F59E0B</color>
+    <color name="palette_coral">#F43F5E</color>
+    <color name="palette_pink">#EC4899</color>
+    <color name="palette_orange">#F97316</color>
+    <color name="palette_lightyellow">#FDE047</color>
 </resources>

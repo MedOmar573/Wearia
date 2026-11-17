@@ -7,7 +7,9 @@
     android:layout_margin="6dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/colorSurface">
+    app:cardBackgroundColor="@color/colorSurfaceCard"
+    app:strokeColor="@color/colorBorder"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +17,7 @@
         android:orientation="vertical"
         android:padding="12dp">
 
-        <!-- Cadre Aperçu Outfit avec Bouton Cœur (11.jpg) -->
+        <!-- Cadre Aperçu Outfit avec Bouton Cœur -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="170dp"
@@ -26,49 +28,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
-                android:padding="8dp" />
+                android:padding="10dp" />
 
             <ImageView
                 android:id="@+id/iv_favorite_heart"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
                 android:layout_gravity="top|end"
                 android:layout_margin="10dp"
                 android:src="@drawable/ic_heart_filled"
-                app:tint="@color/colorPrimary" />
+                app:tint="#F43F5E" />
         </FrameLayout>
 
-        <!-- Titre Occasion (11.jpg) -->
+        <!-- Titre Occasion -->
         <TextView
             android:id="@+id/tv_saved_occasion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="University"
-            android:textSize="15sp"
+            android:text="Université"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/colorTextPrimary"
             android:layout_marginTop="8dp" />
 
-        <!-- Date de création (11.jpg) -->
+        <!-- Date de création -->
         <TextView
             android:id="@+id/tv_saved_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="September 18"
+            android:text="18 Novembre"
             android:textSize="12sp"
             android:textColor="@color/colorTextSecondary"
             android:layout_marginTop="2dp" />
 
-        <!-- Style de tenue (11.jpg) -->
+        <!-- Style de tenue avec badge pastel -->
         <TextView
             android:id="@+id/tv_saved_style"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Casual"
-            android:textSize="12sp"
-            android:textColor="@color/colorTextPrimary"
-            android:layout_marginTop="2dp" />
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="@color/badge_haut_text"
+            android:background="@drawable/bg_badge_haut"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
+            android:layout_marginTop="6dp" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
-

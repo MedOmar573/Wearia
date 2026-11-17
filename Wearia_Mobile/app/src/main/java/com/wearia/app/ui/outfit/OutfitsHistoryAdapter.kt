@@ -6,15 +6,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.wearia.app.BuildConfig
 import com.wearia.app.R
 import com.wearia.app.data.local.entity.TenueFavoriteEntity
 import com.wearia.app.databinding.ItemSavedOutfitBinding
+import com.wearia.app.utils.addPressEffect
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * OutfitsHistoryAdapter : Liste des tenues favorites et passées (Maquette 11.jpg).
+ * OutfitsHistoryAdapter : Liste des tenues favorites et passées modernisée Fresh Fashion Tech.
  */
 class OutfitsHistoryAdapter(
     private val onItemClick: (TenueFavoriteEntity) -> Unit
@@ -32,19 +32,19 @@ class OutfitsHistoryAdapter(
     inner class OutfitViewHolder(private val binding: ItemSavedOutfitBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private val dateFormat = SimpleDateFormat("MMMM d", Locale.ENGLISH)
+        private val dateFormat = SimpleDateFormat("d MMMM", Locale.FRENCH)
 
         fun bind(outfit: TenueFavoriteEntity) {
             val occ = outfit.occasion.lowercase().replaceFirstChar { it.uppercase() }
             binding.tvSavedOccasion.text = occ
             binding.tvSavedDate.text = dateFormat.format(Date(outfit.cachedAt))
-            binding.tvSavedStyle.text = if (occ.contains("Work", ignoreCase = true)) "Smart Casual" else "Casual"
+            binding.tvSavedStyle.text = if (occ.contains("Travail", ignoreCase = true) || occ.contains("Work", ignoreCase = true)) "Smart Casual" else "Casual"
 
-            // Image placeholder / preview
             binding.ivOutfitThumb.load(R.drawable.ic_hanger) {
                 crossfade(true)
             }
 
+            binding.root.addPressEffect(0.97f)
             binding.root.setOnClickListener { onItemClick(outfit) }
         }
     }
@@ -54,4 +54,3 @@ class OutfitsHistoryAdapter(
         override fun areContentsTheSame(old: TenueFavoriteEntity, new: TenueFavoriteEntity) = old == new
     }
 }
-

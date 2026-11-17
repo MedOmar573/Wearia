@@ -3,15 +3,15 @@
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/ic_nav_home"
-        android:title="Home" />
+        android:title="Accueil" />
     <item
         android:id="@+id/dressingFragment"
         android:icon="@drawable/ic_nav_wardrobe"
-        android:title="Wardrobe" />
+        android:title="Dressing" />
     <item
         android:id="@+id/outfitsHistoryFragment"
         android:icon="@drawable/ic_nav_outfits"
-        android:title="Outfits" />
+        android:title="Tenues" />
     <item
         android:id="@+id/shoppingFragment"
         android:icon="@drawable/ic_nav_shopper"
@@ -19,5 +19,5 @@
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/ic_nav_profile"
-        android:title="Profile" />
+        android:title="Profil" />
 </menu>
