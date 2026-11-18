@@ -1,5 +1,5 @@
 [versions]
-agp = "9.4.1"
+agp = "8.11.2"
 kotlin = "2.2.10"
 coreKtx = "1.13.1"
 appcompat = "1.7.0"
@@ -15,7 +15,7 @@ camerax = "1.4.1"
 coil = "2.7.0"
 gson = "2.11.0"
 swiperefresh = "1.1.0"
-ksp = "2.3.6"
+ksp = "2.2.10-2.0.2"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
