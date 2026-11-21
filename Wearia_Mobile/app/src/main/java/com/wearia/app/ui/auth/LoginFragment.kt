@@ -36,14 +36,9 @@ class LoginFragment : Fragment() {
         binding.btnLogin.addPressEffect()
         binding.tvGoToRegister.addPressEffect(0.98f)
 
-        // Si déjà connecté, rediriger selon l'état du profil
+        // Si déjà connecté, rediriger vers l'accueil
         if (viewModel.isLoggedIn()) {
-            val session = WeariaApplication.instance.sessionManager
-            if (session.isProfileCompleted()) {
-                findNavController().navigate(R.id.action_login_to_home)
-            } else {
-                findNavController().navigate(R.id.action_login_to_styleProfile)
-            }
+            findNavController().navigate(R.id.action_login_to_home)
             return
         }
 
@@ -75,12 +70,7 @@ class LoginFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.btnLogin.isEnabled = true
                     Toast.makeText(requireContext(), "Bienvenue sur Wearia !", Toast.LENGTH_SHORT).show()
-                    val session = WeariaApplication.instance.sessionManager
-                    if (session.isProfileCompleted()) {
-                        findNavController().navigate(R.id.action_login_to_home)
-                    } else {
-                        findNavController().navigate(R.id.action_login_to_styleProfile)
-                    }
+                    findNavController().navigate(R.id.action_login_to_home)
                 }
                 is Resource.Error -> {
                     binding.progressBar.visibility = View.GONE

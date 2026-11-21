@@ -1,69 +1,280 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/colorBackground"
-    android:paddingHorizontal="20dp"
-    android:paddingTop="28dp">
+    android:background="@color/colorBackground">
 
-    <!-- En-tête -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Personal Shopper IA"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorTextPrimary" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Complétez votre dressing avec des pièces qui s'accordent à votre style."
-        android:textSize="14sp"
-        android:textColor="@color/colorTextSecondary"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="20dp" />
-
-    <!-- Section: Que manque-t-il dans votre dressing ? -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pièces manquantes recommandées"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorTextPrimary"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Champ de recherche caché pour compatibilité ViewModel -->
-    <EditText
-        android:id="@+id/et_shopping_need"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/btn_search_shopping"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center"
-        android:indeterminateTint="@color/colorPrimary"
-        android:visibility="gone"
-        android:layout_marginBottom="12dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_shopping"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="32dp" />
+        android:fillViewport="true">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="18dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="40dp">
+
+            <!-- En-tête Wearia (même style que Mon Dressing) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI Shopper"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Composez vos tenues à partir de boutiques réelles en Tunisie"
+                android:textSize="13sp"
+                android:textColor="@color/colorTextSecondary"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Carte principale : Prompt & Budget libre -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/colorSurfaceCard"
+                app:strokeColor="@color/colorBorder"
+                app:strokeWidth="1dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <!-- Champ 1 : Prompt -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Style ou occasion souhaitée"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_search_bar"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="14dp"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_search_modern"
+                            app:tint="@color/colorPrimary"
+                            android:layout_marginEnd="10dp" />
+
+                        <EditText
+                            android:id="@+id/et_shopper_prompt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="Ex : Tenue streetwear noire pour l'université"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary"
+                            android:textColorHint="@color/colorTextMuted"
+                            android:inputType="text"
+                            android:imeOptions="actionNext" />
+                    </LinearLayout>
+
+                    <!-- Champ 2 : Budget libre -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Budget maximal (TND)"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorTextPrimary"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_search_bar"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="14dp"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="TND"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimary"
+                            android:layout_marginEnd="10dp" />
+
+                        <EditText
+                            android:id="@+id/et_shopper_budget"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="Entrez un montant libre (ex : 250)"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextPrimary"
+                            android:textColorHint="@color/colorTextMuted"
+                            android:inputType="numberDecimal"
+                            android:imeOptions="actionDone" />
+                    </LinearLayout>
+
+                    <!-- Raccourcis budget rapide -->
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"
+                        android:layout_marginBottom="16dp">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chip_group_budgets"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_budget_150"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="150 DT"
+                                style="@style/Widget.Wearia.Chip"
+                                app:chipCornerRadius="14dp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_budget_200"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="200 DT"
+                                style="@style/Widget.Wearia.Chip"
+                                app:chipCornerRadius="14dp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_budget_250"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="250 DT"
+                                android:checked="true"
+                                style="@style/Widget.Wearia.Chip"
+                                app:chipCornerRadius="14dp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_budget_350"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="350 DT"
+                                style="@style/Widget.Wearia.Chip"
+                                app:chipCornerRadius="14dp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_budget_500"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="500 DT"
+                                style="@style/Widget.Wearia.Chip"
+                                app:chipCornerRadius="14dp" />
+                        </com.google.android.material.chip.ChipGroup>
+                    </HorizontalScrollView>
+
+                    <!-- Bouton de composition Wearia -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_generate_outfits"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:text="Composer mes tenues"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorOnPrimary"
+                        app:icon="@drawable/ic_sparkle"
+                        app:iconTint="@color/colorOnPrimary"
+                        app:iconGravity="textStart"
+                        app:iconPadding="8dp"
+                        app:backgroundTint="@color/colorPrimary"
+                        app:cornerRadius="24dp"
+                        style="@style/Widget.MaterialComponents.Button" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Boutiques partenaires réelles en Tunisie -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Boutiques partenaires : Exist • Zen • Pull&amp;Bear • Bershka • Zara"
+                android:textSize="11sp"
+                android:textColor="@color/colorTextMuted"
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Indicateur de Chargement -->
+            <LinearLayout
+                android:id="@+id/ll_loading_ai"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:paddingVertical="24dp">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:indeterminateTint="@color/colorPrimary"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:id="@+id/tv_loading_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Recherche des articles en cours..."
+                    android:textSize="13sp"
+                    android:textColor="@color/colorTextSecondary" />
+            </LinearLayout>
+
+            <!-- Titre de la section des tenues -->
+            <TextView
+                android:id="@+id/tv_outfits_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tenues composées pour vous"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Liste des Tenues -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_shopper_outfits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- État vide -->
+            <TextView
+                android:id="@+id/tv_empty_shopper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Définissez votre style et votre budget ci-dessus puis cliquez sur « Composer mes tenues »."
+                android:textSize="13sp"
+                android:textColor="@color/colorTextSecondary"
+                android:gravity="center"
+                android:paddingVertical="30dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

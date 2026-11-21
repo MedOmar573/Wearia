@@ -241,3 +241,55 @@ data class ArticleCatalogueResponse(
     val couleur: CouleurResponse
 )
 
+// =================== AI SHOPPER LLM & E-COMMERCE ===================
+data class ShopperPromptRequest(
+    val prompt: String,
+    val budget: Float? = null,
+    val genre: String? = null
+)
+
+data class ShopperCriteriaResponse(
+    val style: String,
+    val occasion: String,
+    val colors: List<String> = emptyList(),
+    val categories: List<String> = emptyList(),
+    @SerializedName("types_vetement") val typesVetement: List<String> = emptyList(),
+    val budget: Float? = null,
+    val currency: String = "TND",
+    @SerializedName("search_queries") val searchQueries: List<String> = emptyList()
+)
+
+data class ShopperArticleResponse(
+    val id: Int,
+    val nom: String,
+    @SerializedName("imageUrl") val imageUrl: String,
+    @SerializedName("lienAchat") val lienAchat: String?,
+    val prix: Float,
+    val devise: String = "TND",
+    val vendeur: String,
+    @SerializedName("taillesDisponibles") val taillesDisponibles: String = "S, M, L, XL",
+    val typeVetementNom: String,
+    val couleurNom: String,
+    val categorieNom: String
+)
+
+data class ShopperOutfitResponse(
+    val id: Int,
+    val articles: List<ShopperArticleResponse>,
+    val prixTotal: Float,
+    val budgetMax: Float?,
+    val respecteBudget: Boolean,
+    val scoreCompatibilite: Int,
+    val harmonieCouleurs: String?,
+    val styleConcordance: String?,
+    val explication: String?
+)
+
+data class ShopperResultResponse(
+    val prompt: String,
+    val criteres: ShopperCriteriaResponse,
+    val tenues: List<ShopperOutfitResponse>,
+    val articlesComplementaires: List<ShopperArticleResponse> = emptyList(),
+    val nbTenuesTrouvees: Int
+)
+

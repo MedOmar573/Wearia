@@ -86,9 +86,9 @@ class ProfileRepository {
         }
     }
 
-    suspend fun getCategories(): Resource<List<CategorieResponse>> {
+    suspend fun getCategories(genre: String? = null): Resource<List<CategorieResponse>> {
         return try {
-            val response = api.getCategories()
+            val response = api.getCategories(genre)
             if (response.isSuccessful) Resource.Success(response.body() ?: emptyList())
             else Resource.Error("Impossible de charger les catégories.")
         } catch (e: Exception) { Resource.Error("Hors-ligne.") }

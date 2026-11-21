@@ -14,7 +14,7 @@ import app.models
 # Importation des routeurs d'API
 from app.api import (
     auth, users, referentials, clothes, ai,
-    routines, events, recommendations, outfits, shopping
+    routines, events, recommendations, outfits, shopping, shopper
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -51,6 +51,7 @@ app.include_router(events.router)
 app.include_router(recommendations.router)
 app.include_router(outfits.router)
 app.include_router(shopping.router)
+app.include_router(shopper.router)
 
 @app.on_event("startup")
 def on_startup():

@@ -48,67 +48,28 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <!-- Photo de Profil / Avatar avec Badge Caméra -->
-                    <FrameLayout
-                        android:id="@+id/layout_avatar_container"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
+                    <!-- Avatar Utilisateur avec Initiale -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
                         android:layout_marginEnd="16dp"
-                        android:clickable="true"
-                        android:focusable="true">
+                        app:cardCornerRadius="36dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/colorPrimary"
+                        app:strokeWidth="2dp"
+                        app:cardBackgroundColor="@color/colorBackground">
 
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="72dp"
-                            android:layout_height="72dp"
-                            app:cardCornerRadius="36dp"
-                            app:cardElevation="0dp"
-                            app:strokeColor="@color/colorPrimary"
-                            app:strokeWidth="2dp"
-                            app:cardBackgroundColor="@color/colorBackground">
-
-                            <FrameLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
-
-                                <TextView
-                                    android:id="@+id/tv_avatar_initial"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:gravity="center"
-                                    android:text="A"
-                                    android:textColor="@color/colorPrimary"
-                                    android:textSize="26sp"
-                                    android:textStyle="bold"
-                                    android:background="@color/colorBackground" />
-
-                                <ImageView
-                                    android:id="@+id/iv_profile_avatar"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:scaleType="centerCrop"
-                                    android:contentDescription="Photo de profil" />
-                            </FrameLayout>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <!-- Badge bouton pour changer la photo -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/btn_change_avatar"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_gravity="bottom|end"
-                            app:cardCornerRadius="13dp"
-                            app:cardElevation="2dp"
-                            app:cardBackgroundColor="@color/colorPrimary">
-
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_camera"
-                                app:tint="@color/colorOnPrimary"
-                                android:contentDescription="Changer photo" />
-                        </com.google.android.material.card.MaterialCardView>
-                    </FrameLayout>
+                        <TextView
+                            android:id="@+id/tv_avatar_initial"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="A"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:background="@color/colorBackground" />
+                    </com.google.android.material.card.MaterialCardView>
 
                     <!-- Informations Nom, Email, Ville -->
                     <LinearLayout
@@ -146,18 +107,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_change_avatar_prompt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="📷 Importer une photo de profil depuis la galerie"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="12dp"
-                    android:paddingVertical="4dp"
-                    android:clickable="true"
-                    android:focusable="true" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

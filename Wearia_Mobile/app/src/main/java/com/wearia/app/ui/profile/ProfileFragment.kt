@@ -1,6 +1,5 @@
 package com.wearia.app.ui.profile
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,13 +9,10 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import coil.load
-import coil.transform.CircleCropTransformation
 import com.google.android.material.card.MaterialCardView
 import com.wearia.app.R
 import com.wearia.app.WeariaApplication
@@ -34,11 +30,6 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels { ProfileViewModel.Factory() }
 
-    private val galleryLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let { handleAvatarPicked(it) }
-        }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
@@ -48,27 +39,13 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val session = WeariaApplication.instance.sessionManager
-        binding.tvProfileName.text = session.getUserName().ifEmpty { "Ameni" }
-        binding.tvProfileEmail.text = session.getUserEmail().ifEmpty { "ameni@wearia.tn" }
+        val initialName = session.getUserName().ifEmpty { "Utilisateur" }
+        binding.tvProfileName.text = initialName
+        binding.tvProfileEmail.text = session.getUserEmail().ifEmpty { "" }
         binding.tvProfileVille.text = "Ville : ${session.getUserVille().ifEmpty { "Tunis" }}"
-
-        // Photo de profil
-        loadAvatar()
-
-        val pickAvatarAction = View.OnClickListener {
-            try {
-                galleryLauncher.launch("image/*")
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Impossible d'ouvrir la galerie : ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-            }
-        }
-        binding.layoutAvatarContainer.setOnClickListener(pickAvatarAction)
-        binding.btnChangeAvatar.setOnClickListener(pickAvatarAction)
-        binding.tvChangeAvatarPrompt.setOnClickListener(pickAvatarAction)
+        binding.tvAvatarInitial.text = initialName.firstOrNull()?.uppercase() ?: "W"
 
         // Tactile press effects
-        binding.layoutAvatarContainer.addPressEffect(0.95f)
-        binding.tvChangeAvatarPrompt.addPressEffect(0.97f)
         binding.cardOpenStyleProfile.addPressEffect()
         binding.cardOpenColorPreferences.addPressEffect()
         binding.btnAddRoutine.addPressEffect()
@@ -84,6 +61,7 @@ class ProfileFragment : Fragment() {
                 binding.tvProfileName.text = user.nom
                 binding.tvProfileEmail.text = user.email
                 binding.tvProfileVille.text = "Ville : ${user.ville}"
+                binding.tvAvatarInitial.text = user.nom.firstOrNull()?.uppercase() ?: "W"
             }
         }
 
@@ -286,44 +264,6 @@ class ProfileFragment : Fragment() {
             }
             .setNegativeButton("Annuler", null)
             .show()
-    }
-
-    private fun loadAvatar() {
-        val session = WeariaApplication.instance.sessionManager
-        val userName = session.getUserName().ifEmpty { "A" }
-        binding.tvAvatarInitial.text = userName.first().uppercase()
-
-        val avatarUriStr = session.getAvatarUri()
-        if (!avatarUriStr.isNullOrEmpty()) {
-            try {
-                binding.ivProfileAvatar.load(Uri.parse(avatarUriStr)) {
-                    crossfade(true)
-                    transformations(CircleCropTransformation())
-                    listener(
-                        onSuccess = { _, _ -> binding.tvAvatarInitial.visibility = View.GONE },
-                        onError = { _, _ -> binding.tvAvatarInitial.visibility = View.VISIBLE }
-                    )
-                }
-            } catch (e: Exception) {
-                binding.tvAvatarInitial.visibility = View.VISIBLE
-            }
-        } else {
-            binding.tvAvatarInitial.visibility = View.VISIBLE
-        }
-    }
-
-    private fun handleAvatarPicked(uri: Uri) {
-        val session = WeariaApplication.instance.sessionManager
-        session.saveAvatarUri(uri.toString())
-        binding.ivProfileAvatar.load(uri) {
-            crossfade(true)
-            transformations(CircleCropTransformation())
-            listener(
-                onSuccess = { _, _ -> binding.tvAvatarInitial.visibility = View.GONE },
-                onError = { _, _ -> binding.tvAvatarInitial.visibility = View.VISIBLE }
-            )
-        }
-        Toast.makeText(requireContext(), "Photo de profil importée avec succès ! ✨", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

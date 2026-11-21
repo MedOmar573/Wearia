@@ -50,6 +50,16 @@ class AuthRepository {
                         email = user.email,
                         ville = user.ville
                     )
+                    // Si l'utilisateur a déjà configuré son profil de style et morphologie en base
+                    if (user.hauteurCm != null && user.hauteurCm > 0 || !user.genre.isNullOrEmpty()) {
+                        session.setProfileCompleted(true)
+                    }
+                    if (!user.genre.isNullOrEmpty()) {
+                        session.saveUserGenre(user.genre)
+                    }
+                    if (user.hauteurCm != null && user.poidsKg != null) {
+                        session.saveUserMorphology(user.hauteurCm, user.poidsKg)
+                    }
                 } else {
                     // Session minimale sans profil
                     session.saveSession(tokenResponse.accessToken, -1, "", email)

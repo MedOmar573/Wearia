@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -6,6 +7,7 @@ from app.core.security import decode_access_token
 from app.models.user import Utilisateur
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -37,3 +39,20 @@ def get_current_user(
         )
     return user
 
+def get_optional_current_user(
+    token: Optional[str] = Depends(oauth2_scheme_optional),
+    db: Session = Depends(get_db)
+) -> Optional[Utilisateur]:
+    if not token:
+        return None
+    payload = decode_access_token(token)
+    if not payload:
+        return None
+    user_id = payload.get("sub")
+    if not user_id:
+        return None
+    try:
+        user_id_int = int(user_id)
+        return db.query(Utilisateur).filter(Utilisateur.id == user_id_int).first()
+    except Exception:
+        return None

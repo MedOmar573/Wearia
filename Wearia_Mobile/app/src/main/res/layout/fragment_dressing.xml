@@ -149,7 +149,7 @@
                         android:id="@+id/chip_custom_category"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="+ Catégorie"
+                        android:text="+ Type"
                         style="@style/Widget.Wearia.Chip" />
 
                     <!-- Anciennes chips pour compatibilité de code -->

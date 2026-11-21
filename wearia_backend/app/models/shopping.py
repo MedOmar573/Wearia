@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from app.database.base import Base
 from app.models.enums import Occasion
@@ -14,12 +14,17 @@ class ArticleCatalogue(Base):
     prix = Column(Float, nullable=False)
     vendeur = Column(String(100), default="Boutique Démo", nullable=False)
     taillesDisponibles = Column(String(100), default="S, M, L, XL", nullable=False)
+    devise = Column(String(10), default="TND", nullable=False)
+    enStock = Column(Boolean, default=True, nullable=False)
+    dateDerniereSynchro = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     type_vetement_id = Column(Integer, ForeignKey("types_vetement.id"), nullable=False)
     couleur_id = Column(Integer, ForeignKey("couleurs.id"), nullable=False)
+    style_id = Column(Integer, ForeignKey("styles_vestimentaires.id", ondelete="SET NULL"), nullable=True)
 
     type_vetement = relationship("TypeVetement")
     couleur = relationship("Couleur")
+    style = relationship("StyleVestimentaire")
 
 class DemandeAchat(Base):
     __tablename__ = "demandes_achat"

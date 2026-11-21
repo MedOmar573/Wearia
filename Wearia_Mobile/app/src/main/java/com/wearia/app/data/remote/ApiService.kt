@@ -45,7 +45,7 @@ interface ApiService {
 
     // =================== RÉFÉRENTIELS ===================
     @GET("referentials/categories")
-    suspend fun getCategories(): Response<List<CategorieResponse>>
+    suspend fun getCategories(@Query("genre") genre: String? = null): Response<List<CategorieResponse>>
 
     @GET("referentials/types")
     suspend fun getTypes(@Query("genre") genre: String? = null): Response<List<TypeVetementResponse>>
@@ -178,7 +178,7 @@ interface ApiService {
         @Body request: FeedbackRequest
     ): Response<FeedbackResponse>
 
-    // =================== SHOPPING ===================
+    // =================== SHOPPING & AI SHOPPER ===================
     @GET("shopping/suggestions")
     suspend fun getShoppingSuggestions(
         @Header("Authorization") token: String,
@@ -187,5 +187,11 @@ interface ApiService {
 
     @GET("shopping/catalogue")
     suspend fun getCatalogue(): Response<List<ArticleCatalogueResponse>>
+
+    @POST("shopper/generate-outfits")
+    suspend fun generateShopperOutfits(
+        @Header("Authorization") token: String? = null,
+        @Body request: ShopperPromptRequest
+    ): Response<ShopperResultResponse>
 }
 

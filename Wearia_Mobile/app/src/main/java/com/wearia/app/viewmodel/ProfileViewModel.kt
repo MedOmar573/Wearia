@@ -76,7 +76,7 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
                 is Resource.Success -> _styles.value = res.data
                 else -> {}
             }
-            when (val res = repository.getCategories()) {
+            when (val res = repository.getCategories(genre)) {
                 is Resource.Success -> _categories.value = res.data
                 else -> {}
             }

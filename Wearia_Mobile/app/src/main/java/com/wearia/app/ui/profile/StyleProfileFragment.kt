@@ -276,8 +276,21 @@ class StyleProfileFragment : Fragment() {
                     binding.progressBarProfile.visibility = View.GONE
                     binding.btnContinueProfile.text = "Enregistrer & Continuer"
                     binding.btnContinueProfile.isEnabled = true
-                    Toast.makeText(requireContext(), "Profil mis à jour !", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_styleProfile_to_colorPreferences)
+                    Toast.makeText(requireContext(), "Profil enregistré avec succès !", Toast.LENGTH_SHORT).show()
+                    
+                    // Marquer le profil comme définitivement complété pour ne plus jamais le réafficher
+                    val session = WeariaApplication.instance.sessionManager
+                    session.setProfileCompleted(true)
+
+                    try {
+                        findNavController().navigate(R.id.action_styleProfile_to_home)
+                    } catch (e: Exception) {
+                        try {
+                            findNavController().navigate(R.id.action_styleProfile_to_colorPreferences)
+                        } catch (e2: Exception) {
+                            findNavController().popBackStack()
+                        }
+                    }
                 }
                 is Resource.Error -> {
                     binding.progressBarProfile.visibility = View.GONE
