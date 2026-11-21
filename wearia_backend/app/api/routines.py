@@ -73,6 +73,22 @@ def update_routine(
     if not routine:
         raise HTTPException(status_code=404, detail="Routine introuvable.")
 
+    if routine_in.jourSemaine is not None and routine_in.jourSemaine != routine.jourSemaine:
+        existing = db.query(RoutineHebdomadaire).filter(
+            RoutineHebdomadaire.utilisateur_id == current_user.id,
+            RoutineHebdomadaire.jourSemaine == routine_in.jourSemaine,
+            RoutineHebdomadaire.id != id
+        ).first()
+        if existing:
+            existing.occasion = routine_in.occasion or routine.occasion
+            if routine_in.estActive is not None:
+                existing.estActive = routine_in.estActive
+            db.delete(routine)
+            db.commit()
+            db.refresh(existing)
+            return existing
+        routine.jourSemaine = routine_in.jourSemaine
+
     if routine_in.occasion is not None:
         routine.occasion = routine_in.occasion
     if routine_in.estActive is not None:

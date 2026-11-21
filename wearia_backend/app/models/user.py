@@ -29,6 +29,7 @@ class Utilisateur(Base):
     coupePreferee = Column(SQLEnum(Coupe), default=Coupe.REGULIERE, nullable=True)
     
     consentementRGPD = Column(Boolean, default=True, nullable=False)
+    is_verified = Column(Boolean, default=False, nullable=False)
     dateCreation = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     # Relations

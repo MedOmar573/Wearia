@@ -1,5 +1,7 @@
 import logging
 import re
+import unicodedata
+from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple
 from sqlalchemy.orm import Session
 from app.models.shopping import ArticleCatalogue
@@ -8,6 +10,71 @@ from app.models.enums import GenreCible
 from app.schemas.shopper import ShopperCriteria
 
 logger = logging.getLogger(__name__)
+
+REQUESTED_TYPE_DEFINITIONS = {
+    "chemise": ("hauts", ("chemise", "chemises", "chemisier", "blouse")),
+    "t shirt": ("hauts", ("t shirt", "tshirt", "tee shirt", "tee-shirt", "t shirts", "tshirts")),
+    "polo": ("hauts", ("polo",)),
+    "pull": ("hauts", ("pull", "cardigan", "sweater")),
+    "sweat": ("hauts", ("sweat", "hoodie", "sweatshirt")),
+    "jean": ("bas", ("jean", "jeans", "denim")),
+    "pantalon": ("bas", ("pantalon", "trousers")),
+    "cargo": ("bas", ("cargo",)),
+    "chino": ("bas", ("chino",)),
+    "jogging": ("bas", ("jogging", "jogger")),
+    "short": ("bas", ("short", "bermuda")),
+    "jupe": ("bas", ("jupe", "skirt")),
+    "robe": ("robes", ("robe", "dress")),
+    "baskets": ("chaussures", ("basket", "sneaker", "tennis")),
+    "bottes": ("chaussures", ("botte", "bottine", "boots")),
+    "chaussures de ville": ("chaussures", ("chaussure de ville", "mocassin", "derby", "escarpin")),
+    "veste": ("vestes", ("veste", "blazer", "blouson", "bomber", "jacket")),
+    "manteau": ("vestes", ("manteau", "trench", "doudoune", "parka", "coat")),
+    "accessoire": ("accessoires", ("accessoire", "ceinture", "casquette", "chapeau", "sac", "montre", "echarpe")),
+}
+
+
+def _normalize_text(value: str) -> str:
+    ascii_text = unicodedata.normalize("NFKD", value.lower()).encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"[^a-z0-9]+", " ", ascii_text).strip()
+
+
+def extract_requested_type_mentions(text: str) -> List[str]:
+    """Find garment names explicitly written in the user's free-text instruction."""
+    normalized = _normalize_text(text)
+    mentions = []
+    negative_prefix = re.compile(r"\b(?:sans|pas de|pas d|eviter|evite|ne veux pas de|ne veut pas de)\s+(?:un|une|des|du|de la)?\s*$")
+    for canonical, (_, aliases) in REQUESTED_TYPE_DEFINITIONS.items():
+        for alias in aliases:
+            normalized_alias = _normalize_text(alias)
+            match = re.search(rf"(?<!\w){re.escape(normalized_alias)}(?!\w)", normalized)
+            if not match:
+                continue
+            if negative_prefix.search(normalized[max(0, match.start() - 28):match.start()]):
+                continue
+            mentions.append(canonical)
+            break
+    return list(dict.fromkeys(mentions))
+
+
+def _requested_definitions(values: List[str]) -> Dict[str, List[tuple[str, ...]]]:
+    by_category: Dict[str, List[tuple[str, ...]]] = {}
+    for value in values:
+        normalized = _normalize_text(value)
+        for _, (category, aliases) in REQUESTED_TYPE_DEFINITIONS.items():
+            normalized_aliases = tuple(_normalize_text(alias) for alias in aliases)
+            if any(re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", normalized) for alias in normalized_aliases):
+                by_category.setdefault(category, []).append(normalized_aliases)
+    return by_category
+
+
+def _matches_requested_type(item: ArticleCatalogue, alias_groups: List[tuple[str, ...]]) -> bool:
+    searchable = _normalize_text(" ".join((item.nom or "", item.type_vetement.nom if item.type_vetement else "")))
+    return any(
+        re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", searchable)
+        for aliases in alias_groups
+        for alias in aliases
+    )
 
 class ProductSearchService:
     """
@@ -22,12 +89,23 @@ class ProductSearchService:
     def search_products_by_criteria(
         db: Session,
         criteres: ShopperCriteria,
-        user_gender: Optional[str] = None
+        user_gender: Optional[str] = None,
+        excluded_product_ids: Optional[List[int]] = None,
+        verified_product_urls: Optional[List[str]] = None
     ) -> Dict[str, List[ArticleCatalogue]]:
         """
         Recherche et organise les articles réels par catégorie.
         """
-        query = db.query(ArticleCatalogue).filter(ArticleCatalogue.enStock == True)
+        query = db.query(ArticleCatalogue).filter(
+            ArticleCatalogue.enStock == True,
+            ArticleCatalogue.dateDerniereSynchro >= datetime.utcnow() - timedelta(hours=24)
+        )
+        query = query.filter(ArticleCatalogue.prix > 0, ArticleCatalogue.lienAchat.like("https://%"))
+        # Only products verified during this request can be recommended. This also
+        # prevents legacy/demo rows in an existing database from leaking into results.
+        query = query.filter(ArticleCatalogue.lienAchat.in_(verified_product_urls or []))
+        if excluded_product_ids:
+            query = query.filter(~ArticleCatalogue.id.in_(excluded_product_ids))
 
         # Filtre budget : NE PAS appliquer 0.85 sur chaque pièce individuelle.
         # Le budget sera vérifié globalement lors de la composition de la tenue.
@@ -51,6 +129,19 @@ class ProductSearchService:
             type_nom = tv.nom.lower()
 
             art_nom_lower = (art.nom or "").lower()
+
+            if any(blocked.lower() in art_nom_lower or blocked.lower() in type_nom
+                   for blocked in criteres.excluded_types):
+                continue
+            if art.couleur and any(blocked.lower() in art.couleur.nom.lower()
+                                   for blocked in criteres.avoided_colors):
+                continue
+
+            source_name = (art.vendeur or "").lower()
+            if user_gender_upper == "FEMME" and "homme" in source_name:
+                continue
+            if user_gender_upper == "HOMME" and "femme" in source_name:
+                continue
 
             if user_gender_upper == "HOMME":
                 # Exclure strictement les pièces féminines
@@ -143,10 +234,13 @@ class ProductSearchService:
             "robes": [],
             "accessoires": []
         }
+        requested_by_category = _requested_definitions(criteres.requested_types)
 
-        # Compteur de vendeurs par catégorie pour limiter la sur-représentation
+        # Diversifier les vendeurs quand plusieurs sont configurés, sans bloquer la
+        # génération de trois tenues quand une seule boutique constitue le catalogue.
         vendor_count_per_cat: Dict[str, Dict[str, int]] = {k: {} for k in grouped}
-        MAX_SAME_VENDOR_PER_CAT = 2
+        distinct_vendors = max(1, len({(item.vendeur or "inconnu").lower() for item in filtered}))
+        MAX_SAME_VENDOR_PER_CAT = max(3, min(8, 8 // distinct_vendors))
 
         # Mots-clés de force majeure pour catégoriser par nom (surpasse la catégorie DB si mal initialisée)
         _BAS_KEYWORDS  = {"jean", "jeans", "denim", "cargo", "pantalon", "jogger", "jogging", "short", "bermuda", "chino", "jupe"}
@@ -189,6 +283,13 @@ class ProductSearchService:
             vendeur = (art.vendeur or "inconnu").lower()
 
             cat_key = _force_category(art.nom or "", tv_nom, cat_nom)
+
+            # A specifically requested garment is a constraint, not just a scoring bonus.
+            # Apply it only to its own garment category so a request for a shirt can
+            # still be completed with matching bottoms and shoes.
+            category_requests = requested_by_category.get(cat_key)
+            if category_requests and not _matches_requested_type(art, category_requests):
+                continue
 
             # Exclure robes pour les hommes
             if cat_key == "robes" and user_gender_upper == "HOMME":

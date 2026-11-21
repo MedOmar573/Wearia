@@ -42,7 +42,15 @@ async def generate_shopper_outfits(
         db=db,
         user=current_user,
         forced_genre=request.genre,
-        forced_budget=request.budget
+        forced_budget=request.budget,
+        occasion=request.occasion,
+        style=request.style,
+        colors=request.colors,
+        avoided_colors=request.avoided_colors,
+        requested_types=request.requested_types,
+        season=request.season,
+        excluded_types=request.excluded_types,
+        excluded_product_ids=request.excluded_product_ids
     )
 
 @router.post("/interpret", response_model=ShopperCriteria)

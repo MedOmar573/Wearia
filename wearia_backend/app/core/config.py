@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Optional
 from dotenv import load_dotenv
 
 # Charger les variables du fichier .env
@@ -27,11 +28,21 @@ class Settings:
     # Météo
     OPENWEATHERMAP_API_KEY: str = os.getenv("OPENWEATHERMAP_API_KEY", "")
 
+    # SMTP / Emails OTP
+    SMTP_HOST: Optional[str] = os.getenv("SMTP_HOST", None)
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: Optional[str] = os.getenv("SMTP_USER", None)
+    SMTP_PASSWORD: Optional[str] = os.getenv("SMTP_PASSWORD", None)
+    SMTP_TLS: bool = os.getenv("SMTP_TLS", "true").lower() in ("true", "1", "yes")
+    EMAILS_FROM_EMAIL: str = os.getenv("EMAILS_FROM_EMAIL", "noreply@wearia.com")
+    EMAILS_FROM_NAME: str = os.getenv("EMAILS_FROM_NAME", "Wearia App")
+
     # AI Shopper & LLM (Ollama)
     OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "qwen2.5:latest")
     LLM_TIMEOUT_SECONDS: int = int(os.getenv("LLM_TIMEOUT_SECONDS", "30"))
     AI_SHOPPER_CURRENCY: str = os.getenv("AI_SHOPPER_CURRENCY", "TND")
+    WEARIA_SHOPPER_STORES: str = os.getenv("WEARIA_SHOPPER_STORES", "")
 
     # Dossiers
     BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent

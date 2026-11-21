@@ -1,5 +1,9 @@
 import json
 import logging
+import random
+import re
+import asyncio
+from urllib.parse import urljoin, urlparse
 from typing import List, Dict, Any
 from bs4 import BeautifulSoup
 from app.scraper.base_scraper import BaseStoreScraper
@@ -18,48 +22,207 @@ class MicrodataFashionScraper(BaseStoreScraper):
 
     async def scrape_products(self, limit: int = 20) -> List[Dict[str, Any]]:
         products = []
+        seen_urls = set()
         for path in self.category_paths:
             if len(products) >= limit:
                 break
-            target_url = f"{self.base_url}{path}"
+            target_url = urljoin(self.base_url + "/", path)
             html = await self.fetch_html(target_url)
             if not html:
                 continue
 
-            soup = BeautifulSoup(html, "html.parser")
-            scripts = soup.find_all("script", type="application/ld+json")
-            for script in scripts:
-                try:
-                    data = json.loads(script.string or "{}")
-                    items = data if isinstance(data, list) else (data.get("@graph", [data]) if isinstance(data, dict) else [data])
-                    for item in items:
-                        if isinstance(item, dict) and item.get("@type") in ["Product", "IndividualProduct"]:
-                            offers = item.get("offers", {})
-                            if isinstance(offers, list) and offers:
-                                offers = offers[0]
-                            price = offers.get("price") if isinstance(offers, dict) else 0.0
+            candidates = []
+            for item in self._jsonld_objects(html):
+                item_type = item.get("@type")
+                if item_type in ("Product", "IndividualProduct"):
+                    # A Product node on a category page without its own URL does not
+                    # provide a direct product link; never turn the category URL into one.
+                    product_page_url = item.get("url")
+                    if product_page_url:
+                        candidates.append(urljoin(target_url, product_page_url))
+                elif item_type == "ItemList":
+                    for entry in item.get("itemListElement", []):
+                        if not isinstance(entry, dict):
+                            continue
+                        linked_item = entry.get("item", {})
+                        linked_url = entry.get("url") or (linked_item.get("url") if isinstance(linked_item, dict) else None)
+                        if linked_url:
+                            candidates.append(urljoin(target_url, linked_url))
 
-                            images = item.get("image", [])
-                            img_url = images[0] if isinstance(images, list) and images else str(images)
+            # WooCommerce collections often expose product links in HTML without
+            # an ItemList node in their structured data.
+            category_soup = BeautifulSoup(html, "html.parser")
+            candidates.extend(
+                urljoin(target_url, anchor.get("href"))
+                for anchor in category_soup.find_all("a", href=True)
+                if "/produit/" in urlparse(urljoin(target_url, anchor.get("href"))).path
+            )
 
-                            prod = {
-                                "nom": item.get("name", "Article Mode"),
-                                "description": item.get("description", ""),
-                                "imageUrl": img_url,
-                                "lienAchat": item.get("url") or target_url,
-                                "prix": float(price or 0.0),
-                                "vendeur": self.store_name,
-                                "taillesDisponibles": "S, M, L, XL",
-                                "couleur_brute": item.get("color", "Noir"),
-                                "categorie_brute": item.get("category", "")
-                            }
-                            products.append(prod)
-                            if len(products) >= limit:
-                                break
-                except Exception as e:
-                    logger.debug(f"Erreur parsing JSON-LD : {e}")
+            random.shuffle(candidates)
+            path_product_count = 0
+            path_product_limit = 5
+            candidate_urls = []
+            for candidate in candidates:
+                product_url = candidate.split("#", 1)[0]
+                if (product_url not in seen_urls and product_url.startswith("https://")
+                        and urlparse(product_url).netloc == urlparse(self.base_url).netloc):
+                    seen_urls.add(product_url)
+                    candidate_urls.append(product_url)
+            candidate_urls = candidate_urls[:8]
+
+            semaphore = asyncio.Semaphore(3)
+
+            async def fetch_candidate(product_url: str):
+                async with semaphore:
+                    return await self.fetch_html(product_url)
+
+            product_pages = await asyncio.gather(*(fetch_candidate(url) for url in candidate_urls))
+            for product_url, product_html in zip(candidate_urls, product_pages):
+                if path_product_count >= path_product_limit:
+                    break
+                if not product_html:
+                    continue
+                for item in self._jsonld_objects(product_html):
+                    item_type = item.get("@type")
+                    if item_type not in ("Product", "IndividualProduct"):
+                        continue
+                    offers = item.get("offers", {})
+                    if isinstance(offers, list):
+                        offers = offers[0] if offers else {}
+                    if not isinstance(offers, dict):
+                        continue
+                    price = offers.get("price")
+                    currency = str(offers.get("priceCurrency", "")).upper()
+                    availability = str(offers.get("availability", "")).lower()
+                    if (not price or currency != "TND"
+                            or not any(marker in availability for marker in ("instock", "limitedavailability"))):
+                        continue
+
+                    # Prefer the exact variant URL supplied by the merchant's Offer.
+                    exact_url = urljoin(product_url, offers.get("url") or product_url)
+                    exact_parsed = urlparse(exact_url)
+                    source_host = urlparse(self.base_url).netloc
+                    if exact_parsed.scheme != "https" or exact_parsed.netloc != source_host:
+                        continue
+                    product_name = item.get("name", "").strip()
+                    offer_url = offers.get("url")
+                    if offer_url and exact_url.split("#", 1)[0] != product_url.split("#", 1)[0]:
+                        offer_html = await self.fetch_html(exact_url)
+                        if not offer_html or not self._is_verified_product_page(offer_html, product_name, price):
+                            continue
+                    color = item.get("color") or self._color_from_variant(exact_url)
+                    if not color:
+                        color = self._color_from_description(item.get("description", ""))
+                    images = item.get("image", [])
+                    if isinstance(images, str):
+                        image_url = images
+                    elif isinstance(images, list):
+                        image_url = next((image if isinstance(image, str) else image.get("url", "")
+                                          for image in images if isinstance(image, (str, dict))), "")
+                    else:
+                        image_url = ""
+                    product = {
+                        "nom": product_name,
+                        "description": item.get("description", ""),
+                        "imageUrl": image_url,
+                        "lienAchat": exact_url,
+                        "prix": float(price),
+                        "vendeur": self.store_name,
+                        "taillesDisponibles": "Non vérifiées",
+                        "couleur_brute": color or "",
+                        "categorie_brute": item.get("category", ""),
+                        "verified_product_page": True,
+                        "availability": availability,
+                    }
+                    if product["nom"] and product["couleur_brute"]:
+                        products.append(product)
+                        path_product_count += 1
+                    break
+                if len(products) >= limit:
+                    break
 
         return products
+
+    @staticmethod
+    def _jsonld_objects(html: str) -> List[Dict[str, Any]]:
+        objects = []
+        soup = BeautifulSoup(html, "html.parser")
+        for script in soup.find_all("script", type="application/ld+json"):
+            try:
+                data = json.loads(script.string or script.get_text() or "{}")
+                roots = data if isinstance(data, list) else [data]
+                for root in roots:
+                    if not isinstance(root, dict):
+                        continue
+                    graph = root.get("@graph")
+                    if isinstance(graph, list):
+                        objects.extend(node for node in graph if isinstance(node, dict))
+                    objects.append(root)
+            except (ValueError, TypeError, json.JSONDecodeError) as error:
+                logger.debug("Erreur parsing JSON-LD : %s", error)
+        return objects
+
+    @staticmethod
+    def _color_from_variant(product_url: str) -> str:
+        fragment = urlparse(product_url).fragment.lower()
+        match = re.search(r"couleur-[^/]*?_([a-z-]+)", fragment)
+        if not match:
+            return ""
+        token = match.group(1).split("_")[-1].replace("-", "")
+        color_tokens = {
+            "noir": "Noir", "noirdel": "Noir", "black": "Noir",
+            "blanc": "Blanc", "white": "Blanc", "ecru": "Blanc",
+            "bleu": "Bleu", "bleuf": "Bleu", "bleumec": "Bleu", "bleudel": "Bleu",
+            "vert": "Vert", "vertmil": "Vert", "kaki": "Vert",
+            "gris": "Gris", "grisch": "Gris", "grischine": "Gris", "grisclr": "Gris",
+            "beige": "Beige", "taupe": "Beige", "grege": "Beige",
+            "marron": "Marron", "rose": "Rose", "rouge": "Rouge"
+        }
+        return color_tokens.get(token, "")
+
+    @staticmethod
+    def _color_from_description(description: str) -> str:
+        text = description.lower()
+        aliases = {
+            "noir": ("noir", "noire", "black"), "blanc": ("blanc", "blanche", "white", "écru", "ecru"),
+            "bleu marine": ("bleu marine", "marine", "navy"), "bleu": ("bleu", "blue"),
+            "gris": ("gris", "grise", "grey", "gray"), "beige": ("beige", "sable", "camel"),
+            "marron": ("marron", "brun", "brown"), "vert": ("vert", "verte", "kaki", "olive"),
+            "rouge": ("rouge", "bordeaux", "red"), "rose": ("rose", "pink"),
+        }
+        for color, terms in aliases.items():
+            if any(term in text for term in terms):
+                return color.capitalize()
+        return ""
+
+    @staticmethod
+    def _is_verified_product_page(html: str, expected_name: str, expected_price: Any) -> bool:
+        soup = BeautifulSoup(html, "html.parser")
+        for script in soup.find_all("script", type="application/ld+json"):
+            try:
+                data = json.loads(script.string or "{}")
+                items = data if isinstance(data, list) else (data.get("@graph", [data]) if isinstance(data, dict) else [])
+                for product in items:
+                    product_type = product.get("@type") if isinstance(product, dict) else None
+                    if not isinstance(product, dict) or not (
+                        product_type in ("Product", "IndividualProduct")
+                        or isinstance(product_type, list) and any(t in ("Product", "IndividualProduct") for t in product_type)
+                    ):
+                        continue
+                    offers = product.get("offers", {})
+                    if isinstance(offers, list):
+                        offers = offers[0] if offers else {}
+                    page_price = offers.get("price") if isinstance(offers, dict) else None
+                    page_currency = str(offers.get("priceCurrency", "")).upper() if isinstance(offers, dict) else ""
+                    page_availability = str(offers.get("availability", "")).lower() if isinstance(offers, dict) else ""
+                    same_name = str(product.get("name", "")).strip().casefold() == str(expected_name).strip().casefold()
+                    same_price = page_price is not None and float(page_price) == float(expected_price)
+                    in_stock = any(marker in page_availability for marker in ("instock", "limitedavailability"))
+                    if same_name and same_price and page_currency == "TND" and in_stock:
+                        return True
+            except (ValueError, TypeError, json.JSONDecodeError):
+                continue
+        return False
 
 
 class VerifiedTunisianCatalogFeed(BaseStoreScraper):

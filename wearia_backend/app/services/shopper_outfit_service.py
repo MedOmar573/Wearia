@@ -1,8 +1,11 @@
 import logging
+import re
+import unicodedata
 from typing import List, Dict, Optional, Tuple
 from app.models.shopping import ArticleCatalogue
 from app.models.user import Utilisateur
 from app.schemas.shopper import ShopperCriteria, ShopperOutfit, ShopperArticle
+from app.services.product_search_service import _requested_definitions
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +30,16 @@ class ShopperOutfitService:
         chaussures = grouped_items.get("chaussures", [])
         robes = grouped_items.get("robes", [])
         vestes = grouped_items.get("vestes", [])
-        accessoires = grouped_items.get("accessoires", [])
 
         candidate_outfits: List[Tuple[List[ArticleCatalogue], float, int, str]] = []
 
         budget_max = criteres.budget if (criteres.budget and criteres.budget > 0) else None
+        requested_categories = _requested_definitions(criteres.requested_types)
+        allow_separates = set(requested_categories) != {"robes"}
+        allow_robes = not requested_categories or "robes" in requested_categories
 
         # 1. Génération des combinaisons : Haut + Bas + Chaussures
-        for h in hauts:
+        for h in (hauts if allow_separates else []):
             for b in bas:
                 # Éviter de mettre le même article en haut et en bas
                 if h.id == b.id:
@@ -50,13 +55,6 @@ class ShopperOutfitService:
                     items = [h, b, c]
                     total_prix = sum(it.prix for it in items)
 
-                    # Si budget respecté, tester si on peut ajouter une casquette/accessoire ou veste
-                    if budget_max and (total_prix + 20.0 <= budget_max) and accessoires:
-                        acc = accessoires[0]
-                        if total_prix + acc.prix <= budget_max:
-                            items.append(acc)
-                            total_prix += acc.prix
-
                     # Filtre budget strict : si budget imposé, ignorer ce qui dépasse
                     if budget_max and total_prix > budget_max:
                         continue
@@ -65,7 +63,7 @@ class ShopperOutfitService:
                     candidate_outfits.append((items, total_prix, score, explication))
 
         # 2. Génération des combinaisons Robes (si applicable)
-        for r in robes:
+        for r in (robes if allow_robes else []):
             for c in chaussures:
                 items = [r, c]
                 total_prix = sum(it.prix for it in items)
@@ -89,20 +87,17 @@ class ShopperOutfitService:
         # 4. Trier par score de compatibilité décroissant
         candidate_outfits.sort(key=lambda x: x[2], reverse=True)
 
-        # 5. Sélection de tenues STRICTEMENT DIVERSIFIÉES (Zéro répétition de pièces)
+        # 5. Sélection réellement distincte : un article ne peut pas réapparaître
+        # dans une autre proposition. Si le catalogue est trop petit, on retourne
+        # moins de tenues plutôt que de recycler les mêmes pièces.
         selected_outfits: List[ShopperOutfit] = []
-        used_top_ids = set()
-        used_bottom_ids = set()
-        used_shoe_ids = set()
+        used_product_ids = set()
+        used_product_fingerprints = set()
 
-        def get_item_category_id(items_list, cat_target: str) -> Optional[int]:
-            for it in items_list:
-                if it.type_vetement and it.type_vetement.categorie:
-                    if cat_target in it.type_vetement.categorie.nom.lower():
-                        return it.id
-                elif cat_target == "chaussure" and it.type_vetement and "basket" in it.type_vetement.nom.lower():
-                    return it.id
-            return None
+        def product_fingerprint(item: ArticleCatalogue) -> str:
+            raw = " ".join((item.nom or "", item.couleur.nom if item.couleur else ""))
+            normalized = unicodedata.normalize("NFKD", raw.lower()).encode("ascii", "ignore").decode("ascii")
+            return re.sub(r"[^a-z0-9]+", " ", normalized).strip()
 
         def build_outfit_dto(idx: int, items_list: List[ArticleCatalogue], price: float, sc: int, exp: str) -> ShopperOutfit:
             articles_dto = [
@@ -117,7 +112,8 @@ class ShopperOutfitService:
                     taillesDisponibles=it.taillesDisponibles or "S, M, L, XL",
                     typeVetementNom=it.type_vetement.nom if it.type_vetement else "Article",
                     couleurNom=it.couleur.nom if it.couleur else "Noir",
-                    categorieNom=it.type_vetement.categorie.nom if (it.type_vetement and it.type_vetement.categorie) else "Mode"
+                    categorieNom=it.type_vetement.categorie.nom if (it.type_vetement and it.type_vetement.categorie) else "Mode",
+                    verifieLe=it.dateDerniereSynchro
                 )
                 for it in items_list
             ]
@@ -162,54 +158,24 @@ class ShopperOutfitService:
                 explication=exp
             )
 
-        # Passe 1 : Diversité Maximale (Haut unique, Bas unique et Chaussures uniques)
+        seen_combinations = set()
         for items, total_prix, score, explication in candidate_outfits:
-            h_id = get_item_category_id(items, "haut")
-            b_id = get_item_category_id(items, "bas")
-            c_id = get_item_category_id(items, "chaussure")
-
-            if h_id and h_id in used_top_ids:
+            item_ids = {item.id for item in items}
+            fingerprints = {product_fingerprint(item) for item in items}
+            combination = tuple(sorted(fingerprints))
+            if combination in seen_combinations:
                 continue
-            if b_id and b_id in used_bottom_ids:
-                continue
-            if c_id and c_id in used_shoe_ids and len(used_shoe_ids) < len(chaussures):
+            if item_ids & used_product_ids or fingerprints & used_product_fingerprints:
                 continue
 
-            if h_id: used_top_ids.add(h_id)
-            if b_id: used_bottom_ids.add(b_id)
-            if c_id: used_shoe_ids.add(c_id)
-
-            selected_outfits.append(build_outfit_dto(len(selected_outfits) + 1, items, total_prix, score, explication))
+            selected_outfits.append(
+                build_outfit_dto(len(selected_outfits) + 1, items, total_prix, score, explication)
+            )
+            used_product_ids.update(item_ids)
+            used_product_fingerprints.update(fingerprints)
+            seen_combinations.add(combination)
             if len(selected_outfits) >= max_outfits:
                 break
-
-        # Passe 2 : Si moins de max_outfits (ex: stock limité), autoriser réutilisation partielle mais INTERDIRE le même couple (Haut, Bas)
-        if len(selected_outfits) < max_outfits:
-            for items, total_prix, score, explication in candidate_outfits:
-                h_id = get_item_category_id(items, "haut")
-                b_id = get_item_category_id(items, "bas")
-
-                already_same_pair = False
-                for prev in selected_outfits:
-                    prev_h = get_item_category_id([it for it in items if any(a.id == it.id for a in prev.articles)], "haut")
-                    prev_b = get_item_category_id([it for it in items if any(a.id == it.id for a in prev.articles)], "bas")
-                    # Comparer IDs avec les articles déjà sélectionnés
-                    prev_ids = {a.id for a in prev.articles}
-                    if h_id in prev_ids and b_id in prev_ids:
-                        already_same_pair = True
-                        break
-
-                if already_same_pair:
-                    continue
-
-                # Vérifier signature exacte
-                combo_sig = tuple(sorted(it.id for it in items))
-                if any(tuple(sorted(a.id for a in prev.articles)) == combo_sig for prev in selected_outfits):
-                    continue
-
-                selected_outfits.append(build_outfit_dto(len(selected_outfits) + 1, items, total_prix, score, explication))
-                if len(selected_outfits) >= max_outfits:
-                    break
 
         return selected_outfits
 

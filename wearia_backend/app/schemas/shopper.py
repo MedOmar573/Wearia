@@ -1,10 +1,19 @@
 from typing import List, Optional
+from datetime import datetime
 from pydantic import BaseModel, Field
 
 class ShopperPromptRequest(BaseModel):
     prompt: str = Field(..., description="Demande en langage naturel de l'utilisateur")
     budget: Optional[float] = Field(None, description="Budget maximal en TND spécifié directement par l'utilisateur")
     genre: Optional[str] = Field(None, description="Genre optionnel (HOMME ou FEMME) pour restreindre la sélection")
+    occasion: Optional[str] = None
+    style: Optional[str] = None
+    colors: List[str] = Field(default_factory=list)
+    avoided_colors: List[str] = Field(default_factory=list)
+    requested_types: List[str] = Field(default_factory=list, description="Types de produits explicitement demandés; filtrés strictement par catégorie")
+    season: Optional[str] = None
+    excluded_types: List[str] = Field(default_factory=list)
+    excluded_product_ids: List[int] = Field(default_factory=list)
 
 class ShopperCriteria(BaseModel):
     style: str = Field("Décontracté", description="Style vestimentaire extrait (streetwear, chic, casual...)")
@@ -15,6 +24,10 @@ class ShopperCriteria(BaseModel):
     budget: Optional[float] = Field(None, description="Budget maximal extrait")
     currency: str = Field("TND", description="Devise détectée")
     search_queries: List[str] = Field(default_factory=list, description="Requêtes de recherche e-commerce formulées")
+    avoided_colors: List[str] = Field(default_factory=list)
+    requested_types: List[str] = Field(default_factory=list)
+    season: Optional[str] = None
+    excluded_types: List[str] = Field(default_factory=list)
 
 class ShopperArticle(BaseModel):
     id: int
@@ -28,6 +41,7 @@ class ShopperArticle(BaseModel):
     typeVetementNom: str
     couleurNom: str
     categorieNom: str
+    verifieLe: Optional[datetime] = None
 
     class Config:
         from_attributes = True

@@ -9,6 +9,7 @@ from app.models.planning import RoutineHebdomadaire, Evenement
 from app.models.clothing import Vetement, tenue_vetements
 from app.models.outfit import Tenue, Feedback
 from app.models.shopping import ArticleCatalogue, DemandeAchat, SuggestionAchat
+from app.models.otp import EmailOTP
 
 __all__ = [
     "Base",
@@ -19,6 +20,7 @@ __all__ = [
     "RoutineHebdomadaire", "Evenement",
     "Vetement", "tenue_vetements",
     "Tenue", "Feedback",
-    "ArticleCatalogue", "DemandeAchat", "SuggestionAchat"
+    "ArticleCatalogue", "DemandeAchat", "SuggestionAchat",
+    "EmailOTP"
 ]
 

@@ -48,6 +48,21 @@ def save_custom_outfit(
             detail="Certains vêtements sont introuvables ou n'appartiennent pas à votre dressing."
         )
 
+    # Vérification d'unicité dans les favoris
+    if outfit_in.estFavorite:
+        target_ids = set(outfit_in.vetement_ids)
+        existing_favs = db.query(Tenue).filter(
+            Tenue.utilisateur_id == current_user.id,
+            Tenue.estFavorite == True
+        ).all()
+        for fav in existing_favs:
+            fav_ids = set(v.id for v in fav.vetements)
+            if fav_ids and fav_ids == target_ids:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Cette combinaison existe déjà dans vos favoris."
+                )
+
     tenue = Tenue(
         utilisateur_id=current_user.id,
         datePrevue=outfit_in.datePrevue or datetime.utcnow().date(),
@@ -92,11 +107,12 @@ def update_outfit(
     id: int,
     estFavorite: Optional[bool] = None,
     marquee_portee: Optional[bool] = None,
+    occasion: Optional[str] = None,
     current_user: Utilisateur = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Modifier une tenue (ex: ajouter/retirer des favoris, marquer comme portée).
+    Modifier une tenue (ex: ajouter/retirer des favoris, marquer comme portée, changer l'occasion).
     """
     tenue = db.query(Tenue).filter(
         Tenue.id == id,
@@ -106,7 +122,25 @@ def update_outfit(
     if not tenue:
         raise HTTPException(status_code=404, detail="Tenue introuvable.")
 
+    if occasion:
+        tenue.occasion = occasion
+
     if estFavorite is not None:
+        if estFavorite is True:
+            # Vérification d'unicité de la combinaison dans les favoris
+            current_ids = set(v.id for v in tenue.vetements)
+            existing_favs = db.query(Tenue).filter(
+                Tenue.utilisateur_id == current_user.id,
+                Tenue.estFavorite == True,
+                Tenue.id != tenue.id
+            ).all()
+            for fav in existing_favs:
+                fav_ids = set(v.id for v in fav.vetements)
+                if fav_ids and fav_ids == current_ids:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Cette combinaison existe déjà dans vos favoris."
+                    )
         tenue.estFavorite = estFavorite
     if marquee_portee:
         tenue.datePortee = datetime.utcnow()
@@ -135,6 +169,62 @@ def delete_outfit(
     db.delete(tenue)
     db.commit()
     return {"message": "Tenue supprimée avec succès."}
+
+@router.delete("/outfits/{id}/items/{vetement_id}", response_model=TenueResponse)
+def remove_item_from_outfit(
+    id: int,
+    vetement_id: int,
+    current_user: Utilisateur = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Retirer une pièce d'une tenue existante.
+    """
+    tenue = db.query(Tenue).filter(
+        Tenue.id == id,
+        Tenue.utilisateur_id == current_user.id
+    ).first()
+
+    if not tenue:
+        raise HTTPException(status_code=404, detail="Tenue introuvable.")
+
+    tenue.vetements = [v for v in tenue.vetements if v.id != vetement_id]
+    db.commit()
+    db.refresh(tenue)
+    return tenue
+
+@router.post("/outfits/{id}/items/{vetement_id}", response_model=TenueResponse)
+def add_item_to_outfit(
+    id: int,
+    vetement_id: int,
+    current_user: Utilisateur = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Ajouter une pièce à une tenue existante.
+    """
+    tenue = db.query(Tenue).filter(
+        Tenue.id == id,
+        Tenue.utilisateur_id == current_user.id
+    ).first()
+
+    if not tenue:
+        raise HTTPException(status_code=404, detail="Tenue introuvable.")
+
+    vetement = db.query(Vetement).filter(
+        Vetement.id == vetement_id,
+        Vetement.utilisateur_id == current_user.id
+    ).first()
+
+    if not vetement:
+        raise HTTPException(status_code=404, detail="Vêtement introuvable.")
+
+    if vetement not in tenue.vetements:
+        tenue.vetements.append(vetement)
+        db.commit()
+        db.refresh(tenue)
+
+    return tenue
 
 @router.get("/outfits/{id}/feedback", response_model=FeedbackResponse)
 def get_outfit_feedback(

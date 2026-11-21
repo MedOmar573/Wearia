@@ -23,7 +23,15 @@ Un fichier `.env` est prêt à l'emploi. Vous pouvez modifier la variable `DATAB
 ```env
 DATABASE_URL="postgresql+psycopg://postgres:postgres@localhost:5432/wearia_db"
 USE_SQLITE_FALLBACK=True
+# Sources configurées pour le marché tunisien
+WEARIA_SHOPPER_STORES="Exist Tunisie Homme|https://www.exist.com.tn|/235-t-shirts,/189-jeans,/196-baskets,/206-chemises;Mabrouk Femme|https://mabrouk.tn|/categorie-produit/vetements-femmes/pulls-t-shirts/,/categorie-produit/vetements-femmes/jupes-pantalons/,/categorie-produit/accessoires/chaussures/"
 ```
+
+Le Shopper synchronise ces pages au démarrage d'une recherche si le catalogue n'a pas
+été actualisé dans les 30 dernières minutes. Il n'ajoute une fiche que si la page produit
+HTTPS confirme le nom et le prix en JSON-LD et annonce un stock disponible. Il respecte
+`robots.txt`. Sans source configurée ou sans métadonnées vérifiables, aucune tenue n'est
+retournée; aucune liste de démonstration n'est utilisée.
 
 ### 4. Lancer le serveur FastAPI
 ```bash
@@ -79,4 +87,5 @@ Le modèle et le normaliseur sont enregistrés dans le dossier `models/` sous `k
 | **GET / POST / PUT / DELETE** | `/outfits` | Historique et favoris |
 | **GET / POST** | `/outfits/{id}/feedback` | Avis sur une tenue (AIME / MOYEN / PAS_POUR_MOI) |
 | **GET** | `/shopping/suggestions` | Suggestions d'achat (Personal Shopper IA) |
+| **POST** | `/shopper/generate-outfits` | Tenues issues des fiches produit vérifiées des boutiques configurées |
 

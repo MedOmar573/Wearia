@@ -9,6 +9,7 @@ class RoutineHebdomadaireCreate(BaseModel):
     estActive: bool = True
 
 class RoutineHebdomadaireUpdate(BaseModel):
+    jourSemaine: Optional[JourSemaine] = None
     occasion: Optional[Occasion] = None
     estActive: Optional[bool] = None
 

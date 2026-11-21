@@ -110,8 +110,8 @@ class DataNormalizer:
                 if matched:
                     return matched
 
-        # Par défaut : Noir (couleur la plus neutre)
-        return next((c for c in all_colors if c.nom == "Noir"), all_colors[0] if all_colors else None)
+        # Ne pas inventer une couleur lorsque la fiche ne la publie pas.
+        return None
 
     @staticmethod
     def match_style(title: str, description: str, db: Session) -> Optional[StyleVestimentaire]:
