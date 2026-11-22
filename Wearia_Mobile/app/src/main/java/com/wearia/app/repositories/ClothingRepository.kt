@@ -1,5 +1,6 @@
 package com.wearia.app.repositories
 
+import androidx.room.withTransaction
 import com.wearia.app.WeariaApplication
 import com.wearia.app.data.local.entity.VetementCacheEntity
 import com.wearia.app.data.remote.dto.*
@@ -19,6 +20,7 @@ class ClothingRepository {
     private val clothingDao = WeariaApplication.instance.database.clothingDao()
 
     private fun authHeader() = session.getAuthHeader()
+    private fun currentUserId() = session.getUserId()
 
     suspend fun getClothes(
         categorieId: Int? = null,
@@ -30,8 +32,21 @@ class ClothingRepository {
             val response = api.getClothes(authHeader(), categorieId, couleurId, statut, search)
             if (response.isSuccessful && response.body() != null) {
                 val list = response.body()!!
-                // Mise en cache locale (Room)
-                clothingDao.insertAll(list.map { it.toCacheEntity() })
+                val uid = currentUserId()
+                if (uid > 0) {
+                    val isUnfiltered = categorieId == null && couleurId == null && statut == null && search.isNullOrBlank()
+                    if (isUnfiltered) {
+                        val entities = list.map { it.toCacheEntity(uid) }
+                        WeariaApplication.instance.database.withTransaction {
+                            clothingDao.clearClothesForUser(uid)
+                            if (entities.isNotEmpty()) {
+                                clothingDao.insertAll(entities)
+                            }
+                        }
+                    } else {
+                        clothingDao.insertAll(list.map { it.toCacheEntity(uid) })
+                    }
+                }
                 Resource.Success(list)
             } else {
                 Resource.Error("Erreur lors du chargement des vêtements.")
@@ -71,9 +86,11 @@ class ClothingRepository {
         return try {
             val response = api.deleteClothing(authHeader(), id)
             if (response.isSuccessful) {
-                clothingDao.getById(id)?.let {
-                    // Supprimer du cache local aussi
-                    clothingDao.clearAll()
+                val uid = currentUserId()
+                if (uid > 0) {
+                    clothingDao.getByIdForUser(id, uid)?.let {
+                        clothingDao.clearClothesForUser(uid)
+                    }
                 }
                 Resource.Success(Unit)
             } else {
@@ -112,10 +129,20 @@ class ClothingRepository {
         }
     }
 
-    fun getLocalClothes() = clothingDao.getAllClothes()
+    suspend fun deleteTempUpload(imageUrl: String) {
+        if (imageUrl.isBlank()) return
+        try {
+            api.deleteTempUpload(authHeader(), imageUrl)
+        } catch (_: Exception) {
+            // Nettoyage best-effort
+        }
+    }
 
-    private fun VetementResponse.toCacheEntity() = VetementCacheEntity(
+    fun getLocalClothes() = clothingDao.getClothesForUser(currentUserId())
+
+    private fun VetementResponse.toCacheEntity(userId: Int = currentUserId()) = VetementCacheEntity(
         id = id,
+        userId = userId,
         nom = nom,
         photoUrl = photoUrl,
         categorie = typeVetement.categorieId.toString(),

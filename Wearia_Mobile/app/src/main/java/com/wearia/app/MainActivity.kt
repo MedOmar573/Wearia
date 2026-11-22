@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
             R.id.colorPreferencesFragment,
             R.id.loginFragment,
             R.id.registerFragment,
+            R.id.verifyOtpFragment,
             R.id.cameraFragment
         )
 

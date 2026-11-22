@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="105dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/colorSurface"
+    app:strokeColor="@color/colorBorder"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="6dp">
+
+        <!-- Image de la pièce -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/colorBackground">
+
+            <ImageView
+                android:id="@+id/iv_piece_thumb"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Photo de la pièce" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Catégorie de la pièce -->
+        <TextView
+            android:id="@+id/tv_piece_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Haut"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="@color/badge_haut_text"
+            android:background="@drawable/bg_badge_haut"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:layout_marginTop="6dp"
+            tools:ignore="HardcodedText" />
+
+        <!-- Nom du vêtement -->
+        <TextView
+            android:id="@+id/tv_piece_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="T-shirt"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTextPrimary"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginTop="3dp"
+            tools:ignore="HardcodedText" />
+
+        <!-- Couleur de la pièce -->
+        <TextView
+            android:id="@+id/tv_piece_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Blanc"
+            android:textSize="11sp"
+            android:textColor="@color/colorTextSecondary"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="2dp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

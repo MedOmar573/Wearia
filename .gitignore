@@ -17,3 +17,11 @@ node_modules/
 # IDE
 .idea/
 .vscode/
+
+# Python bytecode & logs
+**/__pycache__/
+*.pyc
+hs_err_pid*.log
+replay_pid*.log
+wearia_backend/uploads/*.jpg
+wearia_backend/uploads/*.png

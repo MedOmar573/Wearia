@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_bottom_sheet"
+    android:padding="22dp">
+
+    <!-- Poignée supérieure -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_sheet_drag_handle" />
+
+    <TextView
+        android:id="@+id/tv_occasion_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Type de combinaison"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choisissez l'occasion de cette tenue favorite :"
+        android:textSize="13sp"
+        android:textColor="@color/colorTextSecondary"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Chips pour le type de combinaison -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginBottom="20dp">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_occasions_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_dialog_outings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sortie"
+                android:checkable="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="13sp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_dialog_university"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Université"
+                android:checkable="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="13sp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_dialog_work"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Travail"
+                android:checkable="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="13sp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_dialog_daily"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quotidien"
+                android:checkable="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="13sp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_dialog_events"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Événements"
+                android:checkable="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="13sp" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_confirm_occasion"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Confirmer"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@color/colorPrimary"
+        app:cornerRadius="26dp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel_occasion"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:text="Annuler"
+        android:textColor="@color/colorTextSecondary"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

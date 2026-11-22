@@ -26,8 +26,14 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
     private val _types = MutableLiveData<List<TypeVetementResponse>>()
     val types: LiveData<List<TypeVetementResponse>> = _types
 
+    private val _typesState = MutableLiveData<Resource<List<TypeVetementResponse>>>()
+    val typesState: LiveData<Resource<List<TypeVetementResponse>>> = _typesState
+
     private val _styles = MutableLiveData<List<StyleVestimentaireResponse>>()
     val styles: LiveData<List<StyleVestimentaireResponse>> = _styles
+
+    private val _stylesState = MutableLiveData<Resource<List<StyleVestimentaireResponse>>>()
+    val stylesState: LiveData<Resource<List<StyleVestimentaireResponse>>> = _stylesState
 
     private val _categories = MutableLiveData<List<CategorieResponse>>()
     val categories: LiveData<List<CategorieResponse>> = _categories
@@ -68,21 +74,26 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
 
     fun loadReferentials(genre: String? = null) {
         viewModelScope.launch {
+            _stylesState.value = Resource.Loading
+            _typesState.value = Resource.Loading
+
             when (val res = repository.getColors()) {
                 is Resource.Success -> _colors.value = res.data
                 else -> {}
             }
-            when (val res = repository.getStyles()) {
-                is Resource.Success -> _styles.value = res.data
-                else -> {}
+            val stylesRes = repository.getStyles()
+            _stylesState.value = stylesRes
+            if (stylesRes is Resource.Success) {
+                _styles.value = stylesRes.data
             }
             when (val res = repository.getCategories(genre)) {
                 is Resource.Success -> _categories.value = res.data
                 else -> {}
             }
-            when (val res = repository.getTypes(genre)) {
-                is Resource.Success -> _types.value = res.data
-                else -> {}
+            val typesRes = repository.getTypes(genre)
+            _typesState.value = typesRes
+            if (typesRes is Resource.Success) {
+                _types.value = typesRes.data
             }
         }
     }
@@ -97,6 +108,13 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
     fun createRoutine(jour: String, occasion: String) {
         viewModelScope.launch {
             repository.createRoutine(jour, occasion)
+            loadRoutines()
+        }
+    }
+
+    fun updateRoutine(id: Int, jour: String, occasion: String, estActive: Boolean = true) {
+        viewModelScope.launch {
+            repository.updateRoutine(id, jour, occasion, estActive)
             loadRoutines()
         }
     }

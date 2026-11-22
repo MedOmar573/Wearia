@@ -54,7 +54,7 @@ class DressingFragment : Fragment() {
             "Jean", "Pantalon", "Short",
             "Veste", "Manteau",
             "Baskets", "Chaussures de ville",
-            "Ceinture", "Chapeau", "Sac", "Écharpe", "Montre"
+            "Chapeau", "Sac"
         )
         val FEMME_TYPES = listOf(
             "Chemise", "T-Shirt", "Polo", "Pull", "Sweat",
@@ -62,8 +62,9 @@ class DressingFragment : Fragment() {
             "Robe",
             "Veste", "Manteau",
             "Baskets", "Bottes", "Chaussures de ville",
-            "Ceinture", "Chapeau", "Sac", "Écharpe", "Montre"
+            "Chapeau", "Sac"
         )
+        private val EXCLUDED_TYPES = setOf("ceinture", "écharpe", "echarpe", "montre")
     }
 
     private val galleryLauncher =
@@ -277,7 +278,10 @@ class DressingFragment : Fragment() {
         val serverTypes = profileViewModel.types.value
 
         val typesList = if (!serverTypes.isNullOrEmpty()) {
-            val list = serverTypes.map { it.nom }.toMutableList()
+            val list = serverTypes
+                .map { it.nom }
+                .filterNot { it.trim().lowercase() in EXCLUDED_TYPES }
+                .toMutableList()
             if (isHomme) {
                 // Règle stricte : exclure Robe, Jupe, Bottes pour homme
                 list.removeAll { it.equals("Robe", true) || it.equals("Jupe", true) || it.equals("Bottes", true) }
@@ -317,7 +321,7 @@ class DressingFragment : Fragment() {
                 "Bas (Pantalons, Jeans, Shorts)",
                 "Vestes & Manteaux",
                 "Chaussures (Baskets, Chaussures de ville)",
-                "Accessoires (Sacs, Ceintures, Montres, Chapeaux)"
+                "Accessoires (Sacs, Chapeaux)"
             )
 
             MaterialAlertDialogBuilder(requireContext())
@@ -364,7 +368,7 @@ class DressingFragment : Fragment() {
                 "Robes & Combinaisons",
                 "Vestes & Manteaux",
                 "Chaussures (Baskets, Bottes, Chaussures)",
-                "Accessoires (Sacs, Bijoux, Ceintures)"
+                "Accessoires (Sacs, Chapeaux)"
             )
 
             MaterialAlertDialogBuilder(requireContext())
@@ -528,6 +532,9 @@ class DressingFragment : Fragment() {
                             item.typeVetement.nom.contains("access", true) ||
                             item.nom.contains("access", true) ||
                             item.typeVetement.nom.contains("sac", true) ||
+                            item.typeVetement.nom.contains("chapeau", true) ||
+                            item.typeVetement.nom.contains("casquette", true) ||
+                            item.typeVetement.nom.contains("bonnet", true) ||
                             item.typeVetement.nom.contains("ceinture", true) ||
                             item.typeVetement.nom.contains("montre", true)
                     else -> item.typeVetement.nom.contains(currentCategoryFilter, ignoreCase = true) ||

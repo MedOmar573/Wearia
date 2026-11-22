@@ -1,166 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/colorBackground"
-    android:paddingHorizontal="18dp"
-    android:paddingTop="24dp">
+    android:background="@color/colorBackground">
 
-    <!-- En-tête Mes Tenues -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Mes Tenues"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorTextPrimary"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Onglets Segmentés Favoris / Historique -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginBottom="16dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="18dp"
+        android:paddingTop="20dp">
 
+        <!-- En-tête Titre Principal (Sans flèche retour) -->
         <LinearLayout
-            android:id="@+id/tab_favorites"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true">
+            android:layout_marginBottom="16dp">
 
             <TextView
-                android:id="@+id/tv_tab_favorites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Favoris"
-                android:textSize="15sp"
+                android:text="Mes Combinaisons Favorites"
+                android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
-                android:paddingBottom="8dp" />
-
-            <View
-                android:id="@+id/indicator_favorites"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="@drawable/bg_brand_gradient" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/tab_history"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true">
+                android:textColor="@color/colorTextPrimary" />
 
             <TextView
-                android:id="@+id/tv_tab_history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Historique"
-                android:textSize="15sp"
+                android:text="Vos tenues préférées en un coup d'œil"
+                android:textSize="13sp"
                 android:textColor="@color/colorTextSecondary"
-                android:paddingBottom="8dp" />
-
-            <View
-                android:id="@+id/indicator_history"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="@android:color/transparent" />
+                android:layout_marginTop="2dp" />
         </LinearLayout>
-    </LinearLayout>
 
-    <!-- Chips Catégories d'Occasions -->
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:layout_marginBottom="14dp">
+        <!-- Chips Catégories d'Occasions avec sélection et coche -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginBottom="14dp">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group_occasions"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_occasions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_occasion_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Toutes"
+                    android:checkable="true"
+                    android:checked="true"
+                    app:checkedIconVisible="true"
+                    app:checkedIconTint="@color/chip_filter_text_color"
+                    app:chipBackgroundColor="@color/chip_filter_background"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="20dp"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_occasion_university"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Université"
+                    android:checkable="true"
+                    android:checked="false"
+                    app:checkedIconVisible="true"
+                    app:checkedIconTint="@color/chip_filter_text_color"
+                    app:chipBackgroundColor="@color/chip_filter_background"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="20dp"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_occasion_work"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Travail"
+                    android:checkable="true"
+                    android:checked="false"
+                    app:checkedIconVisible="true"
+                    app:checkedIconTint="@color/chip_filter_text_color"
+                    app:chipBackgroundColor="@color/chip_filter_background"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="20dp"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_occasion_outings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sorties"
+                    android:checkable="true"
+                    android:checked="false"
+                    app:checkedIconVisible="true"
+                    app:checkedIconTint="@color/chip_filter_text_color"
+                    app:chipBackgroundColor="@color/chip_filter_background"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="20dp"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_occasion_events"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Événements"
+                    android:checkable="true"
+                    android:checked="false"
+                    app:checkedIconVisible="true"
+                    app:checkedIconTint="@color/chip_filter_text_color"
+                    app:chipBackgroundColor="@color/chip_filter_background"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="20dp"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_occasion_daily"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Quotidien"
+                    android:checkable="true"
+                    android:checked="false"
+                    app:checkedIconVisible="true"
+                    app:checkedIconTint="@color/chip_filter_text_color"
+                    app:chipBackgroundColor="@color/chip_filter_background"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:chipCornerRadius="20dp"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:textSize="13sp" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:singleSelection="true">
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/colorPrimary"
+            android:visibility="gone"
+            android:layout_marginVertical="24dp" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_occasion_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Toutes"
-                android:checked="true"
-                style="@style/Widget.Wearia.Chip"
-                app:chipBackgroundColor="@color/colorPrimary"
-                android:textColor="@color/colorOnPrimary" />
+        <TextView
+            android:id="@+id/tv_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Aucune combinaison favorite enregistrée pour le moment.\nTouchez 'Créer une tenue' ou générez une tenue pour la retrouver ici."
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="14sp"
+            android:lineSpacingExtra="3dp"
+            android:visibility="gone"
+            android:padding="32dp" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_occasion_university"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Université"
-                style="@style/Widget.Wearia.Chip" />
+        <!-- Grid 2 colonnes des tenues favorites -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_outfits"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="88dp" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_occasion_work"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Travail"
-                style="@style/Widget.Wearia.Chip" />
+    </LinearLayout>
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_occasion_outings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sorties"
-                style="@style/Widget.Wearia.Chip" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_occasion_events"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Événements"
-                style="@style/Widget.Wearia.Chip" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
+    <!-- Bouton Flottant pour créer une combinaison favorite depuis le dressing -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_create_outfit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminateTint="@color/colorPrimary"
-        android:visibility="gone"
-        android:layout_marginVertical="24dp" />
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:text="Créer une tenue"
+        android:textColor="@android:color/white"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@android:color/white"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="4dp" />
 
-    <TextView
-        android:id="@+id/tv_empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Aucune tenue enregistrée pour le moment.\nGénérez une tenue et touchez 'J'aime' pour la retrouver ici."
-        android:textColor="@color/colorTextSecondary"
-        android:textSize="14sp"
-        android:lineSpacingExtra="3dp"
-        android:visibility="gone"
-        android:padding="32dp" />
-
-    <!-- Grid 2 colonnes des tenues -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_outfits"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="28dp" />
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

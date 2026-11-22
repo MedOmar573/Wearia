@@ -11,15 +11,21 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.card.MaterialCardView
 import com.wearia.app.R
 import com.wearia.app.WeariaApplication
 import com.wearia.app.databinding.FragmentProfileBinding
+import com.wearia.app.repositories.AuthRepository
 import com.wearia.app.utils.Resource
 import com.wearia.app.utils.addPressEffect
+import com.wearia.app.viewmodel.ClothingViewModel
 import com.wearia.app.viewmodel.ProfileViewModel
+import kotlinx.coroutines.launch
 
 /**
  * ProfileFragment : Gestion du profil, style et routines hebdomadaires.
@@ -29,6 +35,7 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels { ProfileViewModel.Factory() }
+    private val clothingViewModel: ClothingViewModel by activityViewModels { ClothingViewModel.Factory() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -86,9 +93,31 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnLogout.setOnClickListener {
-            session.clearSession()
-            Toast.makeText(requireContext(), "Déconnexion réussie.", Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.loginFragment)
+            viewLifecycleOwner.lifecycleScope.launch {
+                clothingViewModel.clearSessionState()
+                AuthRepository().logoutAndClearCaches()
+                Toast.makeText(requireContext(), "Déconnexion réussie.", Toast.LENGTH_SHORT).show()
+                val navController = findNavController()
+                // Purger les backstacks sauvegardés des onglets (ex. AI Shopper, Dressing, Accueil)
+                // afin qu'aucun ViewModel ni proposition du compte précédent ne fuite vers un autre compte
+                listOf(
+                    R.id.shoppingFragment,
+                    R.id.dressingFragment,
+                    R.id.outfitsHistoryFragment,
+                    R.id.homeFragment
+                ).forEach { tabId ->
+                    try {
+                        navController.clearBackStack(tabId)
+                    } catch (_: Exception) {
+                        // Onglet non encore sauvegardé
+                    }
+                }
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.nav_graph, true)
+                    .setLaunchSingleTop(true)
+                    .build()
+                navController.navigate(R.id.loginFragment, null, navOptions)
+            }
         }
     }
 
@@ -192,19 +221,78 @@ class ProfileFragment : Fragment() {
                 addView(innerLayout)
 
                 setOnClickListener {
-                    com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("Routine : $dayFr")
-                        .setMessage("Occasion programmée : $occasionFr\nVoulez-vous supprimer cette routine ?")
-                        .setPositiveButton("Supprimer") { _, _ ->
-                            viewModel.deleteRoutine(routine.id)
-                            Toast.makeText(requireContext(), "Routine supprimée", Toast.LENGTH_SHORT).show()
-                        }
-                        .setNegativeButton("Fermer", null)
-                        .show()
+                    showEditRoutineDialog(routine)
                 }
             }
             binding.layoutRoutinesList.addView(card)
         }
+    }
+
+    private fun showEditRoutineDialog(routine: com.wearia.app.data.remote.dto.RoutineHebdomadaireResponse) {
+        val days = listOf("LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI", "DIMANCHE")
+        val daysFr = listOf("Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche")
+
+        val occasions = listOf("UNIVERSITE", "TRAVAIL", "SORTIE", "EVENEMENT", "SPORT", "QUOTIDIEN")
+        val occasionsFr = listOf("Université", "Travail", "Sortie", "Événement", "Sport", "Quotidien")
+
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (20f * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad, pad, (8f * resources.displayMetrics.density).toInt())
+        }
+
+        val daySpinner = Spinner(requireContext()).apply {
+            adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, daysFr)
+            val currentDayIdx = days.indexOfFirst { it.equals(routine.jourSemaine, ignoreCase = true) }
+            if (currentDayIdx >= 0) setSelection(currentDayIdx)
+        }
+        val occasionSpinner = Spinner(requireContext()).apply {
+            adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, occasionsFr)
+            val currentOccIdx = occasions.indexOfFirst { it.equals(routine.occasion, ignoreCase = true) }
+            if (currentOccIdx >= 0) setSelection(currentOccIdx)
+        }
+
+        val labelDay = TextView(requireContext()).apply {
+            text = "Jour de la semaine :"
+            textSize = 14f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.colorTextPrimary))
+        }
+
+        val labelOccasion = TextView(requireContext()).apply {
+            text = "Occasion habituelle :"
+            textSize = 14f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.colorTextPrimary))
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = (16f * resources.displayMetrics.density).toInt()
+            }
+            layoutParams = params
+        }
+
+        layout.addView(labelDay)
+        layout.addView(daySpinner)
+        layout.addView(labelOccasion)
+        layout.addView(occasionSpinner)
+
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Modifier la routine")
+            .setView(layout)
+            .setPositiveButton("Modifier") { _, _ ->
+                val selectedDay = days[daySpinner.selectedItemPosition]
+                val selectedOccasion = occasions[occasionSpinner.selectedItemPosition]
+                viewModel.updateRoutine(routine.id, selectedDay, selectedOccasion)
+                Toast.makeText(requireContext(), "Routine modifiée avec succès !", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Supprimer") { _, _ ->
+                viewModel.deleteRoutine(routine.id)
+                Toast.makeText(requireContext(), "Routine supprimée", Toast.LENGTH_SHORT).show()
+            }
+            .setNeutralButton("Annuler", null)
+            .show()
     }
 
     private fun showAddRoutineDialog() {

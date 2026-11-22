@@ -16,14 +16,32 @@
         android:paddingTop="28dp"
         android:paddingBottom="44dp">
 
-        <!-- En-tête Recommandation -->
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- En-tête Recommandation avec Bouton Retour -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Votre Recommandation"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_button"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Retour"
+                app:tint="@color/colorTextPrimary"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Votre Recommandation"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"

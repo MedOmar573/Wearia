@@ -2,9 +2,12 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="6dp"
+    android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
     app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
     app:cardBackgroundColor="@color/colorSurfaceCard"
@@ -15,65 +18,113 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="8dp">
 
-        <!-- Cadre Aperçu Outfit avec Bouton Cœur -->
+        <!-- Cover : composition des vêtements de la tenue -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="145dp"
             android:background="@drawable/bg_clothing_item_preview">
 
-            <ImageView
-                android:id="@+id/iv_outfit_thumb"
+            <!-- Agencement des pièces de la tenue en composition -->
+            <LinearLayout
+                android:id="@+id/layout_pieces_composition"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:padding="10dp" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="4dp">
 
-            <ImageView
-                android:id="@+id/iv_favorite_heart"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                <ImageView
+                    android:id="@+id/iv_piece_1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:padding="2dp"
+                    android:contentDescription="Pièce 1" />
+
+                <ImageView
+                    android:id="@+id/iv_piece_2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:padding="2dp"
+                    android:visibility="gone"
+                    android:contentDescription="Pièce 2" />
+
+                <ImageView
+                    android:id="@+id/iv_piece_3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:padding="2dp"
+                    android:visibility="gone"
+                    android:contentDescription="Pièce 3" />
+            </LinearLayout>
+
+            <!-- Bouton Corbeille / Supprimer avec fond flouté identique à Dressing -->
+            <ImageButton
+                android:id="@+id/btn_delete_outfit"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_gravity="top|end"
-                android:layout_margin="10dp"
-                android:src="@drawable/ic_heart_filled"
-                app:tint="#F43F5E" />
+                android:layout_margin="6dp"
+                android:padding="7dp"
+                android:scaleType="fitCenter"
+                android:background="@drawable/bg_circle_trash"
+                android:src="@drawable/ic_trash"
+                app:tint="@color/colorError"
+                android:contentDescription="Supprimer cette combinaison"
+                android:elevation="3dp" />
         </FrameLayout>
 
-        <!-- Titre Occasion -->
-        <TextView
-            android:id="@+id/tv_saved_occasion"
+        <!-- Informations de la tenue pour la grille 2 colonnes -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Université"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:layout_marginTop="8dp" />
+            android:orientation="vertical"
+            android:paddingHorizontal="4dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp">
 
-        <!-- Date de création -->
-        <TextView
-            android:id="@+id/tv_saved_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="18 Novembre"
-            android:textSize="12sp"
-            android:textColor="@color/colorTextSecondary"
-            android:layout_marginTop="2dp" />
+            <TextView
+                android:id="@+id/tv_saved_occasion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Université"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:maxLines="1"
+                android:ellipsize="end" />
 
-        <!-- Style de tenue avec badge pastel -->
-        <TextView
-            android:id="@+id/tv_saved_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Casual"
-            android:textSize="11sp"
-            android:textStyle="bold"
-            android:textColor="@color/badge_haut_text"
-            android:background="@drawable/bg_badge_haut"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="3dp"
-            android:layout_marginTop="6dp" />
+            <TextView
+                android:id="@+id/tv_saved_pieces_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2 pièces"
+                android:textSize="11sp"
+                android:textColor="@color/colorTextSecondary"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/tv_saved_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Casual"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/badge_haut_text"
+                android:background="@drawable/bg_badge_haut"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="2dp"
+                android:layout_marginTop="6dp" />
+        </LinearLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

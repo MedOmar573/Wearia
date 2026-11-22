@@ -85,6 +85,13 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
+            android:id="@+id/action_login_to_verifyOtp"
+            app:destination="@id/verifyOtpFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
             android:id="@+id/action_login_to_home"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/nav_graph"
@@ -111,6 +118,13 @@
         android:label="Inscription"
         tools:layout="@layout/fragment_register">
         <action
+            android:id="@+id/action_register_to_verifyOtp"
+            app:destination="@id/verifyOtpFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
             android:id="@+id/action_register_to_styleProfile"
             app:destination="@id/styleProfileFragment"
             app:popUpTo="@id/nav_graph"
@@ -125,6 +139,42 @@
         <action
             android:id="@+id/action_register_to_onboarding"
             app:destination="@id/onboardingFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- Vérification Email OTP -->
+    <fragment
+        android:id="@+id/verifyOtpFragment"
+        android:name="com.wearia.app.ui.auth.VerifyOtpFragment"
+        android:label="Vérification OTP"
+        tools:layout="@layout/fragment_verify_otp">
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="purpose"
+            app:argType="string"
+            android:defaultValue="LOGIN" />
+        <action
+            android:id="@+id/action_verifyOtp_to_styleProfile"
+            app:destination="@id/styleProfileFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_verifyOtp_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_verifyOtp_to_login"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right" />
     </fragment>
@@ -210,6 +260,8 @@
         <action
             android:id="@+id/action_camera_to_addClothing"
             app:destination="@id/addClothingFragment"
+            app:popUpTo="@id/cameraFragment"
+            app:popUpToInclusive="true"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -225,6 +277,8 @@
         <action
             android:id="@+id/action_addClothing_to_camera"
             app:destination="@id/cameraFragment"
+            app:popUpTo="@id/addClothingFragment"
+            app:popUpToInclusive="true"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"
@@ -258,12 +312,31 @@
             app:exitAnim="@anim/slide_out_right" />
     </fragment>
 
-    <!-- Mes Tenues / Historique & Favoris (Maquette 11.jpg) -->
+    <!-- Mes Tenues / Combinaisons Favorites -->
     <fragment
         android:id="@+id/outfitsHistoryFragment"
         android:name="com.wearia.app.ui.outfit.OutfitsHistoryFragment"
         android:label="My Outfits"
-        tools:layout="@layout/fragment_my_outfits" />
+        tools:layout="@layout/fragment_my_outfits">
+        <action
+            android:id="@+id/action_outfitsHistory_to_outfitDetail"
+            app:destination="@id/outfitDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- Détails d'une combinaison favorite -->
+    <fragment
+        android:id="@+id/outfitDetailFragment"
+        android:name="com.wearia.app.ui.outfit.OutfitDetailFragment"
+        android:label="Détails de la combinaison"
+        tools:layout="@layout/fragment_outfit_detail">
+        <argument
+            android:name="outfitId"
+            app:argType="integer" />
+    </fragment>
 
     <!-- Personal Shopper IA (Maquette 10.jpg) -->
     <fragment

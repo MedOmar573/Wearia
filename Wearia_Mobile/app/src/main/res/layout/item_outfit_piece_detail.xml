@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/colorSurfaceCard"
+    app:strokeColor="@color/colorBorder"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="10dp">
+
+        <!-- Image de la pièce -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/colorSurface">
+
+            <ImageView
+                android:id="@+id/iv_piece_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="@drawable/bg_clothing_item_preview"
+                android:contentDescription="Photo de la pièce" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Infos de la pièce -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="14dp">
+
+            <TextView
+                android:id="@+id/tv_piece_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nom du vêtement"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+
+                <!-- Catégorie -->
+                <TextView
+                    android:id="@+id/tv_piece_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Haut"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/badge_haut_text"
+                    android:background="@drawable/bg_badge_haut"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp" />
+
+                <!-- Couleur -->
+                <TextView
+                    android:id="@+id/tv_piece_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bleu"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorTextSecondary"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Bouton Poubelle pour retirer cette pièce de la combinaison -->
+        <ImageButton
+            android:id="@+id/btn_delete_piece"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:padding="7dp"
+            android:scaleType="fitCenter"
+            android:background="@drawable/bg_circle_trash"
+            android:src="@drawable/ic_trash"
+            app:tint="@color/colorError"
+            android:contentDescription="Retirer cette pièce"
+            android:elevation="2dp" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_bottom_sheet"
+    android:padding="20dp"
+    android:maxHeight="520dp">
+
+    <!-- Poignée supérieure -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_sheet_drag_handle" />
+
+    <!-- Titre -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ajouter une pièce à la combinaison"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Touchez une pièce de votre dressing pour l'ajouter :"
+        android:textSize="13sp"
+        android:textColor="@color/colorTextSecondary"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="14dp" />
+
+    <TextView
+        android:id="@+id/tv_no_available_clothes"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:gravity="center"
+        android:text="Aucun autre vêtement disponible dans votre dressing."
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <!-- Liste des pièces disponibles -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_available_clothes"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_select_clothing" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel_select"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Fermer"
+        android:textColor="@color/colorTextSecondary"
+        android:layout_marginTop="10dp" />
+
+</LinearLayout>

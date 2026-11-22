@@ -1,106 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:background="@color/colorSurfaceCard"
-    android:padding="12dp"
-    android:layout_marginBottom="1dp">
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="@color/colorSurfaceCard"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/colorBorder"
+    app:strokeWidth="1dp">
 
-    <!-- Image produit -->
-    <FrameLayout
-        android:layout_width="80dp"
-        android:layout_height="90dp"
-        android:layout_marginEnd="12dp">
-
-        <ImageView
-            android:id="@+id/iv_shopper_article_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_clothing_item_preview"
-            android:scaleType="centerCrop"
-            android:contentDescription="Photo article" />
-    </FrameLayout>
-
-    <!-- Infos centrales -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="14dp">
 
-        <!-- Tag catégorie -->
-        <TextView
-            android:id="@+id/tv_shopper_article_badge"
+        <!-- Image produit -->
+        <FrameLayout
+            android:layout_width="86dp"
+            android:layout_height="104dp"
+            android:layout_marginEnd="12dp">
+
+            <ImageView
+                android:id="@+id/iv_shopper_article_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_clothing_item_preview"
+                android:scaleType="centerCrop"
+                android:contentDescription="Photo article" />
+        </FrameLayout>
+
+        <!-- Infos centrales -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp">
+
+            <!-- Badges Type & Score -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="5dp">
+
+                <TextView
+                    android:id="@+id/tv_shopper_article_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PULL"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/badge_haut_text"
+                    android:background="@drawable/bg_badge_haut"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tv_shopper_article_style_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="★ 92%"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+
+            <!-- Nom article -->
+            <TextView
+                android:id="@+id/tv_shopper_article_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pull maille fine bleu marine"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:ignore="HardcodedText" />
+
+            <!-- Boutique + Couleur + Style + Tailles -->
+            <TextView
+                android:id="@+id/tv_shopper_article_store"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Exist · Bleu Marine · Décontracté"
+                android:textSize="12sp"
+                android:textColor="@color/colorTextSecondary"
+                android:layout_marginTop="3dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:ignore="HardcodedText" />
+
+            <!-- Prix + statut budget -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/tv_shopper_article_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="89,90 TND"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tv_shopper_article_budget_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="· Dans le budget"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="#22C55E"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Actions -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HAUT"
-            android:textSize="10sp"
-            android:textStyle="bold"
-            android:textColor="@color/badge_haut_text"
-            android:background="@drawable/bg_badge_haut"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="2dp"
-            android:layout_marginBottom="4dp"
-            tools:ignore="HardcodedText" />
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <!-- Nom article -->
-        <TextView
-            android:id="@+id/tv_shopper_article_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="T-shirt Oversize Noir"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:maxLines="2"
-            android:ellipsize="end"
-            tools:ignore="HardcodedText" />
+            <TextView
+                android:id="@+id/tv_shopper_article_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="♡ Favori"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp" />
 
-        <!-- Boutique + Tailles -->
-        <TextView
-            android:id="@+id/tv_shopper_article_store"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Exist · S, M, L"
-            android:textSize="12sp"
-            android:textColor="@color/colorTextSecondary"
-            android:layout_marginTop="2dp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            tools:ignore="HardcodedText" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_buy_article"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Voir ↗"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorOnPrimary"
+                app:backgroundTint="@color/colorPrimary"
+                app:cornerRadius="18dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingHorizontal="12dp"
+                style="@style/Widget.MaterialComponents.Button" />
+        </LinearLayout>
 
-        <!-- Prix -->
-        <TextView
-            android:id="@+id/tv_shopper_article_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="49.0 TND"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
-            android:layout_marginTop="4dp"
-            tools:ignore="HardcodedText" />
     </LinearLayout>
-
-    <!-- Bouton Acheter -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_buy_article"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:text="Voir ↗"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorOnPrimary"
-        app:backgroundTint="@color/colorPrimary"
-        app:cornerRadius="18dp"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
-        android:paddingHorizontal="12dp"
-        style="@style/Widget.MaterialComponents.Button" />
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

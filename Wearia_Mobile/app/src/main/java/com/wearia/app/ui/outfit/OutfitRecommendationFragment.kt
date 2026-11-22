@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -15,13 +16,17 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.wearia.app.BuildConfig
 import com.wearia.app.R
+import com.wearia.app.WeariaApplication
+import com.wearia.app.data.local.entity.TenueFavoriteEntity
 import com.wearia.app.data.remote.dto.RecommendationResponse
 import com.wearia.app.databinding.DialogManualWeatherBinding
 import com.wearia.app.databinding.DialogOutfitFeedbackBinding
+import com.wearia.app.databinding.DialogSelectOccasionBinding
 import com.wearia.app.databinding.FragmentOutfitRecommendationBinding
 import com.wearia.app.utils.Resource
 import com.wearia.app.utils.addPressEffect
 import com.wearia.app.viewmodel.OutfitViewModel
+import kotlinx.coroutines.launch
 
 /**
  * OutfitRecommendationFragment : Écran de recommandation de tenue modernisé Fresh Fashion Tech.
@@ -47,11 +52,16 @@ class OutfitRecommendationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Effets tactiles
+        binding.btnBack.addPressEffect()
         binding.btnLikeOutfit.addPressEffect()
         binding.btnTryAnother.addPressEffect()
         binding.btnChangeItem.addPressEffect()
         binding.btnManualWeather.addPressEffect()
         binding.btnRecommendationAddClothing.addPressEffect()
+
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
 
         // Charger la première recommandation optimale
         generateRecommendation()
@@ -59,10 +69,14 @@ class OutfitRecommendationFragment : Fragment() {
         // Bouton J'aime cette tenue
         binding.btnLikeOutfit.setOnClickListener {
             currentOutfitId?.let { id ->
-                isFavorite = !isFavorite
-                viewModel.toggleFavorite(id, isFavorite)
-                binding.btnLikeOutfit.text = if (isFavorite) "Tenue sauvegardée !" else "J'aime cette tenue"
-                showFeedbackBottomSheet(id)
+                if (!isFavorite) {
+                    showSelectOccasionDialog(id)
+                } else {
+                    isFavorite = false
+                    viewModel.toggleFavorite(id, false)
+                    binding.btnLikeOutfit.text = "J'aime cette tenue"
+                    Toast.makeText(requireContext(), "Retiré des favoris", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -148,6 +162,19 @@ class OutfitRecommendationFragment : Fragment() {
     }
 
     private fun observeRecommendation() {
+        viewModel.favoriteState.observe(viewLifecycleOwner) { state ->
+            if (state is Resource.Error) {
+                Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                if (state.message.contains("existe déjà", ignoreCase = true)) {
+                    isFavorite = true
+                    binding.btnLikeOutfit.text = "Tenue sauvegardée !"
+                } else {
+                    isFavorite = false
+                    binding.btnLikeOutfit.text = "J'aime cette tenue"
+                }
+            }
+        }
+
         viewModel.recommendationState.observe(viewLifecycleOwner) { state ->
             if (state == null) return@observe
             when (state) {
@@ -273,6 +300,69 @@ class OutfitRecommendationFragment : Fragment() {
             .show()
     }
 
+    private fun showSelectOccasionDialog(outfitId: Int) {
+        val currentIds = currentOutfitItems.map { it.id }.toSet()
+        viewLifecycleOwner.lifecycleScope.launch {
+            val uid = WeariaApplication.instance.sessionManager.getUserId()
+            if (currentIds.isNotEmpty() && uid > 0) {
+                val allFavs = WeariaApplication.instance.database.outfitDao().getFavoritesListForUser(uid)
+                val alreadyExists = allFavs.any { fav ->
+                    val itemIds = parseOutfitItemIds(fav.itemsJson)
+                    itemIds.isNotEmpty() && itemIds == currentIds
+                }
+                if (alreadyExists) {
+                    Toast.makeText(requireContext(), "Cette combinaison existe déjà dans vos favoris", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+            }
+
+            val dialog = BottomSheetDialog(requireContext())
+            val sheetBinding = DialogSelectOccasionBinding.inflate(layoutInflater)
+            dialog.setContentView(sheetBinding.root)
+
+            sheetBinding.tvOccasionDialogTitle.text = "Type de combinaison à ajouter"
+
+            sheetBinding.btnConfirmOccasion.setOnClickListener {
+                val selectedOccasion = when (sheetBinding.chipGroupOccasionsDialog.checkedChipId) {
+                    R.id.chip_dialog_university -> "Université"
+                    R.id.chip_dialog_work -> "Travail"
+                    R.id.chip_dialog_daily -> "Quotidien"
+                    R.id.chip_dialog_events -> "Événements"
+                    else -> "Sortie"
+                }
+                dialog.dismiss()
+                saveOutfitWithOccasion(outfitId, selectedOccasion)
+            }
+
+            sheetBinding.btnCancelOccasion.setOnClickListener {
+                dialog.dismiss()
+            }
+
+            dialog.show()
+        }
+    }
+
+    private fun saveOutfitWithOccasion(outfitId: Int, selectedOccasion: String) {
+        isFavorite = true
+        binding.btnLikeOutfit.text = "Tenue sauvegardée !"
+        viewModel.toggleFavorite(outfitId, true)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val uid = WeariaApplication.instance.sessionManager.getUserId()
+            if (uid > 0) {
+                WeariaApplication.instance.database.outfitDao().updateFavoriteOccasionForUser(outfitId, uid, selectedOccasion)
+            }
+            try {
+                val token = WeariaApplication.instance.sessionManager.getAuthHeader()
+                WeariaApplication.instance.apiService.updateOutfit(token, outfitId, estFavorite = true, occasion = selectedOccasion)
+            } catch (e: Exception) {
+                // Silencieux
+            }
+            Toast.makeText(requireContext(), "Combinaison ajoutée aux favoris ($selectedOccasion) !", Toast.LENGTH_SHORT).show()
+            showFeedbackBottomSheet(outfitId)
+        }
+    }
+
     private fun showFeedbackBottomSheet(outfitId: Int) {
         val bottomSheet = BottomSheetDialog(requireContext())
         val feedbackBinding = DialogOutfitFeedbackBinding.inflate(layoutInflater)
@@ -337,6 +427,17 @@ class OutfitRecommendationFragment : Fragment() {
         }
 
         bottomSheet.show()
+    }
+
+    private fun parseOutfitItemIds(json: String?): Set<Int> {
+        if (json.isNullOrBlank()) return emptySet()
+        return try {
+            val type = object : com.google.gson.reflect.TypeToken<List<com.wearia.app.data.remote.dto.OutfitItemSimple>>() {}.type
+            val items: List<com.wearia.app.data.remote.dto.OutfitItemSimple> = com.google.gson.Gson().fromJson(json, type)
+            items.map { it.id }.toSet()
+        } catch (e: Exception) {
+            emptySet()
+        }
     }
 
     override fun onDestroyView() {

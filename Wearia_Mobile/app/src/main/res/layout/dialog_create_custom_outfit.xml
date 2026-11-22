@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_bottom_sheet"
+    android:padding="20dp"
+    android:maxHeight="600dp">
+
+    <!-- Poignée supérieure -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_sheet_drag_handle" />
+
+    <!-- Titre -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Créer une combinaison favorite"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sélectionnez l'occasion et les pièces de votre dressing :"
+        android:textSize="13sp"
+        android:textColor="@color/colorTextSecondary"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Occasion Selector Chips -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginBottom="12dp">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_custom_occasion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_custom_outings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sortie"
+                android:checkable="true"
+                android:checked="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="12sp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_custom_university"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Université"
+                android:checkable="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="12sp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_custom_work"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Travail"
+                android:checkable="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="12sp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_custom_daily"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quotidien"
+                android:checkable="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="12sp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_custom_events"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Événements"
+                android:checkable="true"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/chip_filter_text_color"
+                app:chipBackgroundColor="@color/chip_filter_background"
+                app:chipStrokeColor="@color/chip_filter_stroke_color"
+                app:chipStrokeWidth="1dp"
+                app:chipCornerRadius="16dp"
+                android:textColor="@color/chip_filter_text_color"
+                android:textSize="12sp" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <!-- Liste des vêtements du dressing -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_dressing_clothes"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_select_clothing" />
+
+    <TextView
+        android:id="@+id/tv_empty_dressing"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:gravity="center"
+        android:text="Aucun vêtement trouvé dans votre dressing.\nAjoutez des pièces dans l'onglet Dressing d'abord."
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <!-- Bouton Enregistrer la combinaison -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_save_custom_outfit"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Enregistrer la combinaison (0 pièce)"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@color/colorPrimary"
+        app:cornerRadius="26dp"
+        android:layout_marginTop="14dp"
+        android:textStyle="bold"
+        android:enabled="false" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel_custom"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:text="Annuler"
+        android:textColor="@color/colorTextSecondary"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

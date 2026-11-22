@@ -13,8 +13,9 @@ if exist "%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe" (
 echo Verification des peripheriques connectes...
 %ADB% devices
 echo.
-echo Activation du pont reseau USB pour le port 8000 (adb reverse)...
+echo Activation du pont reseau USB pour les ports 8000 et 8001 (adb reverse)...
 %ADB% reverse tcp:8000 tcp:8000
+%ADB% reverse tcp:8001 tcp:8001
 %ADB% reverse --list
 echo.
 echo ==========================================================

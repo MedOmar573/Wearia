@@ -41,6 +41,8 @@ def seed_database(db: Session):
         ("Baskets", "Chaussures", GenreCible.MIXTE, False),
         ("Bottes", "Chaussures", GenreCible.FEMME, False),
         ("Chaussures de ville", "Chaussures", GenreCible.MIXTE, False),
+        ("Sac", "Accessoire", GenreCible.MIXTE, False),
+        ("Chapeau", "Accessoire", GenreCible.MIXTE, False),
     ]
 
     types_map = {}
@@ -74,7 +76,8 @@ def seed_database(db: Session):
         ("Corail", "#D94A3D"),
         ("Rose", "#F3B6C2"),
         ("Orange", "#E56A26"),
-        ("Jaune Clair", "#F8D548")
+        ("Jaune Clair", "#F8D548"),
+        ("Violet", "#6C47FF")
     ]
     colors_map = {}
     for nom, hex_code in colors_data:

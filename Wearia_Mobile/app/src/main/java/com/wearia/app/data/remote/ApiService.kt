@@ -11,12 +11,18 @@ import retrofit2.http.*
  */
 interface ApiService {
 
-    // =================== AUTH ===================
+    // =================== AUTH & OTP ===================
     @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequest): Response<UserResponse>
+    suspend fun register(@Body request: RegisterRequest): Response<AuthStepResponse>
 
     @POST("auth/login")
-    suspend fun login(@Body request: LoginRequest): Response<TokenResponse>
+    suspend fun login(@Body request: LoginRequest): Response<AuthStepResponse>
+
+    @POST("auth/verify-otp")
+    suspend fun verifyOtp(@Body request: VerifyOtpRequest): Response<TokenResponse>
+
+    @POST("auth/resend-otp")
+    suspend fun resendOtp(@Body request: ResendOtpRequest): Response<Map<String, Any>>
 
     // =================== PROFIL ===================
     @GET("users/me")
@@ -99,6 +105,12 @@ interface ApiService {
         @Part file: MultipartBody.Part
     ): Response<ClassifyResponse>
 
+    @DELETE("ai/temp-upload")
+    suspend fun deleteTempUpload(
+        @Header("Authorization") token: String,
+        @Query("image_url") imageUrl: String
+    ): Response<Map<String, Any>>
+
     // =================== PLANNING ===================
     @GET("routines")
     suspend fun getRoutines(@Header("Authorization") token: String): Response<List<RoutineHebdomadaireResponse>>
@@ -145,6 +157,12 @@ interface ApiService {
     ): Response<RecommendationResponse>
 
     // =================== TENUES / FAVORIS ===================
+    @POST("outfits")
+    suspend fun createOutfit(
+        @Header("Authorization") token: String,
+        @Body request: TenueCreateRequest
+    ): Response<TenueResponse>
+
     @GET("outfits")
     suspend fun getOutfits(
         @Header("Authorization") token: String,
@@ -162,7 +180,8 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: Int,
         @Query("estFavorite") estFavorite: Boolean? = null,
-        @Query("marquee_portee") marqueePortee: Boolean? = null
+        @Query("marquee_portee") marqueePortee: Boolean? = null,
+        @Query("occasion") occasion: String? = null
     ): Response<TenueResponse>
 
     @DELETE("outfits/{id}")
@@ -170,6 +189,20 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: Int
     ): Response<Unit>
+
+    @DELETE("outfits/{id}/items/{vetement_id}")
+    suspend fun removeItemFromOutfit(
+        @Header("Authorization") token: String,
+        @Path("id") outfitId: Int,
+        @Path("vetement_id") itemId: Int
+    ): Response<TenueResponse>
+
+    @POST("outfits/{id}/items/{vetement_id}")
+    suspend fun addItemToOutfit(
+        @Header("Authorization") token: String,
+        @Path("id") outfitId: Int,
+        @Path("vetement_id") itemId: Int
+    ): Response<TenueResponse>
 
     @POST("outfits/{id}/feedback")
     suspend fun submitFeedback(

@@ -72,6 +72,23 @@ class ClothingViewModel(private val repository: ClothingRepository) : ViewModel(
         _addClothingState.value = null
     }
 
+    fun deleteTempUpload(imageUrl: String) {
+        if (imageUrl.isBlank()) return
+        viewModelScope.launch {
+            repository.deleteTempUpload(imageUrl)
+        }
+    }
+
+    fun clearSessionState() {
+        _clothesList.value = Resource.Success(emptyList())
+        _classifyState.value = null
+        _addClothingState.value = null
+        filterCategorieId = null
+        filterCouleurId = null
+        filterStatut = null
+        searchQuery = null
+    }
+
     fun deleteClothing(id: Int) {
         viewModelScope.launch {
             _deleteState.value = Resource.Loading

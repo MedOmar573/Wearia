@@ -11,6 +11,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "favoris_tenues")
 data class TenueFavoriteEntity(
     @PrimaryKey val id: Int,
+    val userId: Int,
     val occasion: String,
     val temperature: Float?,
     val weather: String?,
@@ -23,6 +24,7 @@ data class TenueFavoriteEntity(
 @Entity(tableName = "vetements_cache")
 data class VetementCacheEntity(
     @PrimaryKey val id: Int,
+    val userId: Int,
     val nom: String,
     val photoUrl: String,
     val categorie: String,

@@ -20,10 +20,10 @@ android {
         versionName = "1.0"
 
         // URL du backend FastAPI :
-        // - Téléphone physique Wi-Fi     : http://10.95.88.235:8000/  (IP du PC sur le réseau Wi-Fi)
+        // - Téléphone physique Wi-Fi     : http://10.95.88.235:8000/  (IP du PC sur le réseau Wi-Fi actuel)
         // - Émulateur Android Studio     : http://10.0.2.2:8000/
         // - Câble USB + adb reverse      : http://127.0.0.1:8000/  (après "adb reverse tcp:8000 tcp:8000")
-        buildConfigField("String", "BASE_URL", "\"http://10.95.88.235:8001/\"")
+        buildConfigField("String", "BASE_URL", "\"http://10.95.88.235:8000/\"")
     }
 
     buildFeatures {

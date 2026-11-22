@@ -2,11 +2,14 @@ package com.wearia.app.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
-// =================== AUTH ===================
+// =================== AUTH & OTP ===================
 data class RegisterRequest(
     val nom: String,
     val email: String,
-    val password: String
+    val password: String,
+    @SerializedName("hauteurCm") val hauteurCm: Int? = null,
+    @SerializedName("poidsKg") val poidsKg: Float? = null,
+    val genre: String? = null
 )
 
 data class LoginRequest(
@@ -14,9 +17,36 @@ data class LoginRequest(
     val password: String
 )
 
+data class AuthStepResponse(
+    @SerializedName("otp_required") val otpRequired: Boolean = true,
+    val email: String,
+    val purpose: String,
+    val message: String,
+    @SerializedName("dev_otp") val devOtp: String? = null
+)
+
+data class VerifyOtpRequest(
+    val email: String,
+    val code: String,
+    val purpose: String
+)
+
+data class ResendOtpRequest(
+    val email: String,
+    val purpose: String
+)
+
 data class TokenResponse(
     @SerializedName("access_token") val accessToken: String,
-    @SerializedName("token_type") val tokenType: String
+    @SerializedName("token_type") val tokenType: String,
+    @SerializedName("user_id") val userId: Int? = null,
+    val nom: String? = null,
+    val email: String? = null,
+    @SerializedName("is_verified") val isVerified: Boolean = true,
+    val genre: String? = null,
+    @SerializedName("hauteurCm") val hauteurCm: Int? = null,
+    @SerializedName("poidsKg") val poidsKg: Float? = null,
+    @SerializedName("is_profile_completed") val isProfileCompleted: Boolean = false
 )
 
 // =================== USER ===================
@@ -193,6 +223,13 @@ data class OutfitItemSimple(
     @SerializedName("image_url") val imageUrl: String?
 )
 
+data class TenueCreateRequest(
+    val occasion: String = "Quotidien",
+    val vetement_ids: List<Int>,
+    val estFavorite: Boolean = true,
+    val explication: String? = "Combinaison personnalisée créée depuis mon dressing."
+)
+
 data class RecommendationResponse(
     @SerializedName("outfit_id") val outfitId: Int,
     val occasion: String,
@@ -243,9 +280,21 @@ data class ArticleCatalogueResponse(
 
 // =================== AI SHOPPER LLM & E-COMMERCE ===================
 data class ShopperPromptRequest(
-    val prompt: String,
+    val prompt: String = "",
+    @SerializedName("type_vetement") val typeVetement: String? = null,
+    @SerializedName("style_id") val styleId: Int? = null,
     val budget: Float? = null,
-    val genre: String? = null
+    val genre: String? = null,
+    val occasion: String? = null,
+    val style: String? = null,
+    val colors: List<String> = emptyList(),
+    @SerializedName("avoided_colors") val avoidedColors: List<String> = emptyList(),
+    @SerializedName("requested_types") val requestedTypes: List<String> = emptyList(),
+    val season: String? = null,
+    @SerializedName("excluded_types") val excludedTypes: List<String> = emptyList(),
+    @SerializedName("excluded_product_ids") val excludedProductIds: List<Int> = emptyList(),
+    @SerializedName("excluded_urls") val excludedUrls: List<String> = emptyList(),
+    @SerializedName("max_results") val maxResults: Int = 12
 )
 
 data class ShopperCriteriaResponse(
@@ -267,10 +316,15 @@ data class ShopperArticleResponse(
     val prix: Float,
     val devise: String = "TND",
     val vendeur: String,
+    @SerializedName("verifieLe") val verifieLe: String? = null,
     @SerializedName("taillesDisponibles") val taillesDisponibles: String = "S, M, L, XL",
     val typeVetementNom: String,
     val couleurNom: String,
-    val categorieNom: String
+    val categorieNom: String,
+    val styleNom: String? = null,
+    val scoreCompatibilite: Int = 85,
+    val respecteBudget: Boolean = true,
+    val explication: String? = null
 )
 
 data class ShopperOutfitResponse(
@@ -288,8 +342,14 @@ data class ShopperOutfitResponse(
 data class ShopperResultResponse(
     val prompt: String,
     val criteres: ShopperCriteriaResponse,
-    val tenues: List<ShopperOutfitResponse>,
+    val articles: List<ShopperArticleResponse> = emptyList(),
+    val nbArticlesTrouves: Int = 0,
+    val typeDemande: String? = null,
+    val styleDemande: String? = null,
+    val genreUtilise: String? = null,
+    val budgetMax: Float? = null,
+    val tenues: List<ShopperOutfitResponse> = emptyList(),
     val articlesComplementaires: List<ShopperArticleResponse> = emptyList(),
-    val nbTenuesTrouvees: Int
+    val nbTenuesTrouvees: Int = 0
 )
 

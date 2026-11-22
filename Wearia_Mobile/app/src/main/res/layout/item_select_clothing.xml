@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="5dp"
+    android:layout_marginHorizontal="2dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/colorSurfaceCard"
+    app:strokeColor="@color/colorBorder"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="10dp">
+
+        <!-- Image du vêtement -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/colorSurface">
+
+            <ImageView
+                android:id="@+id/iv_clothing_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="@drawable/bg_clothing_item_preview"
+                android:contentDescription="Photo vêtement" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Infos -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <TextView
+                android:id="@+id/tv_clothing_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nom du vêtement"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="3dp">
+
+                <TextView
+                    android:id="@+id/tv_clothing_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Haut"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/badge_haut_text"
+                    android:background="@drawable/bg_badge_haut"
+                    android:paddingHorizontal="7dp"
+                    android:paddingVertical="2dp" />
+
+                <TextView
+                    android:id="@+id/tv_clothing_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bleu"
+                    android:textSize="11sp"
+                    android:textColor="@color/colorTextSecondary"
+                    android:layout_marginStart="6dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Indicateur de sélection (Coche pour création de tenue) -->
+        <CheckBox
+            android:id="@+id/cb_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false"
+            android:buttonTint="@color/colorPrimary"
+            android:visibility="gone" />
+
+        <!-- Flèche d'ajout pour ajout direct (une pièce) -->
+        <ImageView
+            android:id="@+id/iv_add_arrow"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_add"
+            app:tint="@color/colorPrimary"
+            android:background="@drawable/bg_circle_button"
+            android:visibility="gone"
+            android:contentDescription="Ajouter" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_bottom_sheet"
+    android:paddingHorizontal="22dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="28dp">
+
+    <!-- Poignée de glissement -->
+    <View
+        android:layout_width="44dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/colorBorderStrong"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Titre et sous-titre -->
+    <TextView
+        android:id="@+id/tv_sheet_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Composition de la Tenue"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorTextPrimary" />
+
+    <TextView
+        android:id="@+id/tv_sheet_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Liste des vêtements de cette combinaison"
+        android:textSize="13sp"
+        android:textColor="@color/colorTextSecondary"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Conteneur défilable de la liste des vêtements -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/layout_outfit_pieces"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bouton Fermer -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_close_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Fermer"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorOnPrimary"
+        app:cornerRadius="26dp"
+        app:backgroundTint="@color/colorPrimary"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

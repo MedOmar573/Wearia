@@ -41,13 +41,69 @@ Règles IMPORTANTES :
 3. "search_queries" : génère 3 à 5 requêtes DISTINCTES et PRÉCISES pour chaque type de vêtement demandé.
    - Chaque requête doit contenir le type précis + couleur + style si mentionné.
    - Les requêtes doivent être variées : mélange français/anglais, termes synonymes.
-   - Exemples pour "veste noire casual homme" : ["veste noire homme casual", "black casual jacket men", "blouson homme noir décontracté", "men black bomber jacket", "veste streetwear noire homme"].
-4. "colors" : extraire TOUTES les couleurs mentionnées explicitement, sans inventer si non mentionné (laisser []).
+4. "colors" : extraire TOUTES les couleurs souhaitées explicitement, sans inventer si non mentionné (laisser []).
 5. "categories" et "types_vetement" : extraire tous les types mentionnés ou demandés.
 6. Si l'utilisateur demande une "tenue complète" sans détails, composer Haut + Bas + Chaussures adaptés au style détecté.
 7. "genre" : inférer du contexte si possible, sinon utiliser la valeur passée en paramètre.
 8. Ne JAMAIS remplacer les critères de l'utilisateur par d'autres critères.
+9. Ne JAMAIS inventer, deviner, réécrire ou inclure d'URL ou de lien boutique dans la réponse.
 """
+
+
+def normalize_shopper_style(raw_style: Optional[str]) -> str:
+    """Aligne les libellés de style UI (Casual, Sportif, Élégant...) avec la base Wearia."""
+    if not raw_style:
+        return "Décontracté"
+    s = raw_style.strip().lower()
+    if any(k in s for k in ("street", "urban", "urbain", "skate", "oversize")):
+        return "Streetwear"
+    if any(k in s for k in ("chic", "eleg", "élég", "soign")):
+        return "Chic"
+    if any(k in s for k in ("classi", "formel", "habil", "costume")):
+        return "Classique"
+    if any(k in s for k in ("sport", "gym", "running", "fitness")):
+        return "Sportswear"
+    if any(k in s for k in ("bohem", "bohèm", "boho", "vintage")):
+        return "Bohème"
+    if any(k in s for k in ("minimal",)):
+        return "Minimaliste"
+    if any(k in s for k in ("casual", "decontract", "décontract", "simple", "quotidien")):
+        return "Décontracté"
+    return raw_style.strip()
+
+
+def normalize_shopper_occasion(raw_occasion: Optional[str]) -> str:
+    """Normalise l'occasion (sans accents) vers l'enum canonique Wearia."""
+    if not raw_occasion:
+        return "QUOTIDIEN"
+    o = raw_occasion.strip().lower()
+    if any(k in o for k in ("universit", "fac", "cours", "etud", "étud")):
+        return "UNIVERSITE"
+    if any(k in o for k in ("travail", "bureau", "boulot", "reunion", "réunion", "stage", "pro", "entretien")):
+        return "TRAVAIL"
+    if any(k in o for k in ("evenement", "événement", "mariage", "gala", "ceremonie", "cérémonie")):
+        return "EVENEMENT"
+    if any(k in o for k in ("sortie", "soiree", "soirée", "fete", "fête", "club", "restaurant")):
+        return "SORTIE"
+    if any(k in o for k in ("sport", "gym", "running", "fitness", "course")):
+        return "SPORT"
+    return "QUOTIDIEN"
+
+
+def normalize_shopper_season(raw_season: Optional[str]) -> Optional[str]:
+    """Normalise la saison vers PRINTEMPS / ETE / AUTOMNE / HIVER (ou None)."""
+    if not raw_season:
+        return None
+    s = raw_season.strip().lower()
+    if any(k in s for k in ("ete", "été", "summer", "chaud", "plage")):
+        return "ETE"
+    if any(k in s for k in ("hiver", "winter", "froid", "neige")):
+        return "HIVER"
+    if any(k in s for k in ("automne", "autumn", "fall", "mi-saison")):
+        return "AUTOMNE"
+    if any(k in s for k in ("printemps", "spring")):
+        return "PRINTEMPS"
+    return None
 
 # ---------------------------------------------------------------------------
 # Classes
@@ -174,14 +230,19 @@ class RuleBasedFallbackLLMProvider(BaseLLMProvider):
         elif any(w in lower for w in ["sport", "course", "fitness", "entrainement", "entraînement", "gym", "running"]):
             occasion = "SPORT"
 
-        # 6. Couleurs — extraction stricte (pas de défaut arbitraire)
+        # 5b. Saison détectée depuis le prompt libre
+        detected_season = normalize_shopper_season(lower)
+
+        # 6. Couleurs — extraction stricte avec distinction souhaitées vs évitées
         color_vocab = {
+            "bleu marine": "Bleu Marine", "marine": "Bleu Marine", "navy": "Bleu Marine",
+            "marron foncé": "Marron Foncé", "marron fonce": "Marron Foncé",
+            "jaune clair": "Jaune Clair",
             "noir": "Noir", "noire": "Noir", "noires": "Noir", "noirs": "Noir", "black": "Noir",
             "blanc": "Blanc", "blanche": "Blanc", "blanches": "Blanc", "blancs": "Blanc", "white": "Blanc",
-            "bleu marine": "Bleu Marine", "marine": "Bleu Marine", "navy": "Bleu Marine",
-            "bleu": "Bleu", "bleue": "Bleu", "bleues": "Bleu", "blue": "Bleu", "denim": "Bleu",
+            "bleu": "Bleu", "bleue": "Bleu", "bleues": "Bleu", "blue": "Bleu",
             "gris": "Gris", "grise": "Gris", "grises": "Gris", "grey": "Gris", "gray": "Gris",
-            "rouge": "Rouge", "rouges": "Rouge", "red": "Rouge",
+            "rouge": "Rouge", "rouges": "Rouge", "red": "Rouge", "bordeaux": "Rouge",
             "vert": "Vert", "verte": "Vert", "vertes": "Vert", "green": "Vert",
             "kaki": "Vert", "khaki": "Vert", "olive": "Vert",
             "beige": "Beige", "sable": "Beige", "camel": "Beige",
@@ -189,15 +250,25 @@ class RuleBasedFallbackLLMProvider(BaseLLMProvider):
             "chocolat": "Marron",
             "rose": "Rose", "pink": "Rose",
             "jaune": "Jaune", "yellow": "Jaune", "moutarde": "Jaune",
-            "orange": "Orange", "corail": "Orange",
+            "orange": "Orange", "corail": "Corail", "violet": "Violet", "mauve": "Violet",
         }
         detected_colors: List[str] = []
-        # Tester d'abord les expressions bi-mots (ex: "bleu marine")
+        avoided_colors: List[str] = []
+        neg_color_re = re.compile(r"\b(?:sans|pas\s+de|pas\s+d|eviter|éviter|evite|évite|hors)\s+(?:du|de\s+la|de|le|la|les)?\s*$")
+        matched_spans: List[tuple[int, int]] = []
+        # Tester d'abord les expressions multi-mots (ex: "bleu marine") pour ne pas recouper "bleu"
         for word, std_color in sorted(color_vocab.items(), key=lambda x: -len(x[0])):
-            if re.search(r"\b" + re.escape(word) + r"\b", lower):
-                if std_color not in detected_colors:
-                    detected_colors.append(std_color)
-        # NE PAS mettre de défaut si aucune couleur mentionnée — laisser []
+            for m in re.finditer(r"\b" + re.escape(word) + r"\b", lower):
+                if any(m.start() >= s and m.end() <= e for s, e in matched_spans):
+                    continue
+                matched_spans.append((m.start(), m.end()))
+                prefix = lower[max(0, m.start() - 24):m.start()]
+                if neg_color_re.search(prefix):
+                    if std_color not in avoided_colors:
+                        avoided_colors.append(std_color)
+                else:
+                    if std_color not in detected_colors and std_color not in avoided_colors:
+                        detected_colors.append(std_color)
 
         # 7. Catégories et Types — détection exhaustive (pas de elif, tous peuvent être présents)
         categories: List[str] = []
@@ -330,9 +401,11 @@ class RuleBasedFallbackLLMProvider(BaseLLMProvider):
         add_query(f"{style_lower} outfit {genre_term_en} {main_color}".strip())
 
         return ShopperCriteria(
-            style=style,
-            occasion=occasion,
+            style=normalize_shopper_style(style),
+            occasion=normalize_shopper_occasion(occasion),
             colors=detected_colors,
+            avoided_colors=avoided_colors,
+            season=detected_season,
             categories=list(dict.fromkeys(categories)),
             types_vetement=list(dict.fromkeys(types)),
             budget=budget,
@@ -344,7 +417,7 @@ class RuleBasedFallbackLLMProvider(BaseLLMProvider):
 def _build_criteria_from_dict(d: dict, user_genre: Optional[str] = None) -> ShopperCriteria:
     """
     Construit un ShopperCriteria depuis un dict JSON (réponse Ollama).
-    Gère les champs manquants et les types incorrects proprement.
+    Gère les champs manquants, normalise style/occasion/saison et ne conserve aucune URL.
     """
     def safe_list(val, default=None):
         if isinstance(val, list):
@@ -365,14 +438,17 @@ def _build_criteria_from_dict(d: dict, user_genre: Optional[str] = None) -> Shop
             return None
 
     colors = safe_list(d.get("colors"), [])
+    avoided_colors = safe_list(d.get("avoided_colors"), [])
     categories = safe_list(d.get("categories"), [])
     types = safe_list(d.get("types_vetement"), [])
-    queries = safe_list(d.get("search_queries"), [])
+    queries = [q for q in safe_list(d.get("search_queries"), []) if "http://" not in q.lower() and "https://" not in q.lower()]
 
     return ShopperCriteria(
-        style=safe_str(d.get("style"), "Décontracté"),
-        occasion=safe_str(d.get("occasion"), "QUOTIDIEN"),
+        style=normalize_shopper_style(safe_str(d.get("style"), "Décontracté")),
+        occasion=normalize_shopper_occasion(safe_str(d.get("occasion"), "QUOTIDIEN")),
         colors=colors,
+        avoided_colors=avoided_colors,
+        season=normalize_shopper_season(d.get("season")),
         categories=categories,
         types_vetement=types,
         budget=safe_float(d.get("budget")),

@@ -3,12 +3,38 @@ import logging
 import random
 import re
 import asyncio
-from urllib.parse import urljoin, urlparse
-from typing import List, Dict, Any
+from urllib.parse import quote_plus, urljoin, urlparse
+from typing import List, Dict, Any, Optional, Set
+import httpx
 from bs4 import BeautifulSoup
 from app.scraper.base_scraper import BaseStoreScraper
+from app.scraper.compliance import USER_AGENT
 
 logger = logging.getLogger(__name__)
+
+# Synonymes de recherche e-commerce pour maximiser le rappel en scraping live
+_LIVE_SEARCH_TERMS: Dict[str, List[str]] = {
+    "pull": ["pull", "pullover", "maille"],
+    "sweat": ["sweat", "hoodie", "sweat-shirt"],
+    "chemise": ["chemise", "sur-chemise"],
+    "t-shirt": ["t-shirt", "tshirt"],
+    "polo": ["polo"],
+    "pantalon": ["pantalon", "chino", "cargo"],
+    "jean": ["jean", "denim"],
+    "short": ["short", "bermuda"],
+    "jupe": ["jupe"],
+    "robe": ["robe"],
+    "veste": ["veste", "blazer", "blouson"],
+    "manteau": ["manteau", "doudoune", "parka", "trench"],
+    "baskets": ["basket", "baskets", "sneakers"],
+    "bottes": ["botte", "bottine"],
+    "chaussures de ville": ["mocassin", "escarpin", "derby", "chaussure"],
+    "sac": ["sac", "sacoche", "pochette"],
+    "chapeau": ["casquette", "chapeau", "bonnet"],
+    "ceinture": ["ceinture"],
+    "écharpe": ["echarpe", "foulard"],
+    "montre": ["montre"],
+}
 
 
 class MicrodataFashionScraper(BaseStoreScraper):
@@ -143,6 +169,273 @@ class MicrodataFashionScraper(BaseStoreScraper):
 
         return products
 
+    def _build_live_search_urls(
+        self,
+        query_type: str,
+        colors: Optional[List[str]] = None,
+        extra_keywords: Optional[List[str]] = None,
+    ) -> List[str]:
+        """
+        Construit les URLs de recherche en direct adaptées à la plateforme e-commerce :
+        - PrestaShop (ex. exist.com.tn) : /recherche?controller=search&s=<terme>
+        - WooCommerce (ex. mabrouk.tn)  : /?s=<terme>&post_type=product
+        """
+        host = (urlparse(self.base_url).hostname or "").lower()
+        is_woocommerce = "mabrouk" in host or any("/categorie-produit/" in p for p in self.category_paths)
+
+        base_key = (query_type or "").strip().lower()
+        terms = list(_LIVE_SEARCH_TERMS.get(base_key, [query_type.strip()] if query_type else []))
+        if extra_keywords:
+            for kw in extra_keywords:
+                clean = (kw or "").strip()
+                if clean and clean.lower() not in {t.lower() for t in terms}:
+                    terms.append(clean)
+
+        # Prioriser la recherche directe sur le type demandé (+ variante avec couleur préférée si renseignée)
+        search_queries: List[str] = []
+        primary = terms[0] if terms else ""
+        if primary and colors:
+            first_color = (colors[0] or "").strip()
+            if first_color:
+                search_queries.append(f"{primary} {first_color}")
+        for t in terms[:3]:
+            if t and t not in search_queries:
+                search_queries.append(t)
+
+        urls: List[str] = []
+        for q in search_queries:
+            encoded = quote_plus(q)
+            if is_woocommerce:
+                urls.append(f"{self.base_url}/?s={encoded}&post_type=product")
+            else:
+                urls.append(f"{self.base_url}/recherche?controller=search&s={encoded}")
+        return list(dict.fromkeys(urls))
+
+    def _extract_product_links_from_listing(self, html: str, page_url: str) -> List[str]:
+        """Extrait uniquement les liens directs de fiches produit depuis une page de résultats."""
+        source_host = urlparse(self.base_url).netloc
+        candidates: List[str] = []
+
+        # 1. Liens structurés JSON-LD
+        for item in self._jsonld_objects(html):
+            item_type = item.get("@type")
+            if item_type in ("Product", "IndividualProduct"):
+                u = item.get("url")
+                if u:
+                    candidates.append(urljoin(page_url, u))
+            elif item_type == "ItemList":
+                for entry in item.get("itemListElement", []):
+                    if not isinstance(entry, dict):
+                        continue
+                    linked = entry.get("item", {})
+                    u = entry.get("url") or (linked.get("url") if isinstance(linked, dict) else None)
+                    if u:
+                        candidates.append(urljoin(page_url, u))
+
+        # 2. Liens HTML de fiches produit (PrestaShop: /cat/1234-5678-slug.html ; WooCommerce: /produit/slug/)
+        soup = BeautifulSoup(html, "html.parser")
+        prestashop_product_re = re.compile(r"/\d+-\d+-[^/]+\.html$", re.IGNORECASE)
+        for anchor in soup.find_all("a", href=True):
+            href = urljoin(page_url, anchor.get("href", ""))
+            parsed = urlparse(href)
+            if parsed.scheme != "https" or parsed.netloc != source_host:
+                continue
+            path = parsed.path or ""
+            if "/produit/" in path or prestashop_product_re.search(path):
+                candidates.append(href)
+
+        # Déduplication en préservant l'ordre de pertinence du moteur de recherche de la boutique
+        unique: List[str] = []
+        seen_base: Set[str] = set()
+        for raw_url in candidates:
+            base_url = raw_url.split("#", 1)[0]
+            if base_url in seen_base:
+                continue
+            if not base_url.startswith("https://") or urlparse(base_url).netloc != source_host:
+                continue
+            seen_base.add(base_url)
+            unique.append(raw_url)
+        return unique
+
+    @staticmethod
+    def _extract_sizes_from_html(html: str) -> str:
+        """Extrait les tailles disponibles si exposées sur la fiche produit."""
+        try:
+            soup = BeautifulSoup(html, "html.parser")
+            sizes: List[str] = []
+            # PrestaShop select/radio taille ou WooCommerce variations
+            for el in soup.select("select[id*='group'] option, ul[id*='group'] li span, select[name*='taille'] option, select[name*='size'] option"):
+                txt = (el.get_text() or "").strip().upper()
+                if re.fullmatch(r"(?:XXS|XS|S|M|L|XL|XXL|XXXL|\d{2})", txt) and txt not in sizes:
+                    sizes.append(txt)
+            if sizes:
+                return ", ".join(sizes[:8])
+        except Exception:
+            pass
+        return "Selon boutique"
+
+    def _parse_product_page(self, product_url: str, product_html: str) -> Optional[Dict[str, Any]]:
+        """Parse une fiche produit vérifiée en direct (JSON-LD + repli OpenGraph)."""
+        source_host = urlparse(self.base_url).netloc
+        for item in self._jsonld_objects(product_html):
+            item_type = item.get("@type")
+            if not (
+                item_type in ("Product", "IndividualProduct")
+                or (isinstance(item_type, list) and any(t in ("Product", "IndividualProduct") for t in item_type))
+            ):
+                continue
+            offers = item.get("offers", {})
+            if isinstance(offers, list):
+                offers = offers[0] if offers else {}
+            if not isinstance(offers, dict):
+                continue
+
+            price = offers.get("price")
+            currency = str(offers.get("priceCurrency", "TND")).upper()
+            availability = str(offers.get("availability", "")).lower()
+            if not price or currency != "TND":
+                continue
+            if availability and not any(m in availability for m in ("instock", "limitedavailability", "onlineonly")):
+                continue
+
+            exact_url = urljoin(product_url, offers.get("url") or product_url)
+            exact_parsed = urlparse(exact_url)
+            if exact_parsed.scheme != "https" or exact_parsed.netloc != source_host:
+                continue
+
+            product_name = str(item.get("name", "")).strip()
+            if not product_name:
+                continue
+            description = str(item.get("description", "") or "").strip()
+
+            color = (
+                str(item.get("color") or "").strip()
+                or self._color_from_variant(exact_url)
+                or self._color_from_variant(product_url)
+                or self._color_from_description(f"{product_name} {description}")
+            )
+
+            images = item.get("image", [])
+            if isinstance(images, str):
+                image_url = images
+            elif isinstance(images, list):
+                image_url = next(
+                    (img if isinstance(img, str) else img.get("url", "")
+                     for img in images if isinstance(img, (str, dict))),
+                    "",
+                )
+            elif isinstance(images, dict):
+                image_url = str(images.get("url", ""))
+            else:
+                image_url = ""
+
+            try:
+                price_float = float(price)
+            except (TypeError, ValueError):
+                continue
+            if price_float <= 0:
+                continue
+
+            return {
+                "nom": product_name,
+                "description": description,
+                "imageUrl": image_url,
+                "lienAchat": exact_url,
+                "prix": price_float,
+                "vendeur": self.store_name,
+                "taillesDisponibles": self._extract_sizes_from_html(product_html),
+                "couleur_brute": color or "",
+                "categorie_brute": str(item.get("category", "") or ""),
+                "verified_product_page": True,
+                "availability": availability or "instock",
+            }
+        return None
+
+    async def search_live_products(
+        self,
+        query_type: str,
+        colors: Optional[List[str]] = None,
+        extra_keywords: Optional[List[str]] = None,
+        excluded_urls: Optional[Set[str]] = None,
+        limit: int = 16,
+    ) -> List[Dict[str, Any]]:
+        """
+        Scraping IMMÉDIAT à la demande sur le moteur de recherche de la boutique :
+        - Respecte robots.txt via ComplianceManager
+        - Interroge en direct les résultats correspondant au type/couleurs demandés
+        - Ouvre les fiches produit en parallèle avec un pool HTTP partagé (rapide : ~3-6s)
+        - Retourne uniquement des produits réels, en stock, avec prix TND et URL vérifiée.
+        """
+        search_urls = self._build_live_search_urls(
+            query_type=query_type,
+            colors=colors,
+            extra_keywords=extra_keywords,
+        )
+        if not search_urls:
+            return []
+
+        excluded_bases = {u.split("#", 1)[0].lower() for u in (excluded_urls or set()) if u}
+        headers = {
+            "User-Agent": USER_AGENT,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+        }
+
+        candidate_urls: List[str] = []
+        seen_bases: Set[str] = set()
+
+        async with httpx.AsyncClient(timeout=10.0, follow_redirects=True, headers=headers) as client:
+            # 1. Récupérer les pages de résultats de recherche en direct
+            for s_url in search_urls:
+                if len(candidate_urls) >= limit + 6:
+                    break
+                if not await self.compliance.can_fetch(s_url):
+                    continue
+                try:
+                    resp = await client.get(s_url)
+                    if resp.status_code != 200:
+                        logger.debug(f"[LIVE-SCRAPE] HTTP {resp.status_code} sur {s_url}")
+                        continue
+                    extracted = self._extract_product_links_from_listing(resp.text, s_url)
+                    for u in extracted:
+                        base_u = u.split("#", 1)[0].lower()
+                        if base_u in seen_bases or base_u in excluded_bases:
+                            continue
+                        seen_bases.add(base_u)
+                        candidate_urls.append(u)
+                except Exception as exc:
+                    logger.warning(f"[LIVE-SCRAPE] Erreur recherche {s_url} : {exc}")
+
+            if not candidate_urls:
+                logger.info(f"[LIVE-SCRAPE] Aucun lien produit trouvé sur {self.store_name} pour '{query_type}'.")
+                return []
+
+            to_fetch = candidate_urls[: min(len(candidate_urls), max(limit + 4, 16))]
+            semaphore = asyncio.Semaphore(5)
+
+            async def _fetch_product(p_url: str) -> Optional[Dict[str, Any]]:
+                async with semaphore:
+                    if not await self.compliance.can_fetch(p_url):
+                        return None
+                    await asyncio.sleep(random.uniform(0.08, 0.20))
+                    try:
+                        resp = await client.get(p_url.split("#", 1)[0])
+                        if resp.status_code != 200:
+                            return None
+                        return self._parse_product_page(p_url, resp.text)
+                    except Exception as exc:
+                        logger.debug(f"[LIVE-SCRAPE] Erreur fiche {p_url} : {exc}")
+                        return None
+
+            parsed_results = await asyncio.gather(*(_fetch_product(u) for u in to_fetch))
+
+        products = [p for p in parsed_results if p is not None]
+        logger.info(
+            f"[LIVE-SCRAPE] {self.store_name} | query='{query_type}' -> "
+            f"{len(products)} fiche(s) produit réelle(s) extraite(s) sur {len(to_fetch)} analysée(s)."
+        )
+        return products[:limit]
+
     @staticmethod
     def _jsonld_objects(html: str) -> List[Dict[str, Any]]:
         objects = []
@@ -165,20 +458,56 @@ class MicrodataFashionScraper(BaseStoreScraper):
     @staticmethod
     def _color_from_variant(product_url: str) -> str:
         fragment = urlparse(product_url).fragment.lower()
-        match = re.search(r"couleur-[^/]*?_([a-z-]+)", fragment)
+        match = re.search(r"couleur-([^/?#]+)", fragment)
         if not match:
             return ""
-        token = match.group(1).split("_")[-1].replace("-", "")
-        color_tokens = {
-            "noir": "Noir", "noirdel": "Noir", "black": "Noir",
-            "blanc": "Blanc", "white": "Blanc", "ecru": "Blanc",
-            "bleu": "Bleu", "bleuf": "Bleu", "bleumec": "Bleu", "bleudel": "Bleu",
-            "vert": "Vert", "vertmil": "Vert", "kaki": "Vert",
-            "gris": "Gris", "grisch": "Gris", "grischine": "Gris", "grisclr": "Gris",
-            "beige": "Beige", "taupe": "Beige", "grege": "Beige",
-            "marron": "Marron", "rose": "Rose", "rouge": "Rouge"
-        }
-        return color_tokens.get(token, "")
+        raw_slug = match.group(1)
+        # Nettoyer chiffres/codes couleur PrestaShop (ex: "006bleu_f4677", "beige6072", "c00495_bleu", "gri_ch_c6232")
+        cleaned = re.sub(r"\d+", " ", raw_slug).replace("_", " ").replace("-", " ")
+        tokens = [t for t in cleaned.split() if t]
+        joined = " ".join(tokens)
+        ordered_patterns = [
+            ("bleu marine", "Bleu Marine"),
+            ("bleum", "Bleu Marine"),
+            ("marine", "Bleu Marine"),
+            ("navy", "Bleu Marine"),
+            ("bleu", "Bleu"),
+            ("blue", "Bleu"),
+            ("noir", "Noir"),
+            ("black", "Noir"),
+            ("blanc", "Blanc"),
+            ("white", "Blanc"),
+            ("ecru", "Blanc"),
+            ("gris", "Gris"),
+            ("gri", "Gris"),
+            ("grey", "Gris"),
+            ("gray", "Gris"),
+            ("beige", "Beige"),
+            ("grege", "Beige"),
+            ("taupe", "Beige"),
+            ("sable", "Sable"),
+            ("camel", "Marron"),
+            ("marron", "Marron"),
+            ("brown", "Marron"),
+            ("chocolat", "Marron Foncé"),
+            ("vert", "Vert"),
+            ("kaki", "Vert"),
+            ("olive", "Vert"),
+            ("rouge", "Rouge"),
+            ("bordeaux", "Rouge"),
+            ("corail", "Corail"),
+            ("rose", "Rose"),
+            ("pink", "Rose"),
+            ("jaune", "Jaune"),
+            ("moutarde", "Jaune"),
+            ("orange", "Orange"),
+            ("violet", "Violet"),
+            ("mauve", "Violet"),
+        ]
+        for needle, canonical in ordered_patterns:
+            if needle in joined:
+                return canonical
+        return ""
 
     @staticmethod
     def _color_from_description(description: str) -> str:

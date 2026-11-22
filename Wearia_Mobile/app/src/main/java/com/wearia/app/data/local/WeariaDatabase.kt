@@ -15,7 +15,7 @@ import com.wearia.app.data.local.entity.VetementCacheEntity
  */
 @Database(
     entities = [TenueFavoriteEntity::class, VetementCacheEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class WeariaDatabase : RoomDatabase() {

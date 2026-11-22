@@ -18,6 +18,12 @@ class ProfileRepository {
                 if (user.hauteurCm != null && user.poidsKg != null) {
                     session.saveUserMorphology(user.hauteurCm, user.poidsKg)
                 }
+                session.savePreferredColors(user.preferencesCouleur
+                    .filter { it.typePreference.equals("AIME", ignoreCase = true) }
+                    .map { it.couleur.nom }.toSet())
+                session.saveAvoidedColors(user.preferencesCouleur
+                    .filter { it.typePreference.equals("EVITE", ignoreCase = true) }
+                    .map { it.couleur.nom }.toSet())
                 Resource.Success(user)
             } else Resource.Error("Impossible de charger le profil.")
         } catch (e: Exception) {
@@ -65,7 +71,14 @@ class ProfileRepository {
                 ColorPreferencesBatchRequest(likedColorIds = likedColorIds, avoidedColorIds = avoidedColorIds)
             )
             if (response.isSuccessful && response.body() != null) {
-                Resource.Success(response.body()!!)
+                val preferences = response.body()!!
+                session.savePreferredColors(preferences
+                    .filter { it.typePreference.equals("AIME", ignoreCase = true) }
+                    .map { it.couleur.nom }.toSet())
+                session.saveAvoidedColors(preferences
+                    .filter { it.typePreference.equals("EVITE", ignoreCase = true) }
+                    .map { it.couleur.nom }.toSet())
+                Resource.Success(preferences)
             } else Resource.Error("Impossible d'enregistrer les préférences de couleurs.")
         } catch (e: Exception) {
             Resource.Error("Impossible de contacter le serveur.")
@@ -131,6 +144,14 @@ class ProfileRepository {
             val response = api.createRoutine(authHeader(), RoutineHebdomadaireRequest(jour, occasion))
             if (response.isSuccessful && response.body() != null) Resource.Success(response.body()!!)
             else Resource.Error("Erreur lors de la création de la routine.")
+        } catch (e: Exception) { Resource.Error("Impossible de contacter le serveur.") }
+    }
+
+    suspend fun updateRoutine(id: Int, jour: String, occasion: String, estActive: Boolean = true): Resource<RoutineHebdomadaireResponse> {
+        return try {
+            val response = api.updateRoutine(authHeader(), id, RoutineHebdomadaireRequest(jour, occasion, estActive))
+            if (response.isSuccessful && response.body() != null) Resource.Success(response.body()!!)
+            else Resource.Error("Erreur lors de la modification de la routine.")
         } catch (e: Exception) { Resource.Error("Impossible de contacter le serveur.") }
     }
 

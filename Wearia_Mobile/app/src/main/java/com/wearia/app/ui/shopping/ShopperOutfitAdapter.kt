@@ -77,19 +77,24 @@ class ShopperOutfitAdapter :
                 // Badge catégorie
                 val cat = article.categorieNom.lowercase()
                 val badgeText = when {
+                    cat.contains("veste") || cat.contains("jacket") || cat.contains("manteau") -> "VESTE"
                     cat.contains("haut") || cat.contains("t-shirt") || cat.contains("chemise") -> "HAUT"
                     cat.contains("bas") || cat.contains("pant") || cat.contains("jean") -> "BAS"
                     cat.contains("chauss") || cat.contains("basket") || cat.contains("sneaker") -> "CHAUSSURES"
-                    cat.contains("veste") || cat.contains("jacket") -> "VESTE"
                     cat.contains("robe") -> "ROBE"
+                    cat.contains("accessoire") -> "ACCESSOIRE"
                     else -> cat.uppercase().take(10)
                 }
                 a.tvShopperArticleBadge.text = badgeText
 
                 // Nom + boutique + tailles + prix
                 a.tvShopperArticleName.text = article.nom
-                a.tvShopperArticleStore.text = "${article.vendeur} · ${article.taillesDisponibles}"
-                a.tvShopperArticlePrice.text = "${article.prix} ${article.devise}"
+                val checkedAt = article.verifieLe?.take(16)?.replace('T', ' ')
+                val checkedLabel = checkedAt?.let { " · Offre lue le $it UTC" } ?: " · Date de lecture inconnue"
+                val sizeLabel = article.taillesDisponibles.takeIf { it.isNotBlank() && !it.equals("Non vérifiées", true) }
+                    ?.let { " · Tailles $it" } ?: ""
+                a.tvShopperArticleStore.text = "${article.vendeur} · ${article.couleurNom}$sizeLabel$checkedLabel"
+                a.tvShopperArticlePrice.text = "${String.format(java.util.Locale.FRANCE, "%.2f", article.prix)} ${article.devise}"
 
                 // Image produit
                 a.ivShopperArticleImage.load(article.imageUrl) {
@@ -98,38 +103,40 @@ class ShopperOutfitAdapter :
                     crossfade(true)
                 }
 
-                // Lien boutique
+                // Lien boutique validé strictement
+                val validProductUrl = validatedProductUrl(article.lienAchat)
                 val openUrl: () -> Unit = {
-                    val rawUrl = article.lienAchat?.trim()
-                    val targetUrl = if (!rawUrl.isNullOrBlank() &&
-                        (rawUrl.startsWith("http://") || rawUrl.startsWith("https://"))
-                    ) {
-                        rawUrl
+                    if (validProductUrl == null) {
+                        Toast.makeText(context, "Lien produit vérifié indisponible", Toast.LENGTH_SHORT).show()
                     } else {
-                        when (article.vendeur.lowercase()) {
-                            "exist" -> "https://www.exist.com.tn"
-                            "zen tunisie", "zen" -> "https://zen.com.tn"
-                            "pull&bear tn", "pull&bear" -> "https://www.pullandbear.com/tn"
-                            "bershka tn", "bershka" -> "https://www.bershka.com/tn"
-                            "zara tn", "zara" -> "https://www.zara.com/tn"
-                            else -> "https://www.exist.com.tn"
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(validProductUrl)).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Impossible d'ouvrir ${article.vendeur}", Toast.LENGTH_SHORT).show()
                         }
-                    }
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl)).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                        context.startActivity(intent)
-                    } catch (e: Exception) {
-                        Toast.makeText(
-                            context,
-                            "Impossible d'ouvrir ${article.vendeur}",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
                 }
 
-                a.btnBuyArticle.text = "Voir ↗"
+                val hasDirectLink = validProductUrl != null
+                a.btnBuyArticle.text = if (hasDirectLink) "Fiche produit ↗" else "Lien indisponible"
+                a.btnBuyArticle.isEnabled = hasDirectLink
+                val userId = com.wearia.app.WeariaApplication.instance.sessionManager.getUserId()
+                val favKey = "product_ids_user_$userId"
+                val favorites = context.getSharedPreferences("shopper_favorites", android.content.Context.MODE_PRIVATE)
+                fun refreshFavorite() {
+                    val saved = favorites.getStringSet(favKey, emptySet()).orEmpty().contains(article.id.toString())
+                    a.tvShopperArticleFavorite.text = if (saved) "♥ Favori" else "♡ Favori"
+                }
+                refreshFavorite()
+                a.tvShopperArticleFavorite.setOnClickListener {
+                    val savedIds = favorites.getStringSet(favKey, emptySet()).orEmpty().toMutableSet()
+                    if (!savedIds.add(article.id.toString())) savedIds.remove(article.id.toString())
+                    favorites.edit().putStringSet(favKey, savedIds).apply()
+                    refreshFavorite()
+                }
                 a.btnBuyArticle.addPressEffect()
                 a.btnBuyArticle.setOnClickListener { openUrl() }
                 a.root.setOnClickListener { openUrl() }
@@ -140,6 +147,38 @@ class ShopperOutfitAdapter :
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<ShopperOutfitResponse>() {
+        private val BLOCKED_HOSTS = setOf(
+            "localhost",
+            "127.0.0.1",
+            "0.0.0.0",
+            "example.com",
+            "www.example.com",
+            "example.org",
+            "example.net",
+            "test.com",
+            "placeholder.com"
+        )
+        private val CATEGORY_PATH_REGEX = Regex(
+            pattern = "(-[cl]\\d+\\.html$|/categorie-produit/|/collections/all/?$|/search/?$)",
+            option = RegexOption.IGNORE_CASE
+        )
+
+        fun validatedProductUrl(rawUrl: String?): String? {
+            val trimmed = rawUrl?.trim().orEmpty()
+            if (trimmed.isEmpty() || !trimmed.startsWith("https://", ignoreCase = true)) return null
+            val uri = try {
+                Uri.parse(trimmed)
+            } catch (_: Exception) {
+                return null
+            }
+            val host = uri.host?.lowercase()?.trim().orEmpty()
+            if (host.isEmpty() || !host.contains('.') || host in BLOCKED_HOSTS) return null
+            val path = uri.path?.trim().orEmpty()
+            if (path.isEmpty() || path == "/") return null
+            if (CATEGORY_PATH_REGEX.containsMatchIn(path)) return null
+            return trimmed
+        }
+
         override fun areItemsTheSame(
             oldItem: ShopperOutfitResponse,
             newItem: ShopperOutfitResponse

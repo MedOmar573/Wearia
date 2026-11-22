@@ -6,6 +6,7 @@ from app.models.shopping import ArticleCatalogue
 from app.core.config import settings
 from app.scraper.normalizer import DataNormalizer
 from app.scraper.stores.fashion_store_scraper import MicrodataFashionScraper
+from app.services.shopper_validation import is_valid_product_url, normalize_product_url
 
 logger = logging.getLogger(__name__)
 
@@ -55,35 +56,47 @@ class ScraperService:
                         desc = raw.get("description", "")
 
                         # A catalog item is usable only when product metadata supplied a
-                        # direct HTTPS product URL and a positive, reported price.
-                        if (not lien_achat.startswith("https://") or prix <= 0
+                        # direct, syntactically valid HTTPS product URL and a positive price.
+                        url_ok, url_reason = is_valid_product_url(lien_achat, require_https=True)
+                        if (not url_ok or prix <= 0
                                 or not raw.get("verified_product_page", False)):
+                            logger.debug(f"Article ignoré ('{nom}') : {url_reason}, prix={prix}")
                             continue
 
-                        # Résolution référentiels
+                        # Résolution référentiels (utiliser couleur_brute extraite de la fiche/variante !)
+                        raw_color = raw.get("couleur_brute", "")
                         type_vetement = DataNormalizer.match_type_vetement(nom, desc, db)
-                        couleur = DataNormalizer.match_couleur(nom, desc, db)
+                        couleur = DataNormalizer.match_couleur(nom, desc, db, raw_color=raw_color)
                         style = DataNormalizer.match_style(nom, desc, db)
 
                         if not type_vetement or not couleur:
                             continue
 
-                        # Vérifier si l'article existe déjà (par lien d'achat ou par nom + vendeur)
+                        # Vérifier si l'article existe déjà (par lien d'achat exact ou normalisé)
                         existing = None
                         if lien_achat:
                             existing = db.query(ArticleCatalogue).filter(ArticleCatalogue.lienAchat == lien_achat).first()
-                        if not existing:
-                            existing = db.query(ArticleCatalogue).filter(
-                                ArticleCatalogue.nom == nom,
-                                ArticleCatalogue.vendeur == vendeur
-                            ).first()
+                        if not existing and lien_achat:
+                            norm_target = normalize_product_url(lien_achat)
+                            base_url = lien_achat.split("#", 1)[0]
+                            candidates = db.query(ArticleCatalogue).filter(
+                                ArticleCatalogue.lienAchat.like(f"{base_url}%")
+                            ).all()
+                            existing = next(
+                                (c for c in candidates if normalize_product_url(c.lienAchat) == norm_target),
+                                None,
+                            )
 
                         if existing:
+                            existing.nom = nom
                             existing.prix = prix
                             existing.imageUrl = image_url
+                            existing.lienAchat = lien_achat
                             existing.taillesDisponibles = tailles
                             existing.vendeur = vendeur
                             existing.enStock = True
+                            existing.type_vetement_id = type_vetement.id
+                            existing.couleur_id = couleur.id
                             existing.dateDerniereSynchro = datetime.utcnow()
                             if style:
                                 existing.style_id = style.id

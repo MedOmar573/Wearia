@@ -130,6 +130,7 @@ class CameraFragment : Fragment() {
                             putString("category", result.category)
                             putString("color", result.color)
                             putString("colorHex", result.colorHex)
+                            putFloat("confidence", result.confidence)
                             putInt("suggestedTypeId", result.suggestedTypeId ?: -1)
                             putInt("suggestedColorId", result.suggestedColorId ?: -1)
                             putString("name", result.name)
@@ -202,6 +203,10 @@ class CameraFragment : Fragment() {
             Toast.makeText(requireContext(), "Caméra non prête. Utilisez le bouton Galerie.", Toast.LENGTH_SHORT).show()
             return
         }
+        // Supprimer immédiatement toute photo temporaire précédente et réinitialiser l'état IA
+        ImageUtils.clearTemporaryCaptureFiles(requireContext())
+        viewModel.resetClassifyState()
+
         val photoFile = File(
             outputDir,
             "wearia_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.FRANCE).format(Date())}.jpg"
@@ -228,8 +233,11 @@ class CameraFragment : Fragment() {
                     binding.tvClassifyStatus.text = "Optimisation de l'image..."
                     lifecycleScope.launch(Dispatchers.IO) {
                         val optimizedFile = ImageUtils.compressAndPrepareFile(ctx, photoFile)
+                        if (optimizedFile.canonicalPath != photoFile.canonicalPath) {
+                            photoFile.delete()
+                        }
                         withContext(Dispatchers.Main) {
-                            binding.tvClassifyStatus.text = "Analyse IA (KNN + OpenCV)..."
+                            binding.tvClassifyStatus.text = "Analyse IA en cours..."
                             viewModel.classifyImage(optimizedFile)
                         }
                     }
@@ -240,8 +248,10 @@ class CameraFragment : Fragment() {
 
     private fun handleGalleryImage(uri: Uri) {
         val ctx = context ?: return
+        viewModel.resetClassifyState()
         lifecycleScope.launch(Dispatchers.IO) {
             try {
+                ImageUtils.clearTemporaryCaptureFiles(ctx)
                 val inputStream = ctx.contentResolver.openInputStream(uri) ?: run {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(ctx, "Impossible de lire l'image sélectionnée.", Toast.LENGTH_SHORT).show()
@@ -253,6 +263,9 @@ class CameraFragment : Fragment() {
                     inputStream.copyTo(output)
                 }
                 val optimizedFile = ImageUtils.compressAndPrepareFile(ctx, rawTempFile)
+                if (optimizedFile.canonicalPath != rawTempFile.canonicalPath) {
+                    rawTempFile.delete()
+                }
                 withContext(Dispatchers.Main) {
                     Toast.makeText(ctx, "Image importée, analyse IA en cours...", Toast.LENGTH_SHORT).show()
                     viewModel.classifyImage(optimizedFile)

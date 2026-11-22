@@ -15,15 +15,32 @@
         android:paddingTop="28dp"
         android:paddingBottom="40dp">
 
-        <!-- Titre de l'écran -->
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- En-tête avec Bouton Retour et Titre -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ajouter une pièce"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorTextPrimary"
-            android:layout_marginBottom="20dp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_button"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Retour"
+                app:tint="@color/colorTextPrimary"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ajouter une pièce"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary" />
+        </LinearLayout>
 
         <!-- Carte 1: Prise de photo rapide -->
         <com.google.android.material.card.MaterialCardView

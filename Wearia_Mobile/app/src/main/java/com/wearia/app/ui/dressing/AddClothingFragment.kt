@@ -3,17 +3,20 @@ package com.wearia.app.ui.dressing
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.wearia.app.BuildConfig
@@ -24,6 +27,7 @@ import com.wearia.app.data.remote.dto.VetementCreateRequest
 import com.wearia.app.databinding.FragmentAddClothingBinding
 import com.wearia.app.utils.ImageUtils
 import com.wearia.app.utils.Resource
+import com.wearia.app.utils.WeariaTaxonomy
 import com.wearia.app.utils.addPressEffect
 import com.wearia.app.viewmodel.ClothingViewModel
 import com.wearia.app.viewmodel.ProfileViewModel
@@ -63,6 +67,7 @@ class AddClothingFragment : Fragment() {
     private var availableTypes: List<TypeVetementResponse> = emptyList()
     private var availableColors: List<CouleurResponse> = emptyList()
     private var hasUserCorrectedAi: Boolean = false
+    private var hasSavedCurrentPhoto: Boolean = false
 
     // Sélecteur de galerie
     private val galleryLauncher =
@@ -75,8 +80,62 @@ class AddClothingFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Nettoie complètement la photo testée précédente (fichier temporaire local,
+     * fichier temporaire serveur non enregistré, aperçu UI et état IA) afin qu'elle
+     * ne réapparaisse jamais lors d'une nouvelle prise ou d'un retour arrière.
+     */
+    private fun clearPreviousCaptureState(deleteRemoteTemp: Boolean = true) {
+        val oldImageUrl = imageUrl
+        if (deleteRemoteTemp && oldImageUrl.isNotBlank() && !hasSavedCurrentPhoto) {
+            clothingViewModel.deleteTempUpload(oldImageUrl)
+        }
+        context?.let { ImageUtils.clearTemporaryCaptureFiles(it) }
+
+        imageUrl = ""
+        predictedCategory = ""
+        predictedColor = ""
+        suggestedTypeId = -1
+        suggestedColorId = -1
+        detectedMatiere = null
+        detectedSaison = "TOUTE_SAISON"
+        detectedEstThermique = false
+        detectedEstImpermeable = false
+        detectedStyleId = null
+        hasUserCorrectedAi = false
+        hasSavedCurrentPhoto = false
+        arguments?.clear()
+        clothingViewModel.resetClassifyState()
+
+        _binding?.let { b ->
+            b.ivClothingPreview.setImageResource(R.drawable.ic_hanger)
+            b.etName.setText("")
+            b.tvAiPredictionBanner.text = "Prenez une photo ou choisissez une image pour lancer la détection IA"
+            b.progressBarAi.visibility = View.GONE
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val exitWithoutSaving: () -> Unit = {
+            clearPreviousCaptureState(deleteRemoteTemp = true)
+            findNavController().popBackStack()
+        }
+
+        binding.btnBack.addPressEffect()
+        binding.btnBack.setOnClickListener {
+            exitWithoutSaving()
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    exitWithoutSaving()
+                }
+            }
+        )
 
         binding.btnSaveClothing.addPressEffect()
         binding.cardTakePhoto.addPressEffect(0.98f)
@@ -85,8 +144,8 @@ class AddClothingFragment : Fragment() {
         // Récupérer les arguments passés depuis CameraFragment s'il y en a
         arguments?.let { args ->
             imageUrl = args.getString("imageUrl", "")
-            predictedCategory = args.getString("category", "")
-            predictedColor = args.getString("color", "")
+            predictedCategory = WeariaTaxonomy.normalizeType(args.getString("category", ""))
+            predictedColor = WeariaTaxonomy.normalizeColor(args.getString("color", ""))
             suggestedTypeId = args.getInt("suggestedTypeId", -1)
             suggestedColorId = args.getInt("suggestedColorId", -1)
             detectedMatiere = args.getString("matiere")
@@ -94,12 +153,27 @@ class AddClothingFragment : Fragment() {
             detectedEstThermique = args.getBoolean("estThermique", false)
             detectedEstImpermeable = args.getBoolean("estImpermeable", false)
             detectedStyleId = args.getInt("styleId", 1)
+            val argConf = args.getFloat("confidence", -1f)
+            if (argConf >= 0f && predictedCategory.isNotEmpty()) {
+                val confPct = (argConf * 100).toInt().coerceIn(0, 100)
+                binding.tvAiPredictionBanner.text =
+                    "IA détectée : $predictedCategory · $predictedColor ($confPct%) — modifiable"
+            }
         }
 
-        // Actions Carte 1 (Prise de photo & Galerie - Maquette 7.jpg)
+        // Actions Carte 1 (Prise de photo & Galerie) : supprime l'ancienne photo et remplace l'écran dans la pile
         binding.cardTakePhoto.setOnClickListener {
             try {
-                findNavController().navigate(R.id.cameraFragment)
+                clearPreviousCaptureState(deleteRemoteTemp = true)
+                val navController = findNavController()
+                if (navController.currentDestination?.id == R.id.addClothingFragment) {
+                    navController.navigate(R.id.action_addClothing_to_camera)
+                } else {
+                    val replaceOpts = NavOptions.Builder()
+                        .setPopUpTo(R.id.addClothingFragment, true)
+                        .build()
+                    navController.navigate(R.id.cameraFragment, null, replaceOpts)
+                }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Impossible d'ouvrir la caméra : ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
@@ -107,6 +181,7 @@ class AddClothingFragment : Fragment() {
 
         binding.tvChooseGallery.setOnClickListener {
             try {
+                clearPreviousCaptureState(deleteRemoteTemp = true)
                 galleryLauncher.launch("image/*")
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Impossible d'ouvrir la galerie : ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
@@ -154,7 +229,7 @@ class AddClothingFragment : Fragment() {
             val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, typeNames)
             binding.spinnerType.adapter = adapter
 
-            val index = types.indexOfFirst { it.id == suggestedTypeId || it.nom.equals(predictedCategory, ignoreCase = true) }
+            val index = WeariaTaxonomy.findMatchingTypeIndex(types, suggestedTypeId, predictedCategory)
             if (index != -1) binding.spinnerType.setSelection(index)
         }
 
@@ -164,7 +239,7 @@ class AddClothingFragment : Fragment() {
             val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, colorNames)
             binding.spinnerColor.adapter = adapter
 
-            val index = colors.indexOfFirst { it.id == suggestedColorId || it.nom.equals(predictedColor, ignoreCase = true) }
+            val index = WeariaTaxonomy.findMatchingColorIndex(colors, suggestedColorId, predictedColor)
             if (index != -1) {
                 binding.spinnerColor.setSelection(index)
                 updateColorSwatch(colors[index].codeHex)
@@ -192,12 +267,20 @@ class AddClothingFragment : Fragment() {
                     binding.progressBarAi.visibility = View.GONE
                     val result = state.data
                     imageUrl = result.imageUrl
-                    predictedCategory = result.category
-                    predictedColor = result.color
+                    predictedCategory = WeariaTaxonomy.normalizeType(result.category)
+                    predictedColor = WeariaTaxonomy.normalizeColor(result.color)
                     suggestedTypeId = result.suggestedTypeId ?: -1
                     suggestedColorId = result.suggestedColorId ?: -1
 
-                    binding.tvAiPredictionBanner.text = "AI detected — you can edit these details."
+                    val confPct = (result.confidence * 100).toInt().coerceIn(0, 100)
+                    binding.tvAiPredictionBanner.text =
+                        "IA détectée : $predictedCategory · $predictedColor ($confPct%) — modifiable"
+                    Log.i(
+                        "WeariaAI",
+                        "Classify result: rawCat=${result.category} -> $predictedCategory (typeId=$suggestedTypeId) | " +
+                        "rawCol=${result.color} -> $predictedColor (colorId=$suggestedColorId) | conf=$confPct%"
+                    )
+
                     val smartTitle = result.name ?: "${predictedCategory.replaceFirstChar { it.uppercase() }} $predictedColor"
                     binding.etName.setText(smartTitle)
 
@@ -213,11 +296,11 @@ class AddClothingFragment : Fragment() {
                         error(R.drawable.ic_hanger)
                     }
 
-                    // Sélectionner dans les dropdowns Type et Couleur
-                    val typeIdx = availableTypes.indexOfFirst { it.id == suggestedTypeId || it.nom.equals(predictedCategory, ignoreCase = true) }
+                    // Sélectionner dans les dropdowns Type et Couleur via correspondance canonique exacte
+                    val typeIdx = WeariaTaxonomy.findMatchingTypeIndex(availableTypes, suggestedTypeId, predictedCategory)
                     if (typeIdx != -1) binding.spinnerType.setSelection(typeIdx)
 
-                    val colorIdx = availableColors.indexOfFirst { it.id == suggestedColorId || it.nom.equals(predictedColor, ignoreCase = true) }
+                    val colorIdx = WeariaTaxonomy.findMatchingColorIndex(availableColors, suggestedColorId, predictedColor)
                     if (colorIdx != -1) {
                         binding.spinnerColor.setSelection(colorIdx)
                         updateColorSwatch(availableColors[colorIdx].codeHex)
@@ -263,6 +346,8 @@ class AddClothingFragment : Fragment() {
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSaveClothing.isEnabled = true
+                    hasSavedCurrentPhoto = true
+                    context?.let { ImageUtils.clearTemporaryCaptureFiles(it) }
                     val successMsg = if (hasUserCorrectedAi) {
                         "✨ Vêtement ajouté ! L'IA a mémorisé votre correction."
                     } else {
@@ -318,8 +403,10 @@ class AddClothingFragment : Fragment() {
 
     private fun handleGalleryImage(uri: Uri) {
         val ctx = context ?: return
+        clearPreviousCaptureState(deleteRemoteTemp = true)
         lifecycleScope.launch(Dispatchers.IO) {
             try {
+                ImageUtils.clearTemporaryCaptureFiles(ctx)
                 val inputStream = ctx.contentResolver.openInputStream(uri) ?: run {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(ctx, "Impossible de lire l'image sélectionnée.", Toast.LENGTH_SHORT).show()
@@ -331,6 +418,9 @@ class AddClothingFragment : Fragment() {
                     inputStream.copyTo(output)
                 }
                 val optimizedFile = ImageUtils.compressAndPrepareFile(ctx, rawTempFile)
+                if (optimizedFile.canonicalPath != rawTempFile.canonicalPath) {
+                    rawTempFile.delete()
+                }
                 withContext(Dispatchers.Main) {
                     Toast.makeText(ctx, "Image importée, analyse IA en cours...", Toast.LENGTH_SHORT).show()
                     clothingViewModel.classifyImage(optimizedFile)

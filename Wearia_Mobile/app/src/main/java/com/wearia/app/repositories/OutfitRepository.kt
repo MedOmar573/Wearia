@@ -1,5 +1,6 @@
 package com.wearia.app.repositories
 
+import androidx.room.withTransaction
 import com.google.gson.Gson
 import com.wearia.app.WeariaApplication
 import com.wearia.app.data.local.entity.TenueFavoriteEntity
@@ -17,6 +18,7 @@ class OutfitRepository {
     private val gson = Gson()
 
     private fun authHeader() = session.getAuthHeader()
+    private fun currentUserId() = session.getUserId()
 
     /**
      * Génère une recommandation de tenue via le moteur BR01-BR09 du backend.
@@ -62,7 +64,18 @@ class OutfitRepository {
         return try {
             val response = api.getOutfits(authHeader(), favorisOnly)
             if (response.isSuccessful && response.body() != null) {
-                Resource.Success(response.body()!!)
+                val list = response.body()!!
+                val uid = currentUserId()
+                if (favorisOnly && uid > 0) {
+                    val entities = list.map { it.toLocalEntity(uid) }
+                    WeariaApplication.instance.database.withTransaction {
+                        outfitDao.clearFavoritesForUser(uid)
+                        if (entities.isNotEmpty()) {
+                            outfitDao.insertAllFavorites(entities)
+                        }
+                    }
+                }
+                Resource.Success(list)
             } else {
                 Resource.Error("Impossible de charger les tenues.")
             }
@@ -76,15 +89,23 @@ class OutfitRepository {
             val response = api.updateOutfit(authHeader(), outfitId, estFavorite = isFavorite)
             if (response.isSuccessful && response.body() != null) {
                 val tenue = response.body()!!
-                if (isFavorite) {
-                    // Sauvegarder en local pour le mode hors-ligne
-                    outfitDao.insertFavorite(tenue.toLocalEntity())
-                } else {
-                    outfitDao.deleteFavoriteById(outfitId)
+                val uid = currentUserId()
+                if (uid > 0) {
+                    if (isFavorite) {
+                        outfitDao.insertFavorite(tenue.toLocalEntity(uid))
+                    } else {
+                        outfitDao.deleteFavoriteByIdForUser(outfitId, uid)
+                    }
                 }
                 Resource.Success(tenue)
             } else {
-                Resource.Error("Erreur lors de la mise à jour du favori.")
+                val errorBody = response.errorBody()?.string() ?: ""
+                val msg = if (response.code() == 409 || errorBody.contains("existe déjà", ignoreCase = true)) {
+                    "Cette combinaison existe déjà dans vos favoris"
+                } else {
+                    "Erreur lors de la mise à jour du favori."
+                }
+                Resource.Error(msg)
             }
         } catch (e: Exception) {
             Resource.Error("Impossible de contacter le serveur.")
@@ -107,16 +128,28 @@ class OutfitRepository {
         }
     }
 
-    fun getLocalFavorites() = outfitDao.getAllFavorites()
+    fun getLocalFavorites() = outfitDao.getFavoritesForUser(currentUserId())
 
-    private fun TenueResponse.toLocalEntity() = TenueFavoriteEntity(
-        id = id,
-        occasion = occasion,
-        temperature = temperatureCelsius,
-        weather = descriptionMeteo,
-        score = scoreCompatibilite,
-        explanation = explication ?: "",
-        itemsJson = gson.toJson(vetements.map { it.nom })
-    )
+    fun TenueResponse.toLocalEntity(userId: Int = currentUserId()): TenueFavoriteEntity {
+        val itemsSimple = vetements.map { v ->
+            OutfitItemSimple(
+                id = v.id,
+                name = v.nom,
+                category = v.typeVetement?.nom,
+                color = v.couleur?.nom,
+                imageUrl = v.photoUrl
+            )
+        }
+        return TenueFavoriteEntity(
+            id = id,
+            userId = userId,
+            occasion = occasion,
+            temperature = temperatureCelsius,
+            weather = descriptionMeteo,
+            score = scoreCompatibilite,
+            explanation = explication ?: "",
+            itemsJson = gson.toJson(itemsSimple)
+        )
+    }
 }
 
